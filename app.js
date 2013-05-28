@@ -8,7 +8,6 @@ var routes = require('./routes');
 var user = require('./routes/user');
 var http = require('http');
 var path = require('path');
-var sys = require("sys");
 var WebSocketServer = require('ws').Server;
 
 var app = express();

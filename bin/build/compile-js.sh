@@ -17,6 +17,11 @@ SITE_VERSION=$6
 
 OUTPUT_NAME=${PROJECT_NAME}_${SITE_VERSION}
 
+if [ ! -d "${JS_PATH}/compiled/" ]; then
+    echo "Create target directory"
+    mkdir -p ${JS_PATH}/compiled
+fi
+
 echo "-----------------------------------------------------"
 
 figlet Compile JS
