@@ -1,0 +1,16 @@
+{
+    "name": "explore",
+    "version": "0.0.2",
+    "description": "Exploring all sorts of new tech",
+    "author": "Jan Badenhorst <janhendrik.badenhorst@gmail.com>",
+    "private": true,
+    "scripts": {
+        "start": "node app.js"
+    },
+    "dependencies": {
+        "express": ">=3.2.5",
+        "jade": ">=0.30.0",
+        "mqtt": ">=0.2.7",
+        "ws": ">=0.4.25"
+    }
+}

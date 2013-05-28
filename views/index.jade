@@ -1,0 +1,32 @@
+extends layout
+
+block head
+
+    if jsIsCompiled
+        link(rel='stylesheet', href = cssCompiled)
+        script(src = jsCompiled)
+        script(src = bootstrap)
+    else
+        link(rel='stylesheet', href = cssBasic)
+        script(src = closureBase)
+        script(src = deps)
+        script()
+            goog.require('app');
+        script(src = bootstrap)
+
+block content
+  h1= title
+  p Welcome to #{title}
+  input#topic(type="text", placeholder="topic", name="topic")br
+  textarea#payload(type="textarea", placeholder="payload", name="payload")br
+  div#clickme
+  br
+  br
+  p#in_topic
+  h2#in_payload
+
+
+block bottomScripts
+    script()
+        bootstrap.setDefaults({permission:true},'myLandingView', {user:'jan'},'mySiteTheme');
+        bootstrap.addApp('site');
