@@ -23,11 +23,7 @@ var conf = {
         }
     },
     engine: 'jade',
-    mqttServer: '54.229.30.67',
-    mqttPort: 80,
-    wsServer: 'localhost',
-    wsPort: process.env.PORT || 3000,
-    port: process.env.PORT || 3000,
+    production: false,
     compiled: {
         JS: true,
         CSS: false
@@ -36,10 +32,22 @@ var conf = {
 
 /**
  * Seed the conf with a root directory
- * @param dir
  */
-var init = function(dir) {
-
+var init = function() {
+// Switch between production and development
+    if (conf.production) {
+        conf.mqttServer = '54.229.30.67';
+        conf.mqttPort = 80;
+        conf.wsServer = '54.229.30.67';
+        conf.wsPort = 80;
+        conf.port = 80;
+    } else {
+        conf.mqttServer = '54.229.30.67';
+        conf.mqttPort = 80;
+        conf.wsServer = 'localhost';
+        conf.wsPort = process.env.PORT || 3000;
+        conf.port = process.env.PORT || 3000;
+    }
 };
 
 /**
@@ -48,6 +56,9 @@ var init = function(dir) {
  * @param express
  */
 var configure = function(app, express) {
+
+    // Set some stuff up
+    init();
 
     // all environments
     app.set('port', conf.port)

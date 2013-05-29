@@ -15,7 +15,7 @@ goog.require('goog.ui.CustomButton');
  * @extends {goog.events.EventHandler}
  * @constructor
  */
-app.Site = function(wsServer, wsPort, mqttServer, mqttPort) {
+app.Site = function(wsServer, wsPort) {
     goog.events.EventHandler.call(this, this);
 
     this.wsServer = wsServer;
