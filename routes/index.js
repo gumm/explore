@@ -10,7 +10,7 @@ exports.index = function (req, res) {
         jsCompiled: app.get('jsCompiled'),
         cssBasic: app.get('cssBasic'),
         cssCompiled: app.get('cssCompiled'),
-        closureBase: app.get('closureBase'),
+        goog: app.get('goog'),
         deps: app.get('deps'),
         bootstrap: app.get('bootstrap')
     });
