@@ -56,13 +56,17 @@ app.Site.prototype.openWebsocket = function() {
             switch (e.type) {
                 case goog.net.WebSocket.EventType.OPENED:
                     console.debug('CONNECTION OPENED');
-                    this.mqttSend('/gumm', 'Website came online');
+                    this.mqttSend('hello', 'Website came online');
                     break;
                 case goog.net.WebSocket.EventType.MESSAGE:
                     this.mqttRead(goog.json.parse(e.message));
                     break;
                 case goog.net.WebSocket.EventType.CLOSED:
                     console.debug('CONNECTION CLOSED');
+                    this.mqttRead({
+                        'topic':'Warning',
+                        'message': 'Lost connection to server'
+                    });
                     break;
                 default:
                     console.debug('Did not understand this message type');

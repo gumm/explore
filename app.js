@@ -21,6 +21,11 @@ var server = http.createServer(app).listen(app.get('port'), function () {
     console.log('Express server listening on port ' + app.get('port'));
 });
 
+var packageForMqtt = function(topic, message) {
+    return JSON.stringify({'topic':topic, 'message':message});
+};
+
+
 /**
  * Socket Server Setup
  * @type {WebSocketServer}
@@ -39,9 +44,24 @@ wss.on('connection', function (ws) {
 
     // This delivers everything that was subscribed to.
     client.on('message', function (topic, message) {
-        var mqttMessage = JSON.stringify({'topic':topic, 'message':message});
-        console.log('client received message:', mqttMessage);
-        ws.send(mqttMessage);
+        console.log('Raw message:', topic, message);
+        console.log('client received message:', packageForMqtt(topic, message));
+        ws.send(packageForMqtt(topic, message));
+    });
+
+    client.on('disconnect', function(packet) {
+        console.log('Client disconnect', packet);
+        ws.send(packageForMqtt('Disconnect', 'Disconnected from broker'));
+    });
+
+    client.on('close', function(err) {
+        console.log('Client close', err);
+        ws.send(packageForMqtt('Close', 'Closed connection to broker'));
+    });
+
+    client.on('error', function(err) {
+        console.log('Client error', err);
+        ws.send(packageForMqtt('error', err));
     });
 
     ws.on('close', function () {
