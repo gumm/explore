@@ -25,6 +25,11 @@ var packageForMqtt = function(topic, message) {
     return JSON.stringify({'topic':topic, 'message':message});
 };
 
+var sendToWs = function(ws, payload) {
+    ws.send(payload, function(e) {
+        console.log('WS Send failed:', e);
+    });
+};
 
 /**
  * Socket Server Setup
@@ -33,6 +38,8 @@ var packageForMqtt = function(topic, message) {
 var wss = new WebSocketServer({server: server});
 wss.on('connection', function (ws) {
 
+    console.log(ws._socket.server);
+
     var clientId = ws.upgradeReq.headers['sec-websocket-key'];
 
     // Each socket becomes a mqtt client.
@@ -40,28 +47,28 @@ wss.on('connection', function (ws) {
     var client = mqtt.createClient(1883, '54.229.30.67', {clientId: clientId});
 
     // This subscribes to all messages.
-    client.subscribe('#');
+    client.subscribe('+/#');
 
     // This delivers everything that was subscribed to.
     client.on('message', function (topic, message) {
-        console.log('Raw message:', topic, message);
-        console.log('client received message:', packageForMqtt(topic, message));
-        ws.send(packageForMqtt(topic, message));
+        console.log('Client receive:', topic, message);
+        console.log('WS Send:', packageForMqtt(topic, message));
+        sendToWs(ws, packageForMqtt(topic, message));
     });
 
     client.on('disconnect', function(packet) {
         console.log('Client disconnect', packet);
-        ws.send(packageForMqtt('Disconnect', 'Disconnected from broker'));
+        sendToWs(ws, packageForMqtt('Disconnect', 'Disconnected from broker'));
     });
 
     client.on('close', function(err) {
         console.log('Client close', err);
-        ws.send(packageForMqtt('Close', 'Closed connection to broker'));
+        sendToWs(ws, packageForMqtt('Close', 'Closed connection to broker'));
     });
 
     client.on('error', function(err) {
         console.log('Client error', err);
-        ws.send(packageForMqtt('error', err));
+        sendToWs(ws, packageForMqtt('Error', err));
     });
 
     ws.on('close', function () {

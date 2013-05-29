@@ -56,7 +56,7 @@ app.Site.prototype.openWebsocket = function() {
             switch (e.type) {
                 case goog.net.WebSocket.EventType.OPENED:
                     console.debug('CONNECTION OPENED');
-                    this.mqttSend('hello', 'Website came online');
+                    this.mqttSend('Hello', 'Website came on-line');
                     break;
                 case goog.net.WebSocket.EventType.MESSAGE:
                     this.mqttRead(goog.json.parse(e.message));
