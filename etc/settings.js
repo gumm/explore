@@ -16,7 +16,7 @@ var conf = {
         DEPS: path.join('js', 'deps.js'),
         BOOTSTRAP: path.join('js', 'bootstrap.js'),
         GOOG: path.join('js', 'closure-library/closure/goog/base.js'),
-        CSS: path.join('css', 'default.css'),
+        CSS: path.join('css', 'default2.css'),
         compiled: {
             JS: path.join('js', 'compiled/' + pjson.name + '_' + pjson.version + '.js'),
             CSS: path.join('css', 'compiled/' + pjson.name + '_' + pjson.version + '.css')
@@ -30,7 +30,7 @@ var conf = {
     port: process.env.PORT || 3000,
     compiled: {
         JS: true,
-        CSS: true
+        CSS: false
     }
 };
 
@@ -72,6 +72,13 @@ var configure = function(app, express) {
         app.enable('jsIsCompiled');
     } else {
         app.disable('jsIsCompiled');
+    }
+
+    // To switch between compiled and basic CSS.
+    if (conf.compiled.CSS) {
+        app.enable('cssIsCompiled');
+    } else {
+        app.disable('cssIsCompiled');
     }
 
     // Middleware

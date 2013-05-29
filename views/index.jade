@@ -2,28 +2,22 @@ extends layout
 
 block head
 
-    if jsIsCompiled
-        link(rel='stylesheet', href = cssCompiled)
-        script(src = jsCompiled)
-        script(src = bootstrap)
-    else
-        link(rel='stylesheet', href = cssBasic)
-        script(src = googScript)
-        script(src = deps)
-        script()
-            goog.require('app');
-        script(src = bootstrap)
-
 block content
   h1= title
   p Welcome to #{title}
-  input#topic(type="text", placeholder="topic", name="topic")br
-  textarea#payload(type="textarea", placeholder="payload", name="payload")br
-  div#clickme
-  br
-  br
-  p#in_topic Waiting
-  h2#in_payload No message
+  .expr_group
+      label Topic
+      input#topic(type="text", placeholder="topic", name="topic")
+      label Messsage
+      textarea#payload(type="textarea", placeholder="payload", name="payload")
+      br
+
+      a#clickme.btn.btn-primary(type="", href="#")
+        i.icon-fire.icon-white
+        |  Submit
+  .expr_group.expr_mar_top
+      p#in_topic Waiting
+      h2#in_payload No message
 
 
 block bottomScripts

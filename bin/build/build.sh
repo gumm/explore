@@ -1,6 +1,6 @@
 #!/bin/bash
 
-WORKSPACE=~/explore
+WORKSPACE=~/Workspace/explore
 
 # Relative to the workspace
 BIN_PATH=${WORKSPACE}/bin

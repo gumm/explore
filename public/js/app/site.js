@@ -32,13 +32,12 @@ goog.inherits(app.Site, goog.events.EventHandler);
  */
 app.Site.prototype.initSite = function() {
 
-    var button = new goog.ui.CustomButton('Button',
-        goog.ui.Css3ButtonRenderer.getInstance());
-    button.render(goog.dom.getElement('clickme'));
+    var button = goog.dom.getElement('clickme');
     this.listen(
         button,
-        goog.ui.Component.EventType.ACTION,
+        goog.events.EventType.CLICK,
         function(e) {
+            console.debug('Click click');
             var topic = document.getElementById('topic').value;
             var payload = document.getElementById('payload').value;
             this.mqttSend(topic, payload);
