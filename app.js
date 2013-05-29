@@ -4,14 +4,14 @@
 
 var express = require('express');
 var http = require('http');
-var configure = require('./etc/settings').configure;
+var settings = require('./etc/settings');
 var WebSocketServer = require('ws').Server;
 
 /**
  * App Setup
  */
 var app = express();
-configure(app, express, __dirname);
+settings.configure(app, express);
 
 /**
  * Server Setup

@@ -2,30 +2,48 @@ var pjson = require('../package.json');
 var routes = require('../routes');
 var user = require('../routes/user');
 var path = require('path');
+var root = path.resolve(__dirname, '../');
 
-var configure = function(app, express, dir) {
-
-    var conf = {
-        path: {
-            ROOT: dir,
-            VIEWS: path.join(dir, 'views'),
-            PUBLIC: path.join(dir, 'public'),
-            DEPS: path.join('js', 'deps.js'),
-            BOOTSTRAP: path.join('js', 'bootstrap.js'),
-            GOOG: path.join('js', 'closure-library/closure/goog/base.js'),
-            CSS: path.join('css', 'default.css'),
-            compiled: {
-                JS: path.join('js', 'compiled/' + pjson.name + '_' + pjson.version + '.js'),
-                CSS: path.join('css', 'compiled/' + pjson.name + '_' + pjson.version + '.css')
-            }
-        },
-        engine: 'jade',
-        port: process.env.PORT || 3000,
+/**
+ * Site specific configuration.
+ * @type {Object}
+ */
+var conf = {
+    path: {
+        ROOT: root,
+        VIEWS: path.join(root, 'views'),
+        PUBLIC: path.join(root, 'public'),
+        DEPS: path.join('js', 'deps.js'),
+        BOOTSTRAP: path.join('js', 'bootstrap.js'),
+        GOOG: path.join('js', 'closure-library/closure/goog/base.js'),
+        CSS: path.join('css', 'default.css'),
         compiled: {
-            JS: true,
-            CSS: true
+            JS: path.join('js', 'compiled/' + pjson.name + '_' + pjson.version + '.js'),
+            CSS: path.join('css', 'compiled/' + pjson.name + '_' + pjson.version + '.css')
         }
-    };
+    },
+    engine: 'jade',
+    port: process.env.PORT || 3000,
+    compiled: {
+        JS: true,
+        CSS: true
+    }
+};
+
+/**
+ * Seed the conf with a root directory
+ * @param dir
+ */
+var init = function(dir) {
+
+};
+
+/**
+ * Configure the app, and express
+ * @param app
+ * @param express
+ */
+var configure = function(app, express) {
 
     // all environments
     app.set('port', conf.port)
@@ -66,4 +84,5 @@ var configure = function(app, express, dir) {
     app.get('/users', user.list);
 };
 
+module.exports.init = init;
 module.exports.configure = configure;
