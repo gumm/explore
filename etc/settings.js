@@ -23,6 +23,10 @@ var conf = {
         }
     },
     engine: 'jade',
+    mqttServer: '54.229.30.67',
+    mqttPort: 80,
+    wsServer: 'localhost',
+    wsPort: process.env.PORT || 3000,
     port: process.env.PORT || 3000,
     compiled: {
         JS: true,
@@ -49,6 +53,10 @@ var configure = function(app, express) {
     app.set('port', conf.port)
         .set('views', conf.path.VIEWS)
         .set('view engine', conf.engine)
+        .set('mqttServer', conf.mqttServer)
+        .set('mqttPort', conf.mqttPort)
+        .set('wsServer', conf.wsServer)
+        .set('wsPort', conf.wsPort)
         .set('goog', conf.path.GOOG)
         .set('deps', conf.path.DEPS)
         .set('bootstrap', conf.path.BOOTSTRAP)

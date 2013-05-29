@@ -33,7 +33,7 @@ wss.on('connection', function (ws) {
 
     // Each socket becomes a mqtt client.
     var mqtt = require('mqtt');
-    var client = mqtt.createClient(1883, 'localhost', {clientId: clientId});
+    var client = mqtt.createClient(1883, '54.229.30.67', {clientId: clientId});
 
     // This subscribes to all messages.
     client.subscribe('#');

@@ -9,10 +9,8 @@ var bootstrap = {
             case 'site':
                 (function () {
                     app_.site(
-                        bootstrap.permissions,
-                        bootstrap.landing,
-                        bootstrap.user,
-                        bootstrap.theme);
+                        bootstrap.wsServer,
+                        bootstrap.wsPort);
                 })();
                 break;
             default:
@@ -22,11 +20,9 @@ var bootstrap = {
     addApp: function (name) {
         bootstrap.todo = name;
     },
-    setDefaults: function (permissions, landing, user, theme) {
-        bootstrap.permissions = permissions;
-        bootstrap.landing = landing;
-        bootstrap.user = user;
-        bootstrap.theme = theme;
+    setDefaults: function (wsServer, wsPort) {
+        bootstrap.wsServer = wsServer;
+        bootstrap.wsPort = wsPort;
     },
     loadScript: function (src, callback) {
         var head = document.getElementsByTagName('head')[0],

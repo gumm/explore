@@ -8,7 +8,7 @@ block head
         script(src = bootstrap)
     else
         link(rel='stylesheet', href = cssBasic)
-        script(src = goog)
+        script(src = googScript)
         script(src = deps)
         script()
             goog.require('app');
@@ -22,11 +22,11 @@ block content
   div#clickme
   br
   br
-  p#in_topic
-  h2#in_payload
+  p#in_topic Waiting
+  h2#in_payload No message
 
 
 block bottomScripts
     script()
-        bootstrap.setDefaults({permission:true},'myLandingView', {user:'jan'},'mySiteTheme');
+        bootstrap.setDefaults('#{wsServer}', '#{wsPort}');
         bootstrap.addApp('site');

@@ -15,9 +15,11 @@ goog.require('goog.ui.CustomButton');
  * @extends {goog.events.EventHandler}
  * @constructor
  */
-app.Site = function() {
+app.Site = function(wsServer, wsPort, mqttServer, mqttPort) {
     goog.events.EventHandler.call(this, this);
-    console.debug('app.Site: Here we go');
+
+    this.wsServer = wsServer;
+    this.wsPort = wsPort;
 
     this.webSocket = new goog.net.WebSocket(false);
     this.openWebsocket();
@@ -37,7 +39,6 @@ app.Site.prototype.initSite = function() {
         button,
         goog.ui.Component.EventType.ACTION,
         function(e) {
-            console.debug('Pres me - hahaha');
             var topic = document.getElementById('topic').value;
             var payload = document.getElementById('payload').value;
             this.mqttSend(topic, payload);
@@ -69,7 +70,7 @@ app.Site.prototype.openWebsocket = function() {
             }
         }
     );
-    this.webSocket.open('ws://localhost:3000/data/1234/');
+    this.webSocket.open('ws://'+ this.wsServer +':'+ this.wsPort +'/data/1234/');
 };
 
 app.Site.prototype.mqttRead = function(data) {
