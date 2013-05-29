@@ -29,7 +29,6 @@ var wss = new WebSocketServer({server: server});
 wss.on('connection', function (ws) {
 
     var clientId = ws.upgradeReq.headers['sec-websocket-key'];
-    console.log(ws.upgradeReq.url);
 
     // Each socket becomes a mqtt client.
     var mqtt = require('mqtt');
@@ -41,7 +40,7 @@ wss.on('connection', function (ws) {
     // This delivers everything that was subscribed to.
     client.on('message', function (topic, message) {
         var mqttMessage = JSON.stringify({'topic':topic, 'message':message});
-        console.log(mqttMessage);
+        console.log('client received message:', mqttMessage);
         ws.send(mqttMessage);
     });
 

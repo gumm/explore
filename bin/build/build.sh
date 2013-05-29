@@ -1,6 +1,6 @@
 #!/bin/bash
 
-WORKSPACE=/home/gumm/Workspace/explore
+WORKSPACE=~/explore
 
 # Relative to the workspace
 BIN_PATH=${WORKSPACE}/bin
