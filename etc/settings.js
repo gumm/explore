@@ -32,21 +32,24 @@ var conf = {
 
 /**
  * Seed the conf with a root directory
+ * @param {boolean} dev True if this is dev run
  */
-var init = function() {
+var init = function(dev) {
 // Switch between production and development
-    if (conf.production) {
-        conf.mqttServer = '54.229.30.67';
-        conf.mqttPort = 80;
-        conf.wsServer = '54.229.30.67';
-        conf.wsPort = 80;
-        conf.port = 80;
-    } else {
+    if (dev) {
+        conf.production = true;
         conf.mqttServer = '54.229.30.67';
         conf.mqttPort = 80;
         conf.wsServer = 'localhost';
         conf.wsPort = process.env.PORT || 3000;
         conf.port = process.env.PORT || 3000;
+    } else {
+        conf.production = false
+        conf.mqttServer = '54.229.30.67';
+        conf.mqttPort = 80;
+        conf.wsServer = '54.229.30.67';
+        conf.wsPort = 80;
+        conf.port = 80;
     }
 };
 
@@ -54,11 +57,12 @@ var init = function() {
  * Configure the app, and express
  * @param app
  * @param express
+ * @param {boolean} dev True if this is a dev run
  */
-var configure = function(app, express) {
+var configure = function(app, express, dev) {
 
     // Set some stuff up
-    init();
+    init(dev);
 
     // all environments
     app.set('port', conf.port)

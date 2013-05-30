@@ -8,11 +8,21 @@ var settings = require('./etc/settings');
 var WebSocketServer = require('ws').Server;
 var Bridge = require('./src/bridge');
 
+var dev = false;
+if(process.argv[2] === 'dev') {
+    dev = true;
+}
+
+process.argv.forEach(function (val, index) {
+  console.log(index + ': ' + val);
+
+});
+
 /**
  * App Setup
  */
 var app = express();
-settings.configure(app, express);
+settings.configure(app, express, dev);
 
 /**
  * Server Setup
