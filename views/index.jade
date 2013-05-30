@@ -3,21 +3,38 @@ extends layout
 block head
 
 block content
-  h1= title
-  p Welcome to #{title}
-  .expr_group
-      label Topic
-      input#topic(type="text", placeholder="topic", name="topic")
-      label Messsage
-      textarea#payload(type="textarea", placeholder="payload", name="payload")
-      br
+    h1= title
+    p Welcome to #{title}
+    legend Subscribe
+    .row
+        .span4
+            form.form-horizontal
+                .input-append
+                    input#subscrIn.span2(type="text", placeholder="Subscribe")
+                    button#subscrGo.btn(type="button") Go!
+        .span8
+            ul#unSubList.unstyled
 
-      a#clickme.btn.btn-primary(type="", href="#")
-        i.icon-fire.icon-white
-        |  Submit
-  .expr_group.expr_mar_top
-      p#in_topic Waiting
-      h2#in_payload No message
+
+    legend Publish
+    form.form-horizontal
+        .control-group
+            label.control-label(for="topic") Topic
+            .controls
+                input#topic(type="text", placeholder="Topic", name="topic")
+        .control-group
+            label.control-label(for="payload") Messsage
+            .controls
+                textarea#payload(type="textarea", placeholder="payload", name="payload")
+        .form-actions
+            #clickme.btn.btn-primary
+                i.icon-fire.icon-white
+                |  Submit
+    .expr_group.expr_mar_top
+        p#in_topic Waiting
+        ol#in_payload
+            li
+                h2 No message
 
 
 block bottomScripts

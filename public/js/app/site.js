@@ -32,15 +32,25 @@ goog.inherits(app.Site, goog.events.EventHandler);
  */
 app.Site.prototype.initSite = function() {
 
-    var button = goog.dom.getElement('clickme');
+    var subscribe = goog.dom.getElement('subscrGo');
     this.listen(
-        button,
+        subscribe,
+        goog.events.EventType.CLICK,
+        function(e) {
+            console.debug('Subscribe');
+            var topic = document.getElementById('subscrIn').value;
+            this.mqttSubscribe(topic);
+        }, undefined, this);
+
+    var publish = goog.dom.getElement('clickme');
+    this.listen(
+        publish,
         goog.events.EventType.CLICK,
         function(e) {
             console.debug('Click click');
             var topic = document.getElementById('topic').value;
             var payload = document.getElementById('payload').value;
-            this.mqttSend(topic, payload);
+            this.mqttPublish(topic, payload);
         }, undefined, this);
 };
 
@@ -56,14 +66,14 @@ app.Site.prototype.openWebsocket = function() {
             switch (e.type) {
                 case goog.net.WebSocket.EventType.OPENED:
                     console.debug('CONNECTION OPENED');
-                    this.mqttSend('Hello', 'Website came on-line');
+                    this.mqttPublish('Hello', 'Website came on-line');
                     break;
                 case goog.net.WebSocket.EventType.MESSAGE:
-                    this.mqttRead(goog.json.parse(e.message));
+                    this.readWs(goog.json.parse(e.message));
                     break;
                 case goog.net.WebSocket.EventType.CLOSED:
                     console.debug('CONNECTION CLOSED');
-                    this.mqttRead({
+                    this.readWs({
                         'topic':'Warning',
                         'message': 'Lost connection to server'
                     });
@@ -76,18 +86,36 @@ app.Site.prototype.openWebsocket = function() {
     this.webSocket.open('ws://'+ this.wsServer +':'+ this.wsPort +'/data/1234/');
 };
 
-app.Site.prototype.mqttRead = function(data) {
-    console.debug('Data ', data);
-    var topic = document.getElementById('in_topic');
-    var payload = document.getElementById('in_payload');
+app.Site.prototype.readWs = function(data) {
+    console.debug('DATA:', data);
 
-    topic.innerText = data['topic'];
-    payload.innerText = data['message'];
+    var mqttMessage = data['mqtt'];
+    if (mqttMessage) {
+        var topic = document.getElementById('in_topic');
+        topic.innerText = mqttMessage['topic'];
+
+        var orderd_list = document.getElementById('in_payload');
+        var li = goog.dom.createDom('li', {},
+            goog.dom.createDom('h2', {}, mqttMessage['message'])
+        );
+        orderd_list.appendChild(li);
+
+    } else {
+        console.debug('THIS WAS NOT A MQTT MESSAGE');
+    }
 };
 
-app.Site.prototype.mqttSend = function(topic, payload) {
+app.Site.prototype.mqttPublish = function(topic, payload) {
     this.webSocket.send(goog.json.serialize({
+        'action': 'publish',
         'topic': topic,
         'payload': payload
+    }));
+};
+
+app.Site.prototype.mqttSubscribe = function(topic) {
+    this.webSocket.send(goog.json.serialize({
+        'action': 'subscribe',
+        'topic': topic
     }));
 };

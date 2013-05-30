@@ -25,7 +25,7 @@ var conf = {
     engine: 'jade',
     production: false,
     compiled: {
-        JS: true,
+        JS: false,
         CSS: false
     }
 };
