@@ -60,8 +60,9 @@ wss.on('connection', function (ws) {
                 if (message.topic && message.topic !== '') {
                     client.subscribe(message.topic, undefined, function() {
                         bridge.sendToWs(bridge.packageMqttForWs(
-                            'Success',
-                            'Subscribed to:' + message.topic)
+                            '@sys',
+                            'Subscribed to',
+                            message.topic)
                         );
                     });
                 }
@@ -70,8 +71,9 @@ wss.on('connection', function (ws) {
                 if (message.topic && message.topic !== '') {
                     client.unsubscribe(message.topic, function() {
                         bridge.sendToWs(bridge.packageMqttForWs(
-                            'Success',
-                            'Un-subscribed from:' + message.topic)
+                            '@sys',
+                            'Un-subscribed from',
+                            message.topic)
                         );
                     });
                 }
@@ -80,8 +82,9 @@ wss.on('connection', function (ws) {
                 client.publish(message.topic, message.payload, undefined,
                     function() {
                         bridge.sendToWs(bridge.packageMqttForWs(
-                            'Success',
-                            'Published:' + message.topic + ' :' + message.payload)
+                            '@published',
+                            message.topic,
+                            message.payload)
                         );
                     }
                 );

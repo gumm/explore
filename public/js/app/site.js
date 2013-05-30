@@ -69,11 +69,12 @@ app.Site.prototype.openWebsocket = function() {
                     this.mqttPublish('Hello', 'Website came on-line');
                     break;
                 case goog.net.WebSocket.EventType.MESSAGE:
-                    this.readWs(goog.json.parse(e.message));
+                    this.routeWs(goog.json.parse(e.message));
                     break;
                 case goog.net.WebSocket.EventType.CLOSED:
                     console.debug('CONNECTION CLOSED');
-                    this.readWs({
+                    this.routeWs({
+                        'target': '@sys',
                         'topic': 'Warning',
                         'message': 'Lost connection to server'
                     });
@@ -87,23 +88,49 @@ app.Site.prototype.openWebsocket = function() {
         '/data/1234/');
 };
 
-app.Site.prototype.readWs = function(data) {
+app.Site.prototype.routeWs = function(data) {
     console.debug('DATA:', data);
 
-    var mqttMessage = data['mqtt'];
-    if (mqttMessage) {
-        var topic = document.getElementById('in_topic');
-        topic.innerText = mqttMessage['topic'];
-
-        var orderd_list = document.getElementById('in_payload');
-        var li = goog.dom.createDom('li', {},
-            goog.dom.createDom('h2', {}, mqttMessage['message'])
-        );
-        orderd_list.appendChild(li);
-
-    } else {
-        console.debug('THIS WAS NOT A MQTT MESSAGE');
+    var target = data['target'];
+    switch (target) {
+        case '@received':
+        case '@published':
+            this.displayMQTT(target, data);
+            break;
+        case '@sys':
+            this.displaySys(data);
+            break;
+        default:
+            console.debug('Unknown target: ', target);
     }
+};
+
+app.Site.prototype.displaySys = function(data) {
+    var orderdList = document.getElementById('in_sys');
+    var li = goog.dom.createDom('li', {},
+        goog.dom.createDom('code', 'muted', data['topic']),
+        goog.dom.createDom('code', 'text-info',
+            goog.dom.createDom('strong', {}, data['message']))
+    );
+    orderdList.appendChild(li);
+};
+
+app.Site.prototype.displayMQTT = function(target, data) {
+    var pull = '';
+    var col = 'text-warning';
+    if(target === '@published') {
+        pull = 'pull-right';
+        col= 'text-success';
+    }
+    var orderdList = document.getElementById('in_mqtt');
+    var li = goog.dom.createDom('li', {},
+        goog.dom.createDom('span', pull,
+            goog.dom.createDom('code', 'muted', data['topic']),
+            goog.dom.createDom('code', col,
+                goog.dom.createDom('strong', {}, data['message']))
+        )
+    );
+    orderdList.appendChild(li);
 };
 
 app.Site.prototype.mqttPublish = function(topic, payload) {

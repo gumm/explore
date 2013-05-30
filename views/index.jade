@@ -4,7 +4,13 @@ block head
 
 block content
     h1= title
-    p Welcome to #{title}
+    p.lead
+        | Explorations in the world of NodeJs, WebSockets, MQTT.
+    p
+        | With guest appearnaces from Twitter Bootstrap, Google Closure,
+        | Amazon EC2 and some shell scripting. Amazingly easy to set the whole
+        | lot up. Oh, exploring Git and GitHub as well. And some Jade
+        | templating, and some Express.
     legend Subscribe
     .row
         .span4
@@ -30,11 +36,18 @@ block content
             #clickme.btn.btn-primary
                 i.icon-fire.icon-white
                 |  Submit
-    .expr_group.expr_mar_top
-        p#in_topic Waiting
-        ol#in_payload
-            li
-                h2 No message
+
+    legend Logs
+    .row.show-grid
+        .span5 MQTT Messages
+            ol#in_mqtt
+
+        .span4 System Comms
+            ol#in_sys.unstyled
+                li
+                    code.small.muted Waiting
+                    code.small.text-info
+                        strong No message
 
 
 block bottomScripts
