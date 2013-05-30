@@ -31,6 +31,7 @@ wss.on('connection', function (ws) {
 
     var bridge = new Bridge(ws);
     var client = bridge.client;
+    ws.bridge = bridge;
 
     //----------------------------------------------------------[ Web Socket ]--
     ws.on('open', function () {
@@ -43,15 +44,11 @@ wss.on('connection', function (ws) {
     });
 
     ws.on('message', function (data) {
-        console.log('Web socket message:', data);
         var message = JSON.parse(data);
-        console.log('Message:', message);
-
         switch(message.action) {
             case 'subscribe':
                 if (message.topic && message.topic !== '') {
-                    client.subscribe(message.topic, undefined, function(e) {
-                        console.log('Subscribed', e);
+                    client.subscribe(message.topic, undefined, function() {
                         bridge.sendToWs(bridge.packageMqttForWs(
                             'Success',
                             'Subscribed to:' + message.topic)
@@ -59,8 +56,25 @@ wss.on('connection', function (ws) {
                     });
                 }
                 break;
+            case 'unsubscribe':
+                if (message.topic && message.topic !== '') {
+                    client.unsubscribe(message.topic, function() {
+                        bridge.sendToWs(bridge.packageMqttForWs(
+                            'Success',
+                            'Un-subscribed from:' + message.topic)
+                        );
+                    });
+                }
+                break;
             case 'publish':
-                client.publish(message.topic, message.payload);
+                client.publish(message.topic, message.payload, undefined,
+                    function() {
+                        bridge.sendToWs(bridge.packageMqttForWs(
+                            'Success',
+                            'Published:' + message.topic + ' :' + message.payload)
+                        );
+                    }
+                );
                 break;
             default:
                 console.log('Unknow WS comms:', data);

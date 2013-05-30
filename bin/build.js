@@ -1,17 +1,24 @@
-var settings = require('./etc/settings');
+var rootPath = require('path').resolve(__dirname, '../');
 var util  = require('util');
 var spawn = require('child_process').spawn;
-var ls    = spawn('ls', ['-lh', '/usr']); // the second arg is the command
-                                          // options
 
-    ls.stdout.on('data', function (data) {    // register one or more handlers
-      console.log('stdout: ' + data);
+process.argv.forEach(function (val, index, array) {
+  console.log(index + ': ' + val);
+});
+
+var buildJob = process.argv[2];
+var buildParms = process.argv[3];
+
+var build    = spawn('sh', ['bin/build/build.sh', rootPath, buildJob, buildParms]);
+
+    build.stdout.on('data', function (data) {
+      console.log('' + data);
     });
 
-    ls.stderr.on('data', function (data) {
-      console.log('stderr: ' + data);
+    build.stderr.on('data', function (data) {
+      console.log('' + data);
     });
 
-    ls.on('exit', function (code) {
+    build.on('exit', function (code) {
       console.log('child process exited with code ' + code);
     });

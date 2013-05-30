@@ -1,6 +1,8 @@
 #!/bin/bash
 
-WORKSPACE=~/Workspace/explore
+WORKSPACE=$1
+BUILD_JOB=$2
+BUILD_PARM=$3
 
 # Relative to the workspace
 BIN_PATH=${WORKSPACE}/bin
@@ -22,10 +24,7 @@ GOOG_BIN_PATH=${CLOSURE_PATH}/bin/build
 PROJECT_NAME=`grep name ${WORKSPACE}/package.json | cut -f4 -d'"'`
 SITE_VERSION=`grep version ${WORKSPACE}/package.json | cut -f4 -d'"'`
 
-#Task
-TASK=$1
-
-case "$1" in
+case "${BUILD_JOB}" in
 
 # Prepare the Closure Development Environment
 cde)  echo "Build Closure Development Environment"
@@ -79,7 +78,7 @@ ui) echo  "Build Closure Dependencies"
    ;;
 
 # Lint some files.
-lint) echo "Lint $2"
-    ${BUILD_PATH}/lint.sh ${JS_PATH} $2
+lint) echo "Lint ${BUILD_PARM}"
+    ${BUILD_PATH}/lint.sh ${JS_PATH} ${BUILD_PARM}
    ;;
 esac

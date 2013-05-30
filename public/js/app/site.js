@@ -74,7 +74,7 @@ app.Site.prototype.openWebsocket = function() {
                 case goog.net.WebSocket.EventType.CLOSED:
                     console.debug('CONNECTION CLOSED');
                     this.readWs({
-                        'topic':'Warning',
+                        'topic': 'Warning',
                         'message': 'Lost connection to server'
                     });
                     break;
@@ -83,7 +83,8 @@ app.Site.prototype.openWebsocket = function() {
             }
         }
     );
-    this.webSocket.open('ws://'+ this.wsServer +':'+ this.wsPort +'/data/1234/');
+    this.webSocket.open('ws://' + this.wsServer + ':' + this.wsPort +
+        '/data/1234/');
 };
 
 app.Site.prototype.readWs = function(data) {

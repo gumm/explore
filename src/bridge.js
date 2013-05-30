@@ -1,9 +1,7 @@
 var mqtt = require('mqtt');
-var goog = require('../lib/goog');
-
-console.log(goog);
 
 /**
+ * This is a
  * @constructor
  */
 Bridge = function(ws) {
@@ -20,45 +18,43 @@ Bridge.prototype.getClient = function() {
 Bridge.prototype.initListeners = function() {
     // This delivers everything that was subscribed to.
 
-    var messageCallback = goog.bind(function(topic, message) {
-        console.log('Client receive:', topic, message);
-        console.log('WS Send:', this.packageMqttForWs(topic, message));
+    var messageCallback = (function(topic, message) {
+        console.log('>>>>>  messageCallback');
         this.sendToWs(this.packageMqttForWs(
             topic,
             message)
         );
-    }, this);
+    }).bind(this);
     this.client.on('message', messageCallback);
 
-    var disconnectCallback = goog.bind(function(packet) {
-        console.log('Client disconnect', packet);
+    var disconnectCallback = (function(packet) {
+        console.log('>>>>> disconnectCallback');
         this.sendToWs(this.packageMqttForWs(
             'Disconnect',
             'Disconnected from broker')
         );
-    }, this);
+    }).bind(this);
     this.client.on('disconnect', disconnectCallback);
 
-    var closeCallback = goog.bind(function(err) {
-         console.log('Client close', err);
+    var closeCallback = (function() {
+        console.log('>>>>>  closeCallback');
         this.sendToWs(this.packageMqttForWs(
             'Close',
             'Closed connection to broker')
         );
-    }, this);
+    }).bind(this);
     this.client.on('close', closeCallback);
 
     this.client.on('puback', function(){
         console.log('>>>>>>>>> PUBACK');
     });
 
-    var errorCallback = goog.bind(function(err) {
-        console.log('Client error', err);
+    var errorCallback = (function(err) {
         this.sendToWs(this.packageMqttForWs(
             'Error',
             err)
         );
-    }, this);
+    }).bind(this);
     this.client.on('error', errorCallback);
 };
 
@@ -67,9 +63,11 @@ Bridge.prototype.packageMqttForWs = function(topic, message) {
 };
 
 Bridge.prototype.sendToWs = function(payload) {
-    this.ws.send(payload, function(e) {
-        console.log('WS Send failed:', e);
-    });
+    if (this.ws.readyState === 1) {
+        this.ws.send(payload, function() {
+            console.log('WS Send disappeared halfway through send');
+        });
+    }
 };
 
 /**
