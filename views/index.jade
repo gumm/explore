@@ -2,52 +2,47 @@ extends layout
 
 block head
 
-block content
+block intro
     h1= title
     p.lead
         | Explorations in the world of NodeJs, WebSockets, MQTT.
     p
-        | With guest appearnaces from Twitter Bootstrap, Google Closure,
+        | With guest appearances from Twitter Bootstrap, Google Closure,
         | Amazon EC2 and some shell scripting. Amazingly easy to set the whole
         | lot up. Oh, exploring Git and GitHub as well. And some Jade
         | templating, and some Express.
-    legend Subscribe
-    .row
-        .span4
-            form.form-horizontal
-                .input-append
-                    input#subscrIn.span2(type="text", placeholder="Subscribe")
-                    button#subscrGo.btn(type="button") Go!
-        .span8
-            ul#unSubList.unstyled
 
+block content
+    legend Subscribe
+    form
+        .input-append
+            input#subscrIn(type="text", placeholder="Subscribe")
+            button#subscrGo.btn(type="button") Go!
 
     legend Publish
-    form.form-horizontal
-        .control-group
-            label.control-label(for="topic") Topic
-            .controls
-                input#topic(type="text", placeholder="Topic", name="topic")
-        .control-group
-            label.control-label(for="payload") Messsage
-            .controls
-                textarea#payload(type="textarea", placeholder="payload", name="payload")
-        .form-actions
-            #clickme.btn.btn-primary
-                i.icon-fire.icon-white
-                |  Submit
+    form
+        label(for="topic")
+            small Topic
+        input#topic(type="text", placeholder="Topic", name="topic")
 
-    legend Logs
-    .row.show-grid
-        .span5 MQTT Messages
-            ol#in_mqtt
+        label(for="payload")
+            small Messsage
+        textarea#payload(type="textarea", placeholder="payload", name="payload")
+        br
+        #clickme.btn.btn-primary
+            i.icon-fire.icon-white
+            |  Submit
 
-        .span4 System Comms
-            ol#in_sys.unstyled
-                li
-                    code.small.muted Waiting
-                    code.small.text-info
-                        strong No message
+    legend MQTT
+    ol#in_mqtt
+
+block syslog
+    legend Sys Logs
+    ol#in_sys.unstyled
+        li
+            code.small.muted Waiting
+            code.small.text-info
+                strong No message
 
 
 block bottomScripts

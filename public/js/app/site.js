@@ -94,8 +94,10 @@ app.Site.prototype.routeWs = function(data) {
     var target = data['target'];
     switch (target) {
         case '@received':
+            this.receivedMQTT(data);
+            break;
         case '@published':
-            this.displayMQTT(target, data);
+            this.publishedMQTT(data);
             break;
         case '@sys':
             this.displaySys(data);
@@ -105,23 +107,15 @@ app.Site.prototype.routeWs = function(data) {
     }
 };
 
-app.Site.prototype.displaySys = function(data) {
-    var orderdList = document.getElementById('in_sys');
-    var li = goog.dom.createDom('li', {},
-        goog.dom.createDom('code', 'muted', data['topic']),
-        goog.dom.createDom('code', 'text-info',
-            goog.dom.createDom('strong', {}, data['message']))
-    );
-    orderdList.appendChild(li);
+app.Site.prototype.receivedMQTT  = function(data) {
+    this.displayMQTT(data, '', 'text-warning');
 };
 
-app.Site.prototype.displayMQTT = function(target, data) {
-    var pull = '';
-    var col = 'text-warning';
-    if(target === '@published') {
-        pull = 'pull-right';
-        col= 'text-success';
-    }
+app.Site.prototype.publishedMQTT  = function(data) {
+    this.displayMQTT(data, 'pull-right', 'text-success');
+};
+
+app.Site.prototype.displayMQTT = function(data, pull, col) {
     var orderdList = document.getElementById('in_mqtt');
     var li = goog.dom.createDom('li', {},
         goog.dom.createDom('span', pull,
@@ -129,6 +123,16 @@ app.Site.prototype.displayMQTT = function(target, data) {
             goog.dom.createDom('code', col,
                 goog.dom.createDom('strong', {}, data['message']))
         )
+    );
+    orderdList.appendChild(li);
+};
+
+app.Site.prototype.displaySys = function(data) {
+    var orderdList = document.getElementById('in_sys');
+    var li = goog.dom.createDom('li', {},
+        goog.dom.createDom('code', 'muted', data['topic']),
+        goog.dom.createDom('code', 'text-info',
+            goog.dom.createDom('strong', {}, data['message']))
     );
     orderdList.appendChild(li);
 };

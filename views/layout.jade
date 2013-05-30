@@ -20,5 +20,11 @@ html
 
     body.expr_body
         .container-fluid
-            block content
+            block intro
+            .row-fluid
+                .span8
+                    block content
+                .span3.offset1
+                    block syslog
+
         block bottomScripts
