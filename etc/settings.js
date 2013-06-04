@@ -1,8 +1,8 @@
 var pjson = require('../package.json');
-var routes = require('../routes');
-var user = require('../routes/user');
 var path = require('path');
+var urls = require('../src/urls');
 var root = path.resolve(__dirname, '../');
+
 
 /**
  * Site specific configuration.
@@ -13,17 +13,21 @@ var conf = {
         ROOT: root,
         VIEWS: path.join(root, 'views'),
         PUBLIC: path.join(root, 'public'),
+        LIB: path.join(root, 'lib'),
         DEPS: path.join('js', 'deps.js'),
+        PAHO: path.join('js', 'lib/mqttws31.js'),
         BOOTSTRAP: path.join('js', 'bootstrap.js'),
         GOOG: path.join('js', 'closure-library/closure/goog/base.js'),
         CSS: path.join('css', 'default2.css'),
         compiled: {
-            JS: path.join('js', 'compiled/' + pjson.name + '_' + pjson.version + '.js'),
-            CSS: path.join('css', 'compiled/' + pjson.name + '_' + pjson.version + '.css')
+            JS: path.join('js',
+                'compiled/' + pjson.name + '_' + pjson.version + '.js'),
+            CSS: path.join('css',
+                'compiled/' + pjson.name + '_' + pjson.version + '.css')
         }
     },
     engine: 'jade',
-    production: false,
+    production: true,
     compiled: {
         JS: true,
         CSS: false
@@ -35,18 +39,18 @@ var conf = {
  * @param {boolean} dev True if this is dev run
  */
 var init = function(dev) {
-// Switch between production and development
+    // Switch between production and development
     if (dev) {
-        conf.production = true;
+        conf.production = false;
         conf.mqttServer = '54.229.30.67';
-        conf.mqttPort = 80;
+        conf.mqttPort = 1883;
         conf.wsServer = 'localhost';
         conf.wsPort = process.env.PORT || 3000;
         conf.port = process.env.PORT || 3000;
     } else {
-        conf.production = false
+        conf.production = true;
         conf.mqttServer = '54.229.30.67';
-        conf.mqttPort = 80;
+        conf.mqttPort = 1883;
         conf.wsServer = '54.229.30.67';
         conf.wsPort = 80;
         conf.port = 80;
@@ -73,6 +77,7 @@ var configure = function(app, express, dev) {
         .set('wsServer', conf.wsServer)
         .set('wsPort', conf.wsPort)
         .set('goog', conf.path.GOOG)
+        .set('paho', conf.path.PAHO)
         .set('deps', conf.path.DEPS)
         .set('bootstrap', conf.path.BOOTSTRAP)
         .set('cssBasic', conf.path.CSS)
@@ -96,22 +101,13 @@ var configure = function(app, express, dev) {
         app.disable('cssIsCompiled');
     }
 
-    // Middleware
-    app.use(express.compress())
-        .use(express.favicon())
-        .use(express.logger('dev'))
-        .use(express.bodyParser())
-        .use(express.methodOverride())
-        .use(app.router)
-        .use(express.static(conf.path.PUBLIC));
-
     // Development only
     if ('development' === app.get('env')) {
         app.use(express.errorHandler());
     }
 
-    app.get('/', routes.index);
-    app.get('/users', user.list);
+    // Set up the app urls directories
+    urls.configure(app);
 };
 
 module.exports.init = init;

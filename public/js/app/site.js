@@ -22,8 +22,8 @@ app.Site = function(wsServer, wsPort) {
     this.wsPort = wsPort;
 
     this.webSocket = new goog.net.WebSocket(false);
-    this.openWebsocket();
     this.initSite();
+    this.openWebsocket();
 };
 goog.inherits(app.Site, goog.events.EventHandler);
 
@@ -32,22 +32,22 @@ goog.inherits(app.Site, goog.events.EventHandler);
  */
 app.Site.prototype.initSite = function() {
 
-    var subscribe = goog.dom.getElement('subscrGo');
+    // Park ref to these elements.
+    this.MQTTElement_ = document.getElementById('in_mqtt');
+    this.sysElement_ = document.getElementById('in_sys');
+
     this.listen(
-        subscribe,
+        goog.dom.getElement('subscrGo'),
         goog.events.EventType.CLICK,
         function(e) {
-            console.debug('Subscribe');
             var topic = document.getElementById('subscrIn').value;
             this.mqttSubscribe(topic);
         }, undefined, this);
 
-    var publish = goog.dom.getElement('clickme');
     this.listen(
-        publish,
+        goog.dom.getElement('clickme'),
         goog.events.EventType.CLICK,
         function(e) {
-            console.debug('Click click');
             var topic = document.getElementById('topic').value;
             var payload = document.getElementById('payload').value;
             this.mqttPublish(topic, payload);
@@ -65,14 +65,12 @@ app.Site.prototype.openWebsocket = function() {
         function(e) {
             switch (e.type) {
                 case goog.net.WebSocket.EventType.OPENED:
-                    console.debug('CONNECTION OPENED');
                     this.mqttPublish('Hello', 'Website came on-line');
                     break;
                 case goog.net.WebSocket.EventType.MESSAGE:
                     this.routeWs(goog.json.parse(e.message));
                     break;
                 case goog.net.WebSocket.EventType.CLOSED:
-                    console.debug('CONNECTION CLOSED');
                     this.routeWs({
                         'target': '@sys',
                         'topic': 'Warning',
@@ -92,49 +90,54 @@ app.Site.prototype.routeWs = function(data) {
     console.debug('DATA:', data);
 
     var target = data['target'];
+    var topic = data['topic'];
+    var payload = data['message'];
+
     switch (target) {
         case '@received':
-            this.receivedMQTT(data);
+            this.receivedMQTT(topic, payload);
             break;
         case '@published':
-            this.publishedMQTT(data);
+            this.publishedMQTT(topic, payload);
             break;
         case '@sys':
-            this.displaySys(data);
+            this.displaySys(topic, payload);
             break;
         default:
             console.debug('Unknown target: ', target);
     }
 };
 
-app.Site.prototype.receivedMQTT  = function(data) {
-    this.displayMQTT(data, '', 'text-warning');
+app.Site.prototype.receivedMQTT  = function(topic, payload) {
+    this.MQTTElement_.appendChild(
+        this.displayMQTT(topic, payload, '', 'text-warning')
+    );
 };
 
-app.Site.prototype.publishedMQTT  = function(data) {
-    this.displayMQTT(data, 'pull-right', 'text-success');
+app.Site.prototype.publishedMQTT  = function(topic, payload) {
+    this.MQTTElement_.appendChild(
+        this.displayMQTT(topic, payload, 'pull-right', 'text-success')
+    );
 };
 
-app.Site.prototype.displayMQTT = function(data, pull, col) {
-    var orderdList = document.getElementById('in_mqtt');
-    var li = goog.dom.createDom('li', {},
+app.Site.prototype.displayMQTT = function(topic, payload, pull, col) {
+    return goog.dom.createDom('li', {},
         goog.dom.createDom('span', pull,
-            goog.dom.createDom('code', 'muted', data['topic']),
+            goog.dom.createDom('code', 'muted', topic),
             goog.dom.createDom('code', col,
-                goog.dom.createDom('strong', {}, data['message']))
+                goog.dom.createDom('strong', {}, payload))
         )
     );
-    orderdList.appendChild(li);
 };
 
-app.Site.prototype.displaySys = function(data) {
-    var orderdList = document.getElementById('in_sys');
-    var li = goog.dom.createDom('li', {},
-        goog.dom.createDom('code', 'muted', data['topic']),
-        goog.dom.createDom('code', 'text-info',
-            goog.dom.createDom('strong', {}, data['message']))
+app.Site.prototype.displaySys = function(topic, payload) {
+    this.sysElement_.appendChild(
+        goog.dom.createDom('li', {},
+            goog.dom.createDom('code', 'muted', topic),
+            goog.dom.createDom('code', 'text-info',
+                goog.dom.createDom('strong', {}, payload))
+        )
     );
-    orderdList.appendChild(li);
 };
 
 app.Site.prototype.mqttPublish = function(topic, payload) {

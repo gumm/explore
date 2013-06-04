@@ -5,8 +5,7 @@
 var express = require('express');
 var http = require('http');
 var settings = require('./etc/settings');
-var WebSocketServer = require('ws').Server;
-var Bridge = require('./src/bridge');
+var ExploreWebSocket = require('./src/websocket');
 
 var dev = false;
 if(process.argv[2] === 'dev') {
@@ -33,64 +32,9 @@ var server = http.createServer(app).listen(app.get('port'), function () {
 });
 
 /**
- * Socket Server Setup
- * @type {WebSocketServer}
- */
-var wss = new WebSocketServer({server: server});
-wss.on('connection', function (ws) {
+* Socket Server Setup
+* @type {WebSocketServer}
+*/
+app.wss = new ExploreWebSocket(server, app);
 
-    var bridge = new Bridge(ws);
-    var client = bridge.client;
-    ws.bridge = bridge;
 
-    //----------------------------------------------------------[ Web Socket ]--
-    ws.on('open', function () {
-        console.log('Web socket opened');
-    });
-
-    ws.on('close', function () {
-        client.end();
-        console.log('>>>>>Web socket closed<<<<<<');
-    });
-
-    ws.on('message', function (data) {
-        var message = JSON.parse(data);
-        switch(message.action) {
-            case 'subscribe':
-                if (message.topic && message.topic !== '') {
-                    client.subscribe(message.topic, undefined, function() {
-                        bridge.sendToWs(bridge.packageMqttForWs(
-                            '@sys',
-                            'Subscribed to',
-                            message.topic)
-                        );
-                    });
-                }
-                break;
-            case 'unsubscribe':
-                if (message.topic && message.topic !== '') {
-                    client.unsubscribe(message.topic, function() {
-                        bridge.sendToWs(bridge.packageMqttForWs(
-                            '@sys',
-                            'Un-subscribed from',
-                            message.topic)
-                        );
-                    });
-                }
-                break;
-            case 'publish':
-                client.publish(message.topic, message.payload, undefined,
-                    function() {
-                        bridge.sendToWs(bridge.packageMqttForWs(
-                            '@published',
-                            message.topic,
-                            message.payload)
-                        );
-                    }
-                );
-                break;
-            default:
-                console.log('Unknow WS comms:', data);
-        }
-    });
-});

@@ -4,10 +4,14 @@ var mqtt = require('mqtt');
  * This is a
  * @constructor
  */
-var Bridge = function(ws) {
+var Bridge = function(ws, app) {
     this.ws = ws;
     this.id = this.ws.upgradeReq.headers['sec-websocket-key'];
-    this.client = mqtt.createClient(1883, '54.229.30.67', {clientId: this.id});
+    this.client = mqtt.createClient(
+        app.get('mqttPort'),
+        app.get('mqttServer'),
+        {clientId: this.id}
+    );
     this.initListeners();
 };
 
