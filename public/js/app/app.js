@@ -13,13 +13,7 @@ app.initSite = function(wsServer, wsPort) {
      * @type {app.Site}
      */
     var site = new app.Site(wsServer, wsPort);
-
-    /**
-     * @enum {Function}
-     */
-    var landingView = {
-        'core': goog.bind(site.initSite, site)
-    };
+    site.initSite();
 };
 
 /**

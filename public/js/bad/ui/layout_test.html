@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Layout Unit Tests - trin.ui.Layout</title>
+    <script type="text/javascript" src="../../closure-library/closure/goog/base.js"></script>
+    <script type="text/javascript" src="../../deps.js"></script>
+
+    <!--<script type="text/javascript" src="../../compiled/smart-compiled_2.11.0.b.js"></script>-->
+
+
+
+    <link rel="stylesheet" type="text/css" href="../../../css/global_layout.css">
+    <script type="text/javascript">
+        goog.require('goog.dom');
+        goog.require('goog.events');
+        goog.require('goog.testing.jsunit');
+        goog.require('trin.console');
+        goog.require('trin.ui.Layout');
+    </script>
+    <style class="text/css">
+        body {
+            margin: 0px;
+        }
+
+        #trin_layout_target {
+            height: 500px;
+            background-color: orange;
+        }
+
+        .trinlib-layout-root {
+            overflow: hidden;
+        }
+
+        .trinlib-layout-compartment_A {
+            background-color: #FFF;
+        }
+
+        .trinlib-layout-compartment_B {
+            background-color: #EEE;
+        }
+
+        .trinlib-layout-compartment_C {
+            background-color: #DDD;
+        }
+
+        #trin_west .trinlib-layout-compartment_A {
+            background-color: #CCC;
+        }
+
+        #trin_west .trinlib-layout-compartment_B {
+            background-color: #BBB;
+        }
+
+        #trin_west .trinlib-layout-compartment_C {
+            background-color: #AAA;
+        }
+
+        #trin_east .trinlib-layout-compartment_A {
+            background-color: #999;
+        }
+
+        #trin_east .trinlib-layout-compartment_B {
+            background-color: #888;
+        }
+
+        #trin_east .trinlib-layout-compartment_C {
+            background-color: #777;
+        }
+
+        .trinlib-layout-drag_handle {
+            background-color: red;
+        }
+
+        .trinlib-layout-drag_handle_BC {
+            background-color: pink;
+        }
+    </style>
+</head>
+<body>
+<div id="trin_layout_target" style=""></div>
+<div class="tcc-hr"></div>
+
+<script type="text/javascript">
+    function setUp() {
+        goog.debug.LogManager.getRoot().setLevel(
+                goog.debug.Logger.Level.WARNING
+        );
+        var debugConsole = new goog.debug.Console();
+        debugConsole.setCapturing(true);
+        var target = document.getElementById('trin_layout_target');
+        layout = new trin.ui.Layout('main', ['A', 'B', 'C'], 'horizontal');
+        layout.setTarget(target);
+        layout.setInitialSize('A', 150);
+        layout.setInitialSize('C', 200);
+        layout.setDraggerThickness(5);
+        layout.setWidthToViewport(true);
+        layout.setMargin(100, 20, 10, 5);
+        layout.setMinimumSize('A', 50);
+        layout.setMinimumSize('C', 50);
+        layout.setHeightToViewport(false);
+        layout.setInnerLayout('left', ['A', 'B', 'C'], 'A', 'vertical');
+        layout.setInnerLayout('center', ['A', 'B', 'C'], 'B', 'vertical');
+        layout.setInnerLayout('right', ['A', 'B', 'C'], 'C', 'vertical');
+        layout.getInnerLayout('right').setInnerLayout(
+                'inn2',
+                ['A', 'B', 'C'],
+                'B',
+                'horizontal'
+        );
+    }
+
+    function tearDown() {
+        // layout.dispose();
+    }
+
+    function test_realWorld() {
+        layout.render();
+
+        layout.getNests()['$A'].slideOpen(100);
+
+    }
+
+</script>
+</body>
+</html>

@@ -1,0 +1,43 @@
+extends fluidsplit83
+
+block intro
+    h1= title
+    p.lead
+        | Explorations in the world of NodeJs, WebSockets, MQTT.
+    p
+        | With guest appearances from Twitter Bootstrap, Google Closure,
+        | Amazon EC2 and some shell scripting. Amazingly easy to set the whole
+        | lot up. Oh, exploring Git and GitHub as well. And some Jade
+        | templating, and some Express.
+
+block content
+    legend Subscribe
+    form
+        .input-append
+            input#subscrIn(type="text", placeholder="Subscribe")
+            button#subscrGo.btn(type="button") Go!
+
+    legend Publish
+    form
+        label(for="topic")
+            small Topic
+        input#topic(type="text", placeholder="Topic", name="topic")
+
+        label(for="payload")
+            small Messsage
+        textarea#payload(type="textarea", placeholder="payload", name="payload")
+        br
+        #clickme.btn.btn-primary
+            i.icon-fire.icon-white
+            |  Submit
+
+    legend MQTT
+    ol#in_mqtt
+
+block syslog
+    legend Sys Logs
+    ol#in_sys.unstyled
+        li
+            code.small.muted Waiting
+            code.small.text-info
+                strong No message

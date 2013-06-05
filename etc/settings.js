@@ -1,6 +1,7 @@
 var pjson = require('../package.json');
 var path = require('path');
 var urls = require('../src/urls');
+var ExploreMongoDB = require('../src/mongodbserver');
 var root = path.resolve(__dirname, '../');
 
 
@@ -19,7 +20,8 @@ var conf = {
         BOOTSTRAP: path.join('js', 'bootstrap.js'),
         GOOG: path.join('js', 'closure-library/closure/goog/base.js'),
         CSS: path.join('css', 'default2.css'),
-        compiled: {
+        FAVICON: path.join(root, 'public/img/favicon.ico'),
+        COMPILED: {
             JS: path.join('js',
                 'compiled/' + pjson.name + '_' + pjson.version + '.js'),
             CSS: path.join('css',
@@ -29,7 +31,7 @@ var conf = {
     engine: 'jade',
     production: true,
     compiled: {
-        JS: true,
+        JS: false,
         CSS: false
     }
 };
@@ -68,6 +70,9 @@ var configure = function(app, express, dev) {
     // Set some stuff up
     init(dev);
 
+    // Set up the database interaction.
+    var mongo = new ExploreMongoDB();
+
     // all environments
     app.set('port', conf.port)
         .set('views', conf.path.VIEWS)
@@ -83,8 +88,22 @@ var configure = function(app, express, dev) {
         .set('cssBasic', conf.path.CSS)
         .set('title', pjson.name)
         .set('version', pjson.version)
-        .set('jsCompiled', conf.path.compiled.JS)
-        .set('cssCompiled', conf.path.compiled.CSS);
+        .set('jsCompiled', conf.path.COMPILED.JS)
+        .set('cssCompiled', conf.path.COMPILED.CSS)
+        .set('mongo', mongo);
+
+    // Middle-ware
+    app.use(express.favicon(conf.path.FAVICON));
+    app.use(express.bodyParser());
+    app.use(express.static(conf.path.PUBLIC));
+
+    // Development only
+    if ('development' === app.get('env')) {
+        app.use(express.errorHandler());
+        app.use(express.logger('dev'));  // 'default', 'short', 'tiny', 'dev'
+    } else {
+        app.use(express.logger('default'));
+    }
 
     // To change between compiled and un-compiled mode
     // use enable or disable.
@@ -101,13 +120,8 @@ var configure = function(app, express, dev) {
         app.disable('cssIsCompiled');
     }
 
-    // Development only
-    if ('development' === app.get('env')) {
-        app.use(express.errorHandler());
-    }
-
-    // Set up the app urls directories
-    urls.configure(app);
+    // Set up the app urls.
+    urls(app);
 };
 
 module.exports.init = init;

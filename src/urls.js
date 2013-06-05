@@ -1,18 +1,16 @@
 var routes = require('../routes');
 var user = require('../routes/user');
-var customers = require('../routes/customers');
+var customers = require('../routes/api/customers');
 
-var urls = urls || {};
-
-urls.configure = function(app) {
+var Urls = function(app) {
     app.get('/', routes.index);
     app.get('/users', user.list);
 
-    app.get('/customers', customers.findAll);
-    app.get('/customers/:id', customers.findById);
-    app.post('/customers', customers.addCustomer);
-    app.put('/customers/:id', customers.updateCustomer);
-    app.delete('/customers/:id', customers.deleteCustomer);
+    app.get('/api/customers', customers.findAll);
+    app.get('/api/customers/:id', customers.findById);
+    app.post('/api/customers', customers.addCustomer);
+    app.put('/api/customers/:id', customers.updateCustomer);
+    app['delete']('/api/customers/:id', customers.deleteCustomer);
 };
 
-module.exports = urls;
+module.exports = Urls;
