@@ -19,7 +19,7 @@ var conf = {
         PAHO: path.join('js', 'lib/mqttws31.js'),
         BOOTSTRAP: path.join('js', 'bootstrap.js'),
         GOOG: path.join('js', 'closure-library/closure/goog/base.js'),
-        CSS: path.join('css', 'default2.css'),
+        CSS: path.join('css', 'default.css'),
         FAVICON: path.join(root, 'public/img/favicon.ico'),
         COMPILED: {
             JS: path.join('js',

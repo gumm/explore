@@ -1,20 +1,3 @@
-body {
-  padding: 50px;
-  font: 14px Helvetica, "Lucida Grande", Arial, sans-serif;
-}
-
-a {
-  color: #00B7FF;
-}
-
-label {
-    color: rgb(34, 34, 34);
-    cursor: pointer;
-    display: inline;
-    font-family: 'Open Sans', sans-serif;
-    font-size: 13px;
-    font-weight: normal;
-    height: auto;
-    line-height: 16px;
-    width: auto;
-}
+@import url('bootstrap-responsive.min.css');
+@import url('explore.css');
+@import url('../js/bad/css/layout.css');

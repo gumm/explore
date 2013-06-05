@@ -7,12 +7,12 @@ goog.require('goog.dom');
 /**
  * Init the site
  */
-app.initSite = function(wsServer, wsPort) {
+app.initSite = function() {
 
     /**
      * @type {app.Site}
      */
-    var site = new app.Site(wsServer, wsPort);
+    var site = new app.Site();
     site.initSite();
 };
 

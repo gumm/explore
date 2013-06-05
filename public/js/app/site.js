@@ -1,5 +1,5 @@
 /**
- * @fileoverview Base scripts for initialising the app site.
+ * @fileoverview The top level app. From here the views are controlled.
  */
 goog.provide('app.Site');
 
@@ -10,25 +10,26 @@ goog.require('goog.events.EventHandler');
 
 /**
  * Constructor of the main site object.
- * @extends {goog.events.EventHandler}
+ *
  * @constructor
+ * @extends {goog.events.EventHandler}
  */
-app.Site = function(wsServer, wsPort) {
+app.Site = function() {
     goog.events.EventHandler.call(this, this);
 
-    this.wsServer = wsServer;
-    this.wsPort = wsPort;
+    /**
+     * @type {?bad.ui.Layout}
+     * @private
+     */
+    this.layout_ = null;
 };
 goog.inherits(app.Site, goog.events.EventHandler);
-
-
 
 
 /**
  * Home page and landing page after login.
  */
 app.Site.prototype.initSite = function() {
-    console.debug('This is where we land');
     this.initLayout_();
 };
 
@@ -38,36 +39,42 @@ app.Site.prototype.initSite = function() {
  */
 app.Site.prototype.initLayout_ = function() {
 
-    this.layout_ = new bad.ui.Layout('root', ['A', 'B', 'C'], 'horizontal');
-
+    var id = Math.floor(Math.random() * 2147483648).toString(36);
+    var mainCells = ['left', 'center', 'right'];
+    var innerCells = ['top', 'mid', 'bot'];
     var topMargin = 90;
     var bottomMargin = 20;
 
+    /**
+     * Create a new layout
+     * @type {bad.ui.Layout}
+     * @private
+     */
+    this.layout_ = new bad.ui.Layout(id, mainCells,
+        bad.ui.Layout.Orientation.HORIZONTAL
+    );
+
     // Set the defaults for the site.
-    this.layout_.setTarget(document.body);
-
-    console.debug('------------>', this.layout_.getTarget());
-
-
-    this.layout_.setInitialSize('A', 259);
-    this.layout_.setInitialSize('C', 200);
-    this.layout_.setDraggerThickness(6);
+    this.layout_.setTarget(goog.dom.getDocument().body);
+    this.layout_.setInitialSize(mainCells[0], 260);
+    this.layout_.setInitialSize(mainCells[2], 200);
+    this.layout_.setDraggerThickness(5);
     this.layout_.setWidthToViewport(true);
     this.layout_.setHeightToViewport(true);
     this.layout_.setMargin(topMargin, 0, bottomMargin, 0);
-    this.layout_.setMinimumSize('A', 200);
-    this.layout_.setMinimumSize('C', 170);
+    this.layout_.setMinimumSize(mainCells[0], 0);
+    this.layout_.setMinimumSize(mainCells[2], 0);
 
     // Create a west layout.
-    this.layout_.setInnerLayout('west', ['1', '2', '3'], 'A',
+    this.layout_.setInnerLayout(innerCells, mainCells[0],
         bad.ui.Layout.Orientation.VERTICAL);
 
     // Create an middle layout
-    this.layout_.setInnerLayout('middle', ['1', '2', '3'], 'B',
+    this.layout_.setInnerLayout(innerCells, mainCells[1],
         bad.ui.Layout.Orientation.VERTICAL);
 
     // Create an east layout
-    this.layout_.setInnerLayout('east', ['1', '2', '3'], 'C',
+    this.layout_.setInnerLayout(innerCells, mainCells[2],
         bad.ui.Layout.Orientation.VERTICAL);
 
     // Create the layout in the DOM

@@ -6,7 +6,7 @@ bad.CssPrefix = {
     UI: 'badlib-ui',
     GADGET: 'badlib-gdt',
     GRAPH: 'badlib-graph',
-    LAYOUT: 'badlib-layout',
+    LAYOUT: 'layout',
     ICON: 'icon'
 };
 

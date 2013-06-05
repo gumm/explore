@@ -1,0 +1,14 @@
+/*---------------------------------------------------------------[ Explore ]--*/
+.expr_body {
+    padding: 50px;
+    font: 14px Helvetica, "Lucida Grande", Arial, sans-serif;
+    height: 100%;
+}
+
+.expr_group {
+    padding :10px
+}
+
+.expr_mar_top {
+    margin-top: 10px;
+}
