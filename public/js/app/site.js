@@ -80,3 +80,7 @@ app.Site.prototype.initLayout_ = function() {
     // Create the layout in the DOM
     this.layout_.render();
 };
+
+app.Site.prototype.getLayout = function() {
+    return this.layout_;
+};

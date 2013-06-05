@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>View Unit Tests - trin.ui.View</title>
+    <script type="text/javascript" src="../../../closure-library/closure/goog/base.js"></script>
+    <script type="text/javascript" src="../../../deps.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../../../css/global_defaults.css">
+    <script type="text/javascript">
+        goog.require('goog.testing.jsunit');
+        goog.require('trin.console');
+        goog.require('goog.dom');
+        goog.require('trin.ui.Layout');
+        goog.require('trin.ui.View');
+        goog.require('trin.ui.Panel');
+
+    </script>
+</head>
+<body>
+<div id="topPanel" class="Panel"></div>
+<div id="leftPanel" class="Panel"></div>
+<div id="middlePanel" class="Panel"></div>
+<div id="rightPanel" class="Panel"></div>
+<div id="bottomPanel" class="Panel"></div>
+
+<script type="text/javascript">
+    var view;
+    var topPanel, leftPanel, middlePanel, rightPanel, bottomPanel;
+
+    function setUp() {
+        goog.debug.LogManager.getRoot().setLevel(goog.debug.Logger.Level.WARNING);
+        var debugConsole = new goog.debug.Console();
+        debugConsole.setCapturing(true);
+
+        layout = new trin.ui.Layout('main', ['A', 'B', 'C'], 'horizontal');
+        layout.setTarget(goog.dom.getElement('trin_layout_target'));
+        layout.render();
+
+        // Site mock object.
+        site = {};
+        site.layout = layout;
+        site.getLayout = function() {
+            return site.layout
+        }
+    }
+
+    function tearDown() {
+    }
+
+    function test_eventListenerLeaks() {
+
+        var listeners = goog.events.getTotalListenerCount();
+        var reference = goog.events.getTotalListenerCount();
+        var listenersPerPanel = 0;
+
+        view = new trin.ui.View(site);
+        assertEquals('Just instansiating adds no listeners', listeners,
+            goog.events.getTotalListenerCount());
+
+        view.setPanel('$A', new trin.ui.Panel());
+        listeners = listeners + listenersPerPanel;
+        assertEquals('Inserting panel A adds '+ listenersPerPanel +' listener',
+            listeners,
+            goog.events.getTotalListenerCount());
+
+        view.setPanel('$C', new trin.ui.Panel());
+        listeners = listeners + listenersPerPanel;
+        assertEquals('Inserting panel C adds '+ listenersPerPanel +' listener',
+            listeners,
+            goog.events.getTotalListenerCount());
+
+        view.setPanel('$B', new trin.ui.Panel());
+        listeners = listeners + listenersPerPanel;
+        assertEquals('Inserting panel B adds '+ listenersPerPanel +' listener',
+            listeners,
+            goog.events.getTotalListenerCount());
+
+        view.disposePanel('$B');
+        listeners = listeners - listenersPerPanel;
+        assertEquals('Disposing panel B removes ' + listenersPerPanel + ' listener',
+            listeners,
+            goog.events.getTotalListenerCount());
+
+        view.disposePanel('$C');
+        listeners = listeners - listenersPerPanel;
+        assertEquals('Disposing panel C removes ' + listenersPerPanel + ' listener',
+            listeners,
+            goog.events.getTotalListenerCount());
+
+        view.disposePanel('$A');
+        listeners = listeners - listenersPerPanel;
+        assertEquals('Disposing panel A removes '+ listenersPerPanel +' listener',
+            listeners,
+            goog.events.getTotalListenerCount());
+
+        view.dispose();
+        assertEquals('dispose cleans up all listeners', reference,
+            goog.events.getTotalListenerCount());
+    }
+
+    function test_eventListenerLeaks_disposePanels_() {
+        var listeners = goog.events.getTotalListenerCount();
+        var listenersPerPanel = 0;
+
+        view = new trin.ui.View(site);
+        assertEquals('Just instansiating adds no listeners', listeners,
+            goog.events.getTotalListenerCount());
+
+        view.setPanel('$A', new trin.ui.Panel());
+        view.setPanel('$C', new trin.ui.Panel());
+        view.setPanel('$B', new trin.ui.Panel());
+        assertEquals('Inserting panels adds '+ listenersPerPanel +' listener per panel',
+            listeners + listenersPerPanel * 3,
+            goog.events.getTotalListenerCount());
+
+        view.disposePanels_();
+        assertEquals('disposePanels_ disposes all listeners',
+            listeners,
+            goog.events.getTotalListenerCount());
+
+        view.dispose();
+        assertEquals('dispose cleans up all listeners', listeners,
+            goog.events.getTotalListenerCount());
+    }
+
+    function test_eventListenerLeaks_dispose() {
+        var listeners = goog.events.getTotalListenerCount();
+        var listenersPerPanel = 0;
+
+        view = new trin.ui.View(site);
+        assertEquals('Just instansiating adds no listeners', listeners,
+            goog.events.getTotalListenerCount());
+
+        view.setPanel('$A', new trin.ui.Panel());
+        view.setPanel('$C', new trin.ui.Panel());
+        view.setPanel('$B', new trin.ui.Panel());
+        assertEquals('Inserting panels adds '+ listenersPerPanel +' listener per panel',
+                listeners + listenersPerPanel * 3,
+            goog.events.getTotalListenerCount());
+
+        view.dispose();
+        assertEquals('disposePanels_ disposes all listeners',
+            listeners,
+            goog.events.getTotalListenerCount());
+    }
+</script>
+<div id="trin_layout_target" style=""></div>
+<div class="tcc-hr">
+</div>
+</body>
+</html>
