@@ -43,7 +43,6 @@ app.Site.prototype.initLayout_ = function() {
     var id = Math.floor(Math.random() * 2147483648).toString(36);
     var mainCells = ['left', 'center', 'right'];
     var innerCells = ['top', 'mid', 'bot'];
-    var innerInnerCells = ['x', 'y', 'z'];
     var topMargin = 90;
     var bottomMargin = 20;
 
