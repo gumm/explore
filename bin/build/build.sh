@@ -72,7 +72,7 @@ deps) echo  "Build Closure Dependencies"
 # Build the deps file needed for un-compiled work.
 ui) echo  "Build Closure Dependencies"
     ${BUILD_PATH}/build.sh lint app
-    ${BUILD_PATH}/build.sh lint bad
+    ${BUILD_PATH}/build.sh lint bad-library
     ${BUILD_PATH}/build.sh js
     ${BUILD_PATH}/build.sh css
    ;;

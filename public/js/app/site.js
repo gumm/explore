@@ -61,7 +61,6 @@ app.Site.prototype.initLayout_ = function() {
     this.layout_.setInitialSize(mainCells[0], 260);
     this.layout_.setInitialSize(mainCells[2], 200);
     this.layout_.setDraggerThickness(5);
-    this.layout_.setGrabberClass('icon-resize-vertical icon-white');
     this.layout_.setWidthToViewport(true);
     this.layout_.setHeightToViewport(true);
     this.layout_.setMargin(topMargin, 0, bottomMargin, 0);
@@ -69,24 +68,22 @@ app.Site.prototype.initLayout_ = function() {
     this.layout_.setMinimumSize(mainCells[2], 0);
 
     // Create a west layout.
-    var leftInnerLayout = this.layout_.setInnerLayout(innerCells, mainCells[0],
-        bad.ui.Layout.Orientation.VERTICAL);
-
-    // Create an middle layout
-    this.layout_.setInnerLayout(innerCells, mainCells[1],
-        bad.ui.Layout.Orientation.VERTICAL);
-
-    // Create an east layout
-    this.layout_.setInnerLayout(innerCells, mainCells[2],
-        bad.ui.Layout.Orientation.VERTICAL);
-
-    // Create an inner inner layout.
-    var leftInnerMidLayout = leftInnerLayout.setInnerLayout(innerInnerCells, innerCells[1],
-        bad.ui.Layout.Orientation.HORIZONTAL
+    this.layout_.setInnerLayout(
+        innerCells,
+        mainCells[0],
+        bad.ui.Layout.Orientation.VERTICAL
     );
 
-    // And an inner inner inner layout.
-    leftInnerMidLayout.setInnerLayout(['a','b','c'], innerInnerCells[2],
+    // Create an middle layout
+    this.layout_.setInnerLayout(innerCells,
+        mainCells[1],
+        bad.ui.Layout.Orientation.VERTICAL
+    );
+
+    // Create an east layout
+    this.layout_.setInnerLayout(
+        innerCells,
+        mainCells[2],
         bad.ui.Layout.Orientation.VERTICAL
     );
 
@@ -96,7 +93,6 @@ app.Site.prototype.initLayout_ = function() {
         function(e) {
             if (e.target.getId() === id) {
                 console.debug('ALL LAYOUTS ARE READY AND IN THE DOM!');
-                nest = this.layout_.getNest('left', 'mid', 'z', 'a')
             }
         }
     );
@@ -107,4 +103,44 @@ app.Site.prototype.initLayout_ = function() {
 
 app.Site.prototype.getLayout = function() {
     return this.layout_;
+};
+
+app.Site.prototype.slideHideAllNests = function() {
+    goog.object.forEach(this.getLayout().getNests(), function(nest) {
+        this.slideHideNest(nest);
+    }, this);
+};
+
+app.Site.prototype.slideHideNest = function(nest) {
+    if (nest.slideClosed) {
+        nest.slideClosed(function() {
+            nest.hide();
+        });
+    }
+};
+
+app.Site.prototype.openLeft = function() {
+    this.getLayout().getNest('left').slideOpen();
+};
+
+app.Site.prototype.openRight = function() {
+    this.getLayout().getNest('right').slideOpen();
+};
+
+app.Site.prototype.closeLeft = function() {
+    this.slideHideNest(this.getLayout().getNest('left'));
+};
+
+app.Site.prototype.closeRight = function() {
+    this.slideHideNest(this.getLayout().getNest('right'));
+};
+
+app.Site.prototype.openLeftToRight = function() {
+    this.openLeft();
+    this.closeRight();
+};
+
+app.Site.prototype.openRightToLeft = function() {
+    this.openRight();
+    this.closeLeft();
 };

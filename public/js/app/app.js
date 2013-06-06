@@ -14,7 +14,9 @@ app.initSite = function() {
      */
     var site = new app.Site();
     site.initSite();
+    goog.exportSymbol('debugSite', site);
 };
+
 
 /**
  * @type {Object}

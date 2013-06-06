@@ -40,7 +40,7 @@ cd ${WORKSPACE}
 
 ${GOOG_BIN_PATH}/closurebuilder.py \
     --root=${JS_PATH}/closure-library/ \
-    --root=${JS_PATH}/bad/ \
+    --root=${JS_PATH}/bad-library/ \
     --root=${JS_PATH}/app/ \
     --namespace="app" \
     --output_mode=compiled \
