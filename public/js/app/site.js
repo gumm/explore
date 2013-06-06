@@ -61,6 +61,7 @@ app.Site.prototype.initLayout_ = function() {
     this.layout_.setInitialSize(mainCells[0], 260);
     this.layout_.setInitialSize(mainCells[2], 200);
     this.layout_.setDraggerThickness(5);
+    this.layout_.setGrabberClass('icon-resize-vertical icon-white');
     this.layout_.setWidthToViewport(true);
     this.layout_.setHeightToViewport(true);
     this.layout_.setMargin(topMargin, 0, bottomMargin, 0);

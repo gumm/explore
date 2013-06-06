@@ -16,6 +16,11 @@
     </script>
     <style class="text/css">
 
+        h1 {
+            font-family: Helvetica;
+            padding:30px;
+        }
+
         #layout_target {
             width: 800px;
             height: 500px;
@@ -75,7 +80,7 @@
     </style>
 </head>
 <body>
-<div id="layout_target"></div>
+<div id="layout_target"><h1>Layout</h1></div>
 <script type="text/javascript">
     function setUp() {
         goog.debug.LogManager.getRoot().setLevel(
@@ -92,7 +97,14 @@
         var innerInnerCells = ['x', 'y', 'z'];
         var innerInnerInnerCells = ['a', 'b', 'c'];
         var topMargin = 90;
+        var rightMargin = 30;
         var bottomMargin = 20;
+        var leftMargin = 10;
+        var draggerThickness = 3;
+        var initialSizeOfLeftCell = 260;
+        var initialSizeOfRightCell = 200;
+        var minSizeLeftCellCanBeDraggedTo = 30;
+        var minSizeRightCellCanBeDraggedTo = 50;
 
         /**
          * Create a new layout
@@ -105,14 +117,15 @@
 
         // Set the defaults for the site.
         layout.setTarget(target);
-        layout.setInitialSize(mainCells[0], 260);
-        layout.setInitialSize(mainCells[2], 200);
-        layout.setDraggerThickness(5);
+        layout.setInitialSize(mainCells[0], initialSizeOfLeftCell);
+        layout.setInitialSize(mainCells[2], initialSizeOfRightCell);
+        layout.setDraggerThickness(draggerThickness);
+        layout.setGrabberClass('grabber');
 //        layout.setWidthToViewport(true);
 //        layout.setHeightToViewport(true);
-        layout.setMargin(topMargin, 0, bottomMargin, 0);
-        layout.setMinimumSize(mainCells[0], 0);
-        layout.setMinimumSize(mainCells[2], 0);
+        layout.setMargin(topMargin, rightMargin, bottomMargin, leftMargin);
+        layout.setMinimumSize(mainCells[0], minSizeLeftCellCanBeDraggedTo);
+        layout.setMinimumSize(mainCells[2], minSizeRightCellCanBeDraggedTo);
 
         // Create a west layout.
         var leftInnerLayout = layout.setInnerLayout(innerCells, mainCells[0],

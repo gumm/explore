@@ -141,6 +141,15 @@ bad.ui.Layout = function(id, cellNames, opt_orientation, opt_domHelper) {
     this.draggerThickness_ = 0;
 
     /**
+     * A class name that will be appended to the draggers to be able to style
+     * a grabber image into them. By default this is set to 'grabber'
+     * and results in 3 dots.
+     * @type {string}
+     * @private
+     */
+    this.grabberClass_ = 'grabber';
+
+    /**
      * The last known position of the 'AB' dragger.
      * @type {number}
      * @private
@@ -293,7 +302,8 @@ bad.ui.Layout.prototype.createDom = function() {
         this.dragger_[key].element = dom.createDom(goog.dom.TagName.DIV, {
                 'class': bad.ui.Layout.CssClassMap.DRAG_HANDLE + ' ' +
                     bad.ui.Layout.CssClassMap.DRAG_HAND_FRAGMENT +
-                    dragger.dragClass + ' ' + this.getOrientClassName_(),
+                    dragger.dragClass + ' ' + this.getOrientClassName_() +
+                    ' ' + this.getGrabberClass_(),
                 'style': this.flipWidth_() + ': ' +
                     this.draggerThickness_ + 'px'
             }
@@ -523,6 +533,7 @@ bad.ui.Layout.prototype.setInnerLayout = function(names, targetName,
     var layout = this.innerLayout_[id];
     layout.setTargetCellName(targetName);
     layout.setDraggerThickness(this.getDraggerThickness());
+    layout.setGrabberClass(this.getGrabberClass_());
     layout.setWidthToViewport(false);
     layout.setHeightToViewport(false);
     layout.setInitialSize(names[0], 20);
@@ -532,14 +543,6 @@ bad.ui.Layout.prototype.setInnerLayout = function(names, targetName,
     layout.setCellClassPrefix_(this.getCellClassPrefix_() + '-' +
         targetName);
     return layout;
-};
-
-/**
- * @param {string} name
- * @return {bad.ui.Layout}
- */
-bad.ui.Layout.prototype.getInnerLayout = function(name) {
-    return this.innerLayout_[name];
 };
 
 /**
@@ -806,6 +809,24 @@ bad.ui.Layout.prototype.setDraggerThickness = function(value) {
 bad.ui.Layout.prototype.getDraggerThickness = function() {
     return this.draggerThickness_;
 };
+
+/**
+ * Add a grabber image to the dragger.
+ * @param {string} value The name of a class that wil be
+ *      appended to the draggers.
+ */
+bad.ui.Layout.prototype.setGrabberClass = function(value) {
+    this.grabberClass_ = value;
+};
+
+/**
+ * Get the class name of the grabber image to be added to the draggers.
+ * @return {string} The size of the handle in pixels.
+ */
+bad.ui.Layout.prototype.getGrabberClass_ = function() {
+    return this.grabberClass_;
+};
+
 
 /**
  * Sets the vertical/horizontal orientation.
