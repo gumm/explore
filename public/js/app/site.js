@@ -9,7 +9,8 @@ goog.require('goog.events.EventHandler');
 
 
 /**
- * Constructor of the main site object.
+ * Constructor of the main site object. Inherits from EventHandler, so it
+ * can simply subscribe to events on its children.
  *
  * @constructor
  * @extends {goog.events.EventHandler}
@@ -42,6 +43,7 @@ app.Site.prototype.initLayout_ = function() {
     var id = Math.floor(Math.random() * 2147483648).toString(36);
     var mainCells = ['left', 'center', 'right'];
     var innerCells = ['top', 'mid', 'bot'];
+    var innerInnerCells = ['x', 'y', 'z'];
     var topMargin = 90;
     var bottomMargin = 20;
 
@@ -66,7 +68,7 @@ app.Site.prototype.initLayout_ = function() {
     this.layout_.setMinimumSize(mainCells[2], 0);
 
     // Create a west layout.
-    this.layout_.setInnerLayout(innerCells, mainCells[0],
+    var leftInnerLayout = this.layout_.setInnerLayout(innerCells, mainCells[0],
         bad.ui.Layout.Orientation.VERTICAL);
 
     // Create an middle layout
@@ -76,6 +78,27 @@ app.Site.prototype.initLayout_ = function() {
     // Create an east layout
     this.layout_.setInnerLayout(innerCells, mainCells[2],
         bad.ui.Layout.Orientation.VERTICAL);
+
+    // Create an inner inner layout.
+    var leftInnerMidLayout = leftInnerLayout.setInnerLayout(innerInnerCells, innerCells[1],
+        bad.ui.Layout.Orientation.HORIZONTAL
+    );
+
+    // And an inner inner inner layout.
+    leftInnerMidLayout.setInnerLayout(['a','b','c'], innerInnerCells[2],
+        bad.ui.Layout.Orientation.VERTICAL
+    );
+
+    this.listen(
+        this.layout_,
+        bad.ui.Layout.EventType.LAYOUT_READY,
+        function(e) {
+            if (e.target.getId() === id) {
+                console.debug('ALL LAYOUTS ARE READY AND IN THE DOM!');
+                nest = this.layout_.getNest('left', 'mid', 'z', 'a')
+            }
+        }
+    );
 
     // Create the layout in the DOM
     this.layout_.render();
