@@ -19,3 +19,11 @@ exports.index = function (req, res) {
         wsServer: app.get('wsServer')
     });
 };
+
+exports.landing = function (req, res) {
+    var app = req.app;
+
+    res.render('panel', {
+        title: app.get('title')
+    });
+};

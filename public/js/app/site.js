@@ -6,17 +6,21 @@ goog.provide('app.Site');
 goog.require('bad.ui.Component');
 goog.require('bad.ui.Layout');
 goog.require('goog.events.EventHandler');
+goog.require('goog.net.XhrIo');
 
 
 /**
  * Constructor of the main site object. Inherits from EventHandler, so it
  * can simply subscribe to events on its children.
+ * @param {goog.net.XhrManager} xMan This site's XhrManager.
  *
  * @constructor
  * @extends {goog.events.EventHandler}
  */
-app.Site = function() {
+app.Site = function(xMan) {
     goog.events.EventHandler.call(this, this);
+
+    this.xMan = xMan;
 
     /**
      * @type {?bad.ui.Layout}
@@ -74,30 +78,33 @@ app.Site.prototype.initLayout_ = function() {
         bad.ui.Layout.Orientation.HORIZONTAL
     );
     mainHorizontalLayout.setDraggerThickness(5);
-    mainHorizontalLayout.setInitialSize(innerCellsHorizontal[0], 0 - 5);
-    mainHorizontalLayout.setInitialSize(innerCellsHorizontal[2], 0 - 5);
+    mainHorizontalLayout.setInitialSize(innerCellsHorizontal[0], 220);
+    mainHorizontalLayout.setInitialSize(innerCellsHorizontal[2], 220);
 
     // Up-Down Layout in the left.
-    var leftVerticalLayout = mainHorizontalLayout.setInnerLayout(innerCellsVertical,
+    var leftVerticalLayout = mainHorizontalLayout.setInnerLayout(
+        innerCellsVertical,
         innerCellsHorizontal[0],
         bad.ui.Layout.Orientation.VERTICAL
     );
-    leftVerticalLayout.setInitialSize(innerCellsVertical[0], 0 - 5);
-    leftVerticalLayout.setInitialSize(innerCellsVertical[2], 0 - 5);
+    leftVerticalLayout.setInitialSize(innerCellsVertical[0], 50);
+    leftVerticalLayout.setInitialSize(innerCellsVertical[2], 50);
 
     // Up-Down Layout in the right.
-    var rightVerticalLayout = mainHorizontalLayout.setInnerLayout(innerCellsVertical,
+    var rightVerticalLayout = mainHorizontalLayout.setInnerLayout(
+        innerCellsVertical,
         innerCellsHorizontal[2],
         bad.ui.Layout.Orientation.VERTICAL
     );
-    rightVerticalLayout.setInitialSize(innerCellsVertical[0], 0 - 5);
-    rightVerticalLayout.setInitialSize(innerCellsVertical[2], 0 - 5);
+    rightVerticalLayout.setInitialSize(innerCellsVertical[0], 50);
+    rightVerticalLayout.setInitialSize(innerCellsVertical[2], 50);
 
     this.listen(
         this.layout_,
         bad.ui.Layout.EventType.LAYOUT_READY,
         function(e) {
             if (e.target.getId() === id) {
+                this.hideAllNests();
                 this.initNavigation();
             }
         }
@@ -112,13 +119,36 @@ app.Site.prototype.getLayout = function() {
 };
 
 app.Site.prototype.initNavigation = function() {
-    this.hideAllNests();
-    this.slideOpenAllNests();
+    var callback = goog.bind(function(e) {
+        var xhr = e.target;
+        var html = goog.dom.htmlToDocumentFragment(xhr.getResponseText());
+        var element = this.layout_.getNestElement('main', 'center');
+        goog.dom.append(/** @type {!Node} */ (element), html);
+    }, this);
+    this.xMan.send(
+        '/landing', // id
+        '/landing', // url
+        'GET',      // opt_method
+        null,       // opt_content
+        null,       // opt_headers
+        10,         // opt_priority
+        callback,   // opt_callback
+        2,          // opt_maxRetries
+        goog.net.XhrIo.ResponseType.TEXT // opt_responseType
+    );
 };
 
 app.Site.prototype.hideAllNests = function() {
-    goog.object.forEach(this.getLayout().getNests(), function(nest) {
-        this.hideNest(nest);
+    var nests = [
+        this.layout_.getNest('main', 'left'),
+        this.layout_.getNest('main', 'left', 'top'),
+        this.layout_.getNest('main', 'left', 'bottom'),
+        this.layout_.getNest('main', 'right'),
+        this.layout_.getNest('main', 'right', 'top'),
+        this.layout_.getNest('main', 'right', 'bottom')
+    ];
+    goog.array.forEach(nests, function(nest) {
+        nest.hide();
     }, this);
 };
 
@@ -134,12 +164,18 @@ app.Site.prototype.slideOpenAllNests = function() {
     }, this);
 };
 
+/**
+* @param {Object} nest
+*/
 app.Site.prototype.slideOpenNest = function(nest) {
     if (nest.slideOpen) {
         nest.slideOpen();
     }
 };
 
+/**
+* @param {Object} nest
+*/
 app.Site.prototype.slideHideNest = function(nest) {
     if (nest.slideClosed) {
         nest.slideClosed(function() {
@@ -148,17 +184,30 @@ app.Site.prototype.slideHideNest = function(nest) {
     }
 };
 
+/**
+* @param {Object} nest
+*/
 app.Site.prototype.hideNest = function(nest) {
     if (nest.hide) {
         nest.hide();
     }
 };
 
+/**
+* @param {number=} op_perCent
+* @param {number=} opt_pixels
+* @param {Function=} opt_callback
+*/
 app.Site.prototype.openLeft = function(op_perCent, opt_pixels, opt_callback) {
     this.getLayout().getNest('main', 'left').slideOpen(
         op_perCent, opt_pixels, opt_callback);
 };
 
+/**
+* @param {number=} op_perCent
+* @param {number=} opt_pixels
+* @param {Function=} opt_callback
+*/
 app.Site.prototype.openRight = function(op_perCent, opt_pixels, opt_callback) {
     this.getLayout().getNest('main', 'right').slideOpen(
         op_perCent, opt_pixels, opt_callback);
@@ -170,14 +219,4 @@ app.Site.prototype.closeLeft = function() {
 
 app.Site.prototype.closeRight = function() {
     this.slideHideNest(this.getLayout().getNest('main', 'right'));
-};
-
-app.Site.prototype.openLeftToRight = function() {
-    this.openLeft();
-    this.closeRight();
-};
-
-app.Site.prototype.openRightToLeft = function() {
-    this.openRight();
-    this.closeLeft();
 };

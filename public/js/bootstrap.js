@@ -8,9 +8,7 @@ var bootstrap = {
         switch (bootstrap.todo) {
             case 'site':
                 (function () {
-                    app_.site(
-                        bootstrap.wsServer,
-                        bootstrap.wsPort);
+                    app_.site(); // Add the defaults here
                 })();
                 break;
             default:
@@ -20,9 +18,9 @@ var bootstrap = {
     addApp: function (name) {
         bootstrap.todo = name;
     },
-    setDefaults: function (wsServer, wsPort) {
-        bootstrap.wsServer = wsServer;
-        bootstrap.wsPort = wsPort;
+    setDefaults: function (var_args) {
+        bootstrap.wsServer = arguments[0];
+        bootstrap.wsPort = arguments[1];
     },
     loadScript: function (src, callback) {
         var head = document.getElementsByTagName('head')[0],

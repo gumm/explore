@@ -4,6 +4,8 @@ var customers = require('../routes/api/customers');
 
 var Urls = function(app) {
     app.get('/', routes.index);
+    app.get('/landing', routes.landing);
+
     app.get('/users', user.list);
 
     app.get('/api/customers', customers.findAll);
