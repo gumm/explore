@@ -1,4 +1,7 @@
 /*---------------------------------------------------------------[ Explore ]--*/
+/*.layout-nest-header {*/
+    /*z-index: 10;*/
+/*}*/
 .linklike {
     font-size: 13px;
     color: rgb(0, 136, 204);
@@ -8,6 +11,12 @@
 .linklike:hover {
     color: rgb(0, 85, 128);
     text-decoration: underline;
+}
+
+.topfixed {
+    position: fixed;
+    top: 10px;
+    right: 40px;
 }
 
 .expr_wrapper {

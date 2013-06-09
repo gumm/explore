@@ -9,7 +9,6 @@ goog.require('goog.dom.forms');
 goog.require('goog.events.EventHandler');
 goog.require('goog.net.XhrIo');
 
-
 /**
  * Constructor of the main site object. Inherits from EventHandler, so it
  * can simply subscribe to events on its children.
@@ -198,7 +197,8 @@ app.Site.prototype.submitLoginForm = function() {
     }, this);
 
     var form = goog.dom.getElement('login-form');
-    var content = goog.dom.forms.getFormDataMap(form).toObject();
+    var content = goog.dom.forms.getFormDataMap(
+        /** @type {HTMLFormElement} */ (form)).toObject();
 
     this.xMan.send(
         '/login', // id
@@ -213,8 +213,8 @@ app.Site.prototype.submitLoginForm = function() {
     );
 };
 
-app.Site.prototype.fetchHomePage = function () {
-    var callback = goog.bind(function (e) {
+app.Site.prototype.fetchHomePage = function() {
+    var callback = goog.bind(function(e) {
         var xhr = e.target;
         var html = goog.dom.htmlToDocumentFragment(xhr.getResponseText());
         var element = this.layout_.getNestElement('main', 'center');
@@ -293,7 +293,8 @@ app.Site.prototype.submitSignUp = function() {
     }, this);
 
     var form = goog.dom.getElement('account-form');
-    var content = goog.dom.forms.getFormDataMap(form);
+    var content = goog.dom.forms.getFormDataMap(
+        /** @type {HTMLFormElement} */ (form)).toObject();
     this.xMan.send(
         '/signup', // id
         '/signup', // url
@@ -364,7 +365,8 @@ app.Site.prototype.submitLostPasswordForm = function() {
     }, this);
 
     var form = goog.dom.getElement('get-credentials-form');
-    var content = goog.dom.forms.getFormDataMap(form).toObject();
+    var content = goog.dom.forms.getFormDataMap(
+        /** @type {HTMLFormElement} */ (form)).toObject();
 
     this.xMan.send('/lost-password', '/lost-password', 'POST',
         goog.uri.utils.buildQueryDataFromMap(content),
@@ -384,7 +386,7 @@ app.Site.prototype.logOut = function() {
     var callback = goog.bind(function(e) {
         var xhr = e.target;
         if (xhr.isSuccess()) {
-            window.open('/','_self');
+            window.open('/', '_self');
         } else {
             console.debug('Log Out was not successful. Try again...', e, xhr);
         }
