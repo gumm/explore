@@ -12,11 +12,20 @@
     color: rgb(0, 85, 128);
     text-decoration: underline;
 }
-
+.signup {
+    font-size: 13px;
+    color: #f5f5f5;
+}
+.signup button {
+    margin-left: 10px;
+    padding: 2px 20px;
+}
 .topfixed {
     position: fixed;
-    top: 10px;
-    right: 40px;
+    top: 2px;
+    right: 22px;
+    width: 190px;
+    line-height: 34px;
 }
 
 .expr_wrapper {
@@ -37,13 +46,10 @@
 }
 
 #login-container {
-  width: 340px;
+  width: 260px;
   margin: 30px auto;
 }
 
-#login-container .checkbox {
-  margin: 23px 0 0 180px;
-}
 #login-container .btm-links {
   text-align: center;
   margin-top: 10px;
@@ -119,7 +125,7 @@ button#account-submit {
   margin-bottom: 0;
 }
 
-#get-credentials-form > .alert-error {
+#get-credentials-form > .alert {
   margin-top: 7px;
 }
 

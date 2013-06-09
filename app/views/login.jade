@@ -1,18 +1,21 @@
 block content
     #login-container
         h3 Hello!
-        form()#login-form.well.span4
+        form()#login-form.well.span3
             p.subheading Please Login To Your Account
             label Username
-            input(type="text", name="user", id='user-tf').span4.required
+            input(type="text", name="user", id='user-tf', required).span3.required
             label Password
-            input(type="password", name="pass", id='pass-tf').span4.required
+            input(type="password", name="pass", id='pass-tf', required).span3.required
+            label#remember-me.checkbox Remember Me
+                    input(type="checkbox", checked='checked')
             .form-actions
                 button(type="button")#btn-login.btn.btn-primary
                     i.icon-lock.icon-white
                     | Sign in
-                label#remember-me.checkbox Remember Me
-                    input(type="checkbox", checked='checked')
         div.btm-links
             #forgot-password.linklike Forgot Your Password?
-            #create-account.linklike.topfixed Create An Account
+    #signup.topfixed.hide
+        .signup New Explorer?
+            button#create-account.btn.btn-danger
+                | Sign Up

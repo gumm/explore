@@ -170,7 +170,7 @@ app.Site.prototype.fetchLoginForm = function() {
             goog.events.EventType.CLICK,
             this.submitLoginForm
         );
-        this.layout_.getNest('main', 'right').slideOpen(null, 400);
+        this.slideSignUpIn();
     }, this);
 
     this.xMan.send(
@@ -196,21 +196,23 @@ app.Site.prototype.submitLoginForm = function() {
         }
     }, this);
 
-    var form = goog.dom.getElement('login-form');
-    var content = goog.dom.forms.getFormDataMap(
-        /** @type {HTMLFormElement} */ (form)).toObject();
-
-    this.xMan.send(
-        '/login', // id
-        '/login', // url
-        'POST',      // opt_method
-        goog.uri.utils.buildQueryDataFromMap(content),       // opt_content
-        null,       // opt_headers
-        10,         // opt_priority
-        callback,   // opt_callback
-        0,          // opt_maxRetries
-        goog.net.XhrIo.ResponseType.TEXT // opt_responseType
-    );
+    var form = /** @type {HTMLFormElement} */ (
+        goog.dom.getElement('login-form'));
+    var content = goog.dom.forms.getFormDataMap(form).toObject();
+    var constraintsValidate = form.checkValidity();
+    if (constraintsValidate) {
+        this.xMan.send(
+            '/login', // id
+            '/login', // url
+            'POST',      // opt_method
+            goog.uri.utils.buildQueryDataFromMap(content), // opt_content
+            null,       // opt_headers
+            10,         // opt_priority
+            callback,   // opt_callback
+            0,          // opt_maxRetries
+            goog.net.XhrIo.ResponseType.TEXT // opt_responseType
+        );
+    }
 };
 
 app.Site.prototype.fetchHomePage = function() {
@@ -223,12 +225,8 @@ app.Site.prototype.fetchHomePage = function() {
         goog.dom.removeChildren(element);
         goog.dom.append(/** @type {!Node} */ (element), html);
 
-        var nest = this.layout_.getNest('main', 'right');
-        nest.slideClosed(goog.bind(nest.hide, nest));
-
+        this.slideSignUpOut();
         this.initHome();
-
-
     }, this);
     this.xMan.send(
         '/home', // id
@@ -258,8 +256,8 @@ app.Site.prototype.fetchSighUpForm = function() {
             goog.events.EventType.CLICK,
             function() {
                 this.fetchIntro();
-                var nest = this.layout_.getNest('main', 'right');
-                nest.slideOpen();
+                this.slideSignUpIn();
+
             }
         ).listen(
             goog.dom.getElement('account-submit'),
@@ -267,8 +265,7 @@ app.Site.prototype.fetchSighUpForm = function() {
             this.submitSignUp
         );
 
-        var nest = this.layout_.getNest('main', 'right');
-        nest.slideClosed(goog.bind(nest.hide, nest));
+        this.slideSignUpOut();
 
     }, this);
     this.xMan.send(
@@ -292,20 +289,29 @@ app.Site.prototype.submitSignUp = function() {
         console.debug(e, xhr);
     }, this);
 
-    var form = goog.dom.getElement('account-form');
-    var content = goog.dom.forms.getFormDataMap(
-        /** @type {HTMLFormElement} */ (form)).toObject();
-    this.xMan.send(
-        '/signup', // id
-        '/signup', // url
-        'POST',      // opt_method
-        goog.uri.utils.buildQueryDataFromMap(content.toObject()),
-        null,       // opt_headers
-        10,         // opt_priority
-        callback,   // opt_callback
-        0,          // opt_maxRetries
-        goog.net.XhrIo.ResponseType.TEXT // opt_responseType
+    var form = /** @type {HTMLFormElement} */ (
+        goog.dom.getElement('account-form')
     );
+    var constraintsValidate = form.checkValidity();
+    var countryList = goog.dom.forms.getValueByName(form, 'country');
+    console.debug('constraintsValidate', constraintsValidate);
+    console.debug('countryList', countryList);
+
+    if (constraintsValidate && countryList !== 'Please select a country') {
+        var content = goog.dom.forms.getFormDataMap(form).toObject();
+
+        this.xMan.send(
+            '/signup', // id
+            '/signup', // url
+            'POST',      // opt_method
+            goog.uri.utils.buildQueryDataFromMap(content),
+            null,       // opt_headers
+            10,         // opt_priority
+            callback,   // opt_callback
+            0,          // opt_maxRetries
+            goog.net.XhrIo.ResponseType.TEXT // opt_responseType
+        );
+    }
 };
 
 app.Site.prototype.fetchLostPasswordForm = function() {
@@ -324,8 +330,7 @@ app.Site.prototype.fetchLostPasswordForm = function() {
             goog.events.EventType.CLICK,
             function() {
                 this.fetchIntro();
-                var nest = this.layout_.getNest('main', 'right');
-                nest.slideOpen();
+                this.slideSignUpIn();
             }
         ).listen(
             goog.dom.getElement('submit'),
@@ -333,8 +338,7 @@ app.Site.prototype.fetchLostPasswordForm = function() {
             this.submitLostPasswordForm
         );
 
-        var nest = this.layout_.getNest('main', 'right');
-        nest.slideClosed(goog.bind(nest.hide, nest));
+        this.slideSignUpOut();
 
     }, this);
     this.xMan.send(
@@ -354,24 +358,35 @@ app.Site.prototype.submitLostPasswordForm = function() {
 
     var callback = goog.bind(function(e) {
         var xhr = e.target;
+        var alert = goog.dom.getElementByClass('alert');
+        goog.dom.removeChildren(alert);
+        goog.dom.classes.remove(alert, 'alert-success', 'alert-error');
+        var message = goog.dom.createDom('strong', {}, 'Done. ');
         if (xhr.isSuccess()) {
-            console.debug('Password reset email sent');
-            this.fetchHomePage();
+            goog.dom.append(alert, message,
+                'Check your email on how to reset your password.');
+            goog.dom.classes.add(alert, 'alert-success');
+            goog.dom.classes.remove(alert, 'hide');
         } else {
-            console.debug('Could not find password:', e, xhr);
-            var alert = goog.dom.getElementByClass('alert-error');
+            message = goog.dom.createDom('strong', {}, 'Error! ');
+            goog.dom.append(alert, message,
+                'Please enter a valid email address.');
+            goog.dom.classes.add(alert, 'alert-error');
             goog.dom.classes.remove(alert, 'hide');
         }
     }, this);
 
-    var form = goog.dom.getElement('get-credentials-form');
-    var content = goog.dom.forms.getFormDataMap(
-        /** @type {HTMLFormElement} */ (form)).toObject();
-
-    this.xMan.send('/lost-password', '/lost-password', 'POST',
-        goog.uri.utils.buildQueryDataFromMap(content),
-        null, 10, callback, 0, goog.net.XhrIo.ResponseType.TEXT
+    var form = /** @type {HTMLFormElement} */ (
+        goog.dom.getElement('get-credentials-form')
     );
+    var constraintsValidate = form.checkValidity();
+    if (constraintsValidate) {
+        var content = goog.dom.forms.getFormDataMap(form).toObject();
+        this.xMan.send('/lost-password', '/lost-password', 'POST',
+            goog.uri.utils.buildQueryDataFromMap(content),
+            null, 10, callback, 0, goog.net.XhrIo.ResponseType.TEXT
+        );
+    }
 };
 
 app.Site.prototype.initHome = function() {
@@ -405,7 +420,7 @@ app.Site.prototype.logOut = function() {
     );
 };
 
-
+//-----------------------------------------------------[ Utility Stuff Below ]--
 
 app.Site.prototype.hideAllNests = function() {
     var nests = [
@@ -419,6 +434,27 @@ app.Site.prototype.hideAllNests = function() {
     goog.array.forEach(nests, function(nest) {
         nest.hide();
     }, this);
+};
+
+app.Site.prototype.slideSignUpIn = function() {
+    var nest = this.layout_.getNest('main', 'right');
+    nest.slideOpen(null, 350, goog.bind(this.showSignUp, this));
+};
+
+app.Site.prototype.slideSignUpOut = function() {
+    var nest = this.layout_.getNest('main', 'right');
+    var hideSignup = goog.bind(this.hideSignUp, this);
+    nest.slideClosed(goog.bind(nest.hide, nest, hideSignup));
+};
+
+app.Site.prototype.showSignUp = function() {
+    var topFix = goog.dom.getElement('signup');
+    goog.dom.classes.remove(topFix, 'hide');
+};
+
+app.Site.prototype.hideSignUp = function() {
+    var topFix = goog.dom.getElement('signup');
+    goog.dom.classes.add(topFix, 'hide');
 };
 
 app.Site.prototype.slideHideAllNests = function() {
