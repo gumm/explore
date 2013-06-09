@@ -95,6 +95,8 @@ exports.configure = function(app, express, dev) {
     // Middle-ware
     app.use(express.favicon(conf.path.FAVICON));
     app.use(express.bodyParser());
+    app.use(express.cookieParser());
+    app.use(express.session({ secret: 'super-duper-secret-secret' }));
     app.use(express.static(conf.path.PUBLIC));
 
     // Development only

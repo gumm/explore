@@ -3,12 +3,17 @@ var routes = require('../routes');
 
 exports.urls = function(app) {
     app.get('/', routes.index);
+
+    // Intro pages
+    app.get('/intro', routes.intro);
+
+    // Login
     app.get('/login', routes.login);
     app.post('/login', routes.postLogin);
 
-
-//    app.get('/signup', routes.signUp);
-//    app.post('/signup', routes.postSignUp);
+    // Account Creation
+    app.get('/signup', routes.signUp);
+    app.post('/signup', routes.postSignUp);
 
 
 //    app.get('/api/customers', customers.findAll);

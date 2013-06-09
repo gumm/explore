@@ -5,6 +5,7 @@ goog.provide('app.Site');
 
 goog.require('bad.ui.Component');
 goog.require('bad.ui.Layout');
+goog.require('goog.dom.forms');
 goog.require('goog.events.EventHandler');
 goog.require('goog.net.XhrIo');
 
@@ -119,13 +120,68 @@ app.Site.prototype.getLayout = function() {
 };
 
 app.Site.prototype.initNavigation = function() {
+    this.fetchIntro();
+    this.fetchLoginForm();
+};
 
+app.Site.prototype.fetchIntro = function() {
     var callback = goog.bind(function(e) {
         var xhr = e.target;
         var html = goog.dom.htmlToDocumentFragment(xhr.getResponseText());
         var element = this.layout_.getNestElement('main', 'center');
+
+        // This is not right. It could remove layout elements.
+        goog.dom.removeChildren(element);
+
         goog.dom.append(/** @type {!Node} */ (element), html);
+        this.listen(
+            goog.dom.getElement('create-account'),
+            goog.events.EventType.CLICK,
+            this.fetchSighUpForm
+        ).listen(
+            goog.dom.getElement('btn-login'),
+            goog.events.EventType.CLICK,
+            this.submitLoginForm
+        );
     }, this);
+
+    this.xMan.send(
+        '/intro', // id
+        '/intro', // url
+        'GET',      // opt_method
+        null,       // opt_content
+        null,       // opt_headers
+        10,         // opt_priority
+        callback,   // opt_callback
+        0,          // opt_maxRetries
+        goog.net.XhrIo.ResponseType.TEXT // opt_responseType
+    );
+};
+
+app.Site.prototype.fetchLoginForm = function() {
+    var callback = goog.bind(function(e) {
+        var xhr = e.target;
+        var html = goog.dom.htmlToDocumentFragment(xhr.getResponseText());
+        var element = this.layout_.getNestElement('main', 'right', 'mid');
+
+        // This is not right. It could remove layout elements.
+        goog.dom.removeChildren(element);
+
+        goog.dom.append(/** @type {!Node} */ (element), html);
+        this.listen(
+            goog.dom.getElement('create-account'),
+            goog.events.EventType.CLICK,
+            this.fetchSighUpForm
+        ).listen(
+            goog.dom.getElement('btn-login'),
+            goog.events.EventType.CLICK,
+            this.submitLoginForm
+        );
+
+        this.layout_.getNest('main', 'right').slideOpen(null, 400);
+
+    }, this);
+
     this.xMan.send(
         '/login', // id
         '/login', // url
@@ -137,6 +193,131 @@ app.Site.prototype.initNavigation = function() {
         2,          // opt_maxRetries
         goog.net.XhrIo.ResponseType.TEXT // opt_responseType
     );
+};
+
+app.Site.prototype.submitLoginForm = function() {
+    var callback = goog.bind(function(e) {
+        var xhr = e.target;
+        if (xhr.isSuccess()) {
+            console.debug('Submit was successful. Lets scoot off to the home page...');
+            this.fetchHomePage();
+        } else {
+            console.debug('Submit was not successful. Try again...', e, xhr);
+        }
+    }, this);
+
+    var form = goog.dom.getElement('login-form');
+    var content = goog.dom.forms.getFormDataMap(form).toObject();
+    console.debug('LOGIN GORM CONTNET:', content);
+
+    this.xMan.send(
+        '/login', // id
+        '/login', // url
+        'POST',      // opt_method
+        goog.uri.utils.buildQueryDataFromMap(content),       // opt_content
+        null,       // opt_headers
+        10,         // opt_priority
+        callback,   // opt_callback
+        0,          // opt_maxRetries
+        goog.net.XhrIo.ResponseType.TEXT // opt_responseType
+    );
+};
+
+app.Site.prototype.fetchHomePage = function() {
+//    var callback = goog.bind(function(e) {
+//        var xhr = e.target;
+//        var html = goog.dom.htmlToDocumentFragment(xhr.getResponseText());
+//        var element = this.layout_.getNestElement('main', 'center');
+//
+//        // This is not right. It could remove layout elements.
+//        goog.dom.removeChildren(element);
+//
+//        goog.dom.append(/** @type {!Node} */ (element), html);
+//        this.listen(
+//            goog.dom.getElement('account-cancel'),
+//            goog.events.EventType.CLICK,
+//            this.fetchLoginForm
+//        ).listen(
+//            goog.dom.getElement('account-submit'),
+//            goog.events.EventType.CLICK,
+//            this.submitSignUp
+//        );
+//    }, this);
+//    this.xMan.send(
+//        '/signup', // id
+//        '/signup', // url
+//        'GET',      // opt_method
+//        null,       // opt_content
+//        null,       // opt_headers
+//        10,         // opt_priority
+//        callback,   // opt_callback
+//        2,          // opt_maxRetries
+//        goog.net.XhrIo.ResponseType.TEXT // opt_responseType
+//    );
+};
+
+app.Site.prototype.fetchSighUpForm = function() {
+    var callback = goog.bind(function(e) {
+        var xhr = e.target;
+        var html = goog.dom.htmlToDocumentFragment(xhr.getResponseText());
+        var element = this.layout_.getNestElement('main', 'center');
+
+        // This is not right. It could remove layout elements.
+        goog.dom.removeChildren(element);
+
+        goog.dom.append(/** @type {!Node} */ (element), html);
+        this.listen(
+            goog.dom.getElement('account-cancel'),
+            goog.events.EventType.CLICK,
+            this.fetchLoginForm
+        ).listen(
+            goog.dom.getElement('account-submit'),
+            goog.events.EventType.CLICK,
+            this.submitSignUp
+        );
+
+        var nest = this.layout_.getNest('main', 'right');
+        nest.slideClosed(goog.bind(nest.hide, nest));
+
+    }, this);
+    this.xMan.send(
+        '/signup', // id
+        '/signup', // url
+        'GET',      // opt_method
+        null,       // opt_content
+        null,       // opt_headers
+        10,         // opt_priority
+        callback,   // opt_callback
+        2,          // opt_maxRetries
+        goog.net.XhrIo.ResponseType.TEXT // opt_responseType
+    );
+};
+
+app.Site.prototype.submitSignUp = function() {
+    var callback = goog.bind(function(e) {
+        var xhr = e.target;
+        var html = goog.dom.htmlToDocumentFragment(xhr.getResponseText());
+        var element = this.layout_.getNestElement('main', 'center');
+        console.debug(e, xhr);
+    }, this);
+
+    var form = goog.dom.getElement('account-form');
+    var content = goog.dom.forms.getFormDataMap(form);
+    this.xMan.send(
+        '/signup', // id
+        '/signup', // url
+        'POST',      // opt_method
+        goog.uri.utils.buildQueryDataFromMap(content.toObject()),       // opt_content
+        null,       // opt_headers
+        10,         // opt_priority
+        callback,   // opt_callback
+        0,          // opt_maxRetries
+        goog.net.XhrIo.ResponseType.TEXT // opt_responseType
+    );
+};
+
+app.Site.prototype.fetchAccountConfirmation = function() {
+    console.debug('All is OK. User Created...');
 };
 
 app.Site.prototype.hideAllNests = function() {
