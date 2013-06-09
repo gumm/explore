@@ -15,6 +15,14 @@ exports.urls = function(app) {
     app.get('/signup', routes.signUp);
     app.post('/signup', routes.postSignUp);
 
+    // Password Management
+    app.get('/lost-password', routes.lostPassword);
+    app.post('/lost-password', routes.postLostPassword);
+
+    // Home Page
+    app.get('/home', routes.home);
+    app.post('/home', routes.postHome);
+
 
 //    app.get('/api/customers', customers.findAll);
 //    app.get('/api/customers/:id', customers.findById);

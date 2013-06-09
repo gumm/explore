@@ -132,17 +132,7 @@ app.Site.prototype.fetchIntro = function() {
 
         // This is not right. It could remove layout elements.
         goog.dom.removeChildren(element);
-
         goog.dom.append(/** @type {!Node} */ (element), html);
-        this.listen(
-            goog.dom.getElement('create-account'),
-            goog.events.EventType.CLICK,
-            this.fetchSighUpForm
-        ).listen(
-            goog.dom.getElement('btn-login'),
-            goog.events.EventType.CLICK,
-            this.submitLoginForm
-        );
     }, this);
 
     this.xMan.send(
@@ -173,10 +163,16 @@ app.Site.prototype.fetchLoginForm = function() {
             goog.events.EventType.CLICK,
             this.fetchSighUpForm
         ).listen(
+            goog.dom.getElement('forgot-password'),
+            goog.events.EventType.CLICK,
+            this.fetchLostPasswordForm
+        ).listen(
             goog.dom.getElement('btn-login'),
             goog.events.EventType.CLICK,
             this.submitLoginForm
         );
+
+
 
         this.layout_.getNest('main', 'right').slideOpen(null, 400);
 
@@ -208,7 +204,6 @@ app.Site.prototype.submitLoginForm = function() {
 
     var form = goog.dom.getElement('login-form');
     var content = goog.dom.forms.getFormDataMap(form).toObject();
-    console.debug('LOGIN GORM CONTNET:', content);
 
     this.xMan.send(
         '/login', // id
@@ -223,37 +218,34 @@ app.Site.prototype.submitLoginForm = function() {
     );
 };
 
-app.Site.prototype.fetchHomePage = function() {
-//    var callback = goog.bind(function(e) {
-//        var xhr = e.target;
-//        var html = goog.dom.htmlToDocumentFragment(xhr.getResponseText());
-//        var element = this.layout_.getNestElement('main', 'center');
-//
-//        // This is not right. It could remove layout elements.
-//        goog.dom.removeChildren(element);
-//
-//        goog.dom.append(/** @type {!Node} */ (element), html);
-//        this.listen(
-//            goog.dom.getElement('account-cancel'),
-//            goog.events.EventType.CLICK,
-//            this.fetchLoginForm
-//        ).listen(
-//            goog.dom.getElement('account-submit'),
-//            goog.events.EventType.CLICK,
-//            this.submitSignUp
-//        );
-//    }, this);
-//    this.xMan.send(
-//        '/signup', // id
-//        '/signup', // url
-//        'GET',      // opt_method
-//        null,       // opt_content
-//        null,       // opt_headers
-//        10,         // opt_priority
-//        callback,   // opt_callback
-//        2,          // opt_maxRetries
-//        goog.net.XhrIo.ResponseType.TEXT // opt_responseType
-//    );
+app.Site.prototype.fetchHomePage = function () {
+    var callback = goog.bind(function (e) {
+        var xhr = e.target;
+        var html = goog.dom.htmlToDocumentFragment(xhr.getResponseText());
+        var element = this.layout_.getNestElement('main', 'center');
+
+        // This is not right. It could remove layout elements.
+        goog.dom.removeChildren(element);
+        goog.dom.append(/** @type {!Node} */ (element), html);
+
+        var nest = this.layout_.getNest('main', 'right');
+        nest.slideClosed(goog.bind(nest.hide, nest));
+
+        this.initHome();
+
+
+    }, this);
+    this.xMan.send(
+        '/home', // id
+        '/home', // url
+        'GET',      // opt_method
+        null,       // opt_content
+        null,       // opt_headers
+        10,         // opt_priority
+        callback,   // opt_callback
+        0,          // opt_maxRetries
+        goog.net.XhrIo.ResponseType.TEXT // opt_responseType
+    );
 };
 
 app.Site.prototype.fetchSighUpForm = function() {
@@ -269,7 +261,11 @@ app.Site.prototype.fetchSighUpForm = function() {
         this.listen(
             goog.dom.getElement('account-cancel'),
             goog.events.EventType.CLICK,
-            this.fetchLoginForm
+            function() {
+                this.fetchIntro();
+                var nest = this.layout_.getNest('main', 'right');
+                nest.slideOpen();
+            }
         ).listen(
             goog.dom.getElement('account-submit'),
             goog.events.EventType.CLICK,
@@ -316,9 +312,105 @@ app.Site.prototype.submitSignUp = function() {
     );
 };
 
-app.Site.prototype.fetchAccountConfirmation = function() {
-    console.debug('All is OK. User Created...');
+app.Site.prototype.fetchLostPasswordForm = function() {
+    var callback = goog.bind(function(e) {
+        var xhr = e.target;
+        var html = goog.dom.htmlToDocumentFragment(xhr.getResponseText());
+        var element = this.layout_.getNestElement('main', 'center');
+
+        // This is not right. It could remove layout elements.
+        goog.dom.removeChildren(element);
+
+        goog.dom.append(/** @type {!Node} */ (element), html);
+
+        this.listen(
+            goog.dom.getElement('cancel'),
+            goog.events.EventType.CLICK,
+            function() {
+                this.fetchIntro();
+                var nest = this.layout_.getNest('main', 'right');
+                nest.slideOpen();
+            }
+        ).listen(
+            goog.dom.getElement('submit'),
+            goog.events.EventType.CLICK,
+            this.submitLostPasswordForm
+        );
+
+        var nest = this.layout_.getNest('main', 'right');
+        nest.slideClosed(goog.bind(nest.hide, nest));
+
+    }, this);
+    this.xMan.send(
+        '/lost-password', // id
+        '/lost-password', // url
+        'GET',      // opt_method
+        null,       // opt_content
+        null,       // opt_headers
+        10,         // opt_priority
+        callback,   // opt_callback
+        0,          // opt_maxRetries
+        goog.net.XhrIo.ResponseType.TEXT // opt_responseType
+    );
 };
+
+app.Site.prototype.submitLostPasswordForm = function() {
+
+    var callback = goog.bind(function(e) {
+        var xhr = e.target;
+        if (xhr.isSuccess()) {
+            console.debug('Password reset email sent');
+            this.fetchHomePage();
+        } else {
+            console.debug('Could not find password:', e, xhr);
+            var alert = goog.dom.getElementByClass('alert-error');
+            goog.dom.classes.remove(alert, 'hide');
+        }
+    }, this);
+
+    var form = goog.dom.getElement('get-credentials-form');
+    var content = goog.dom.forms.getFormDataMap(form).toObject();
+
+    this.xMan.send('/lost-password', '/lost-password', 'POST',
+        goog.uri.utils.buildQueryDataFromMap(content),
+        null, 10, callback, 0, goog.net.XhrIo.ResponseType.TEXT
+    );
+};
+
+app.Site.prototype.initHome = function() {
+    this.listen(
+        goog.dom.getElement('btn-logout'),
+        goog.events.EventType.CLICK,
+        this.logOut
+    );
+};
+
+app.Site.prototype.logOut = function() {
+    console.debug('LOG OUT PLEASE');
+    var callback = goog.bind(function(e) {
+        var xhr = e.target;
+        if (xhr.isSuccess()) {
+            console.debug('Log Out was successful');
+            this.initNavigation();
+        } else {
+            console.debug('Log Out was not successful. Try again...', e, xhr);
+        }
+    }, this);
+
+    this.xMan.send(
+        '/logout', // id
+        '/home', // url
+        'POST',      // opt_method
+        goog.uri.utils.buildQueryDataFromMap({'logout': true}),
+        null,       // opt_headers
+        10,         // opt_priority
+        callback,   // opt_callback
+        0,          // opt_maxRetries
+        goog.net.XhrIo.ResponseType.TEXT // opt_responseType
+    );
+};
+
+
 
 app.Site.prototype.hideAllNests = function() {
     var nests = [
