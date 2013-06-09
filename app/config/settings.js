@@ -1,8 +1,9 @@
-var pjson = require('../package.json');
+var pjson = require('../../package.json');
 var path = require('path');
-var urls = require('../src/urls');
+var urls = require('../urls/urls').urls;
 var ExploreMongoDB = require('../src/mongodbserver');
-var root = path.resolve(__dirname, '../');
+var root = path.resolve(__dirname, '../../');
+var appPath = path.resolve(__dirname, '../');
 
 
 /**
@@ -12,15 +13,14 @@ var root = path.resolve(__dirname, '../');
 var conf = {
     path: {
         ROOT: root,
-        VIEWS: path.join(root, 'views'),
-        PUBLIC: path.join(root, 'public'),
-        LIB: path.join(root, 'lib'),
+        VIEWS: path.join(appPath, 'views'),
+        PUBLIC: path.join(appPath, 'public'),
         DEPS: path.join('js', 'deps.js'),
         PAHO: path.join('js', 'lib/mqttws31.js'),
         BOOTSTRAP: path.join('js', 'bootstrap.js'),
         GOOG: path.join('js', 'closure-library/closure/goog/base.js'),
         CSS: path.join('css', 'default.css'),
-        FAVICON: path.join(root, 'public/img/favicon.ico'),
+        FAVICON: path.join(appPath, 'public/img/favicon.ico'),
         COMPILED: {
             JS: path.join('js',
                 'compiled/' + pjson.name + '_' + pjson.version + '.js'),
@@ -65,7 +65,7 @@ var init = function(dev) {
  * @param express
  * @param {boolean} dev True if this is a dev run
  */
-var configure = function(app, express, dev) {
+exports.configure = function(app, express, dev) {
 
     // Set some stuff up
     init(dev);
@@ -123,6 +123,3 @@ var configure = function(app, express, dev) {
     // Set up the app urls.
     urls(app);
 };
-
-module.exports.init = init;
-module.exports.configure = configure;

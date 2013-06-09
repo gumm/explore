@@ -119,6 +119,7 @@ app.Site.prototype.getLayout = function() {
 };
 
 app.Site.prototype.initNavigation = function() {
+
     var callback = goog.bind(function(e) {
         var xhr = e.target;
         var html = goog.dom.htmlToDocumentFragment(xhr.getResponseText());
@@ -126,8 +127,8 @@ app.Site.prototype.initNavigation = function() {
         goog.dom.append(/** @type {!Node} */ (element), html);
     }, this);
     this.xMan.send(
-        '/landing', // id
-        '/landing', // url
+        '/login', // id
+        '/login', // url
         'GET',      // opt_method
         null,       // opt_content
         null,       // opt_headers

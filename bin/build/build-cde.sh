@@ -21,9 +21,9 @@ echo "PROJECT_NAME: ${PROJECT_NAME}"
 echo "-----------------------------------------------------"
 echo ""
 
-#${PARTS_PATH}/get_linter.sh ${WORKSPACE} ${PROJECT_NAME}
+${PARTS_PATH}/get_linter.sh ${WORKSPACE} ${PROJECT_NAME}
 ${PARTS_PATH}/get_library.sh ${WORKSPACE} ${PROJECT_NAME} ${JS_PATH} ${GOOG_BIN_PATH}
 ${PARTS_PATH}/get_bad-library.sh ${WORKSPACE} ${PROJECT_NAME} ${JS_PATH} ${GOOG_BIN_PATH}
-#${PARTS_PATH}/get_stylesheets.sh ${WORKSPACE} ${PROJECT_NAME} ${BIN_PATH}
-#${PARTS_PATH}/get_compiler.sh ${WORKSPACE} ${PROJECT_NAME} ${BIN_PATH}
-#${PARTS_PATH}/get_cssembed.sh ${WORKSPACE} ${PROJECT_NAME} ${BIN_PATH}
+${PARTS_PATH}/get_stylesheets.sh ${WORKSPACE} ${PROJECT_NAME} ${BIN_PATH}
+${PARTS_PATH}/get_compiler.sh ${WORKSPACE} ${PROJECT_NAME} ${BIN_PATH}
+${PARTS_PATH}/get_cssembed.sh ${WORKSPACE} ${PROJECT_NAME} ${BIN_PATH}

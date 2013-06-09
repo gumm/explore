@@ -22,5 +22,5 @@ cd ${WORKSPACE}
 chmod +x ${GOOG_BIN_PATH}/*.py
 
 ${GOOG_BIN_PATH}/depswriter.py \
-    --root_with_prefix='public/js/app ../../../app' \
-    --root_with_prefix='public/js/bad-library/bad ../../../bad-library/bad'> ${JS_PATH}/deps.js
+    --root_with_prefix='app/public/js/app ../../../app' \
+    --root_with_prefix='app/public/js/bad-library/bad ../../../bad-library/bad'> ${JS_PATH}/deps.js

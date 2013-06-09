@@ -4,8 +4,8 @@
 
 var express = require('express');
 var http = require('http');
-var settings = require('./etc/settings');
-var ExploreWebSocket = require('./src/websocket');
+var settings = require('./app/config/settings');
+var ExploreWebSocket = require('./app/src/websocket');
 
 var dev = false;
 if(process.argv[2] === 'dev') {
@@ -25,9 +25,9 @@ settings.configure(app, express, dev);
 
 
 /**
- * Server Setup
- * @type {*|http.Server|http.Server|goog.events.Key}
- */
+* Server Setup
+* @type {*|http.Server|http.Server|goog.events.Key}
+*/
 var server = http.createServer(app).listen(app.get('port'), function () {
     console.log('Express server listening on port ' + app.get('port'));
 });

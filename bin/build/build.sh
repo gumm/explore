@@ -7,7 +7,7 @@ BUILD_PARM=$3
 # Relative to the workspace
 BIN_PATH=${WORKSPACE}/bin
 BUILD_PATH=${BIN_PATH}/build
-PUBLIC_PATH=${WORKSPACE}/public
+PUBLIC_PATH=${WORKSPACE}/app/public
 JS_PATH=${PUBLIC_PATH}/js
 CSS_PATH=${PUBLIC_PATH}/css
 
