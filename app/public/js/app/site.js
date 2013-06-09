@@ -171,11 +171,7 @@ app.Site.prototype.fetchLoginForm = function() {
             goog.events.EventType.CLICK,
             this.submitLoginForm
         );
-
-
-
         this.layout_.getNest('main', 'right').slideOpen(null, 400);
-
     }, this);
 
     this.xMan.send(
@@ -195,7 +191,6 @@ app.Site.prototype.submitLoginForm = function() {
     var callback = goog.bind(function(e) {
         var xhr = e.target;
         if (xhr.isSuccess()) {
-            console.debug('Submit was successful. Lets scoot off to the home page...');
             this.fetchHomePage();
         } else {
             console.debug('Submit was not successful. Try again...', e, xhr);
@@ -303,7 +298,7 @@ app.Site.prototype.submitSignUp = function() {
         '/signup', // id
         '/signup', // url
         'POST',      // opt_method
-        goog.uri.utils.buildQueryDataFromMap(content.toObject()),       // opt_content
+        goog.uri.utils.buildQueryDataFromMap(content.toObject()),
         null,       // opt_headers
         10,         // opt_priority
         callback,   // opt_callback
@@ -386,12 +381,10 @@ app.Site.prototype.initHome = function() {
 };
 
 app.Site.prototype.logOut = function() {
-    console.debug('LOG OUT PLEASE');
     var callback = goog.bind(function(e) {
         var xhr = e.target;
         if (xhr.isSuccess()) {
-            console.debug('Log Out was successful');
-            this.initNavigation();
+            window.open('/','_self');
         } else {
             console.debug('Log Out was not successful. Try again...', e, xhr);
         }

@@ -1,6 +1,6 @@
 /*---------------------------------------------------------------[ Explore ]--*/
 .linklike {
-    font-size: 12px;
+    font-size: 13px;
     color: rgb(0, 136, 204);
     text-decoration: none;
     cursor: pointer;
@@ -9,6 +9,7 @@
     color: rgb(0, 85, 128);
     text-decoration: underline;
 }
+
 .expr_wrapper {
     padding: 30px;
 }
@@ -106,7 +107,7 @@ button#account-submit {
 
 #get-credentials-form.form-horizontal .form-actions {
   padding: 17px 0 0 220px;
-  margin-bottom: 0px;
+  margin-bottom: 0;
 }
 
 #get-credentials-form > .alert-error {

@@ -127,6 +127,7 @@ exports.postHome = function (req, res) {
             }
         });
     } else if (req.param('logout') == 'true') {
+        console.log('LOG OUT Please...');
         res.clearCookie('user');
         res.clearCookie('pass');
         req.session.destroy(function (e) {
