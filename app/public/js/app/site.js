@@ -8,19 +8,24 @@ goog.require('bad.ui.Layout');
 goog.require('goog.dom.forms');
 goog.require('goog.events.EventHandler');
 goog.require('goog.net.XhrIo');
+goog.require('goog.Uri');
 
 /**
  * Constructor of the main site object. Inherits from EventHandler, so it
  * can simply subscribe to events on its children.
- * @param {goog.net.XhrManager} xMan This site's XhrManager.
+ * @param {bad.Net} xManWrapper This site's XhrManager wrapped in a bad.Net
+ *      convenience wrapper.
  *
  * @constructor
  * @extends {goog.events.EventHandler}
  */
-app.Site = function(xMan) {
+app.Site = function(xManWrapper) {
     goog.events.EventHandler.call(this, this);
 
-    this.xMan = xMan;
+    /**
+     * @type {bad.Net}
+     */
+    this.xMan = xManWrapper;
 
     /**
      * @type {?bad.ui.Layout}
@@ -123,273 +128,224 @@ app.Site.prototype.initNavigation = function() {
     this.fetchLoginForm();
 };
 
+//-------------------------------------------------------------------[ Intro ]--
+
 app.Site.prototype.fetchIntro = function() {
-    var callback = goog.bind(function(e) {
-        var xhr = e.target;
-        var html = goog.dom.htmlToDocumentFragment(xhr.getResponseText());
-        var element = this.layout_.getNestElement('main', 'center');
-
-        // This is not right. It could remove layout elements.
-        goog.dom.removeChildren(element);
-        goog.dom.append(/** @type {!Node} */ (element), html);
-    }, this);
-
-    this.xMan.send(
-        '/intro', // id
-        '/intro', // url
-        'GET',      // opt_method
-        null,       // opt_content
-        null,       // opt_headers
-        10,         // opt_priority
-        callback,   // opt_callback
-        0,          // opt_maxRetries
-        goog.net.XhrIo.ResponseType.TEXT // opt_responseType
-    );
+    var uri = new goog.Uri('/intro');
+    this.xMan.get(uri, goog.bind(this.onIntroReceived, this));
 };
 
+app.Site.prototype.onIntroReceived = function(e) {
+    var xhr = e.target;
+    var html = goog.dom.htmlToDocumentFragment(xhr.getResponseText());
+    var element = this.layout_.getNestElement('main', 'center');
+
+    // This is not right. It could remove layout elements.
+    goog.dom.removeChildren(element);
+    goog.dom.append(/** @type {!Node} */ (element), html);
+};
+
+//--------------------------------------------------------------[ Login Form ]--
+
 app.Site.prototype.fetchLoginForm = function() {
-    var callback = goog.bind(function(e) {
-        var xhr = e.target;
-        var html = goog.dom.htmlToDocumentFragment(xhr.getResponseText());
-        var element = this.layout_.getNestElement('main', 'right', 'mid');
+    var uri = new goog.Uri('/login');
+    this.xMan.get(uri, goog.bind(this.onLoginFormReceived, this));
+};
 
-        // This is not right. It could remove layout elements.
-        goog.dom.removeChildren(element);
+app.Site.prototype.onLoginFormReceived = function(e) {
+    var xhr = e.target;
+    var html = goog.dom.htmlToDocumentFragment(xhr.getResponseText());
+    var element = this.layout_.getNestElement('main', 'right', 'mid');
 
-        goog.dom.append(/** @type {!Node} */ (element), html);
-        this.listen(
-            goog.dom.getElement('create-account'),
-            goog.events.EventType.CLICK,
-            this.fetchSighUpForm
-        ).listen(
-            goog.dom.getElement('forgot-password'),
-            goog.events.EventType.CLICK,
-            this.fetchLostPasswordForm
-        ).listen(
-            goog.dom.getElement('btn-login'),
-            goog.events.EventType.CLICK,
-            this.submitLoginForm
-        );
-        this.slideSignUpIn();
-    }, this);
+    // This is not right. It could remove layout elements.
+    goog.dom.removeChildren(element);
+    goog.dom.append(/** @type {!Node} */ (element), html);
 
-    this.xMan.send(
-        '/login', // id
-        '/login', // url
-        'GET',      // opt_method
-        null,       // opt_content
-        null,       // opt_headers
-        10,         // opt_priority
-        callback,   // opt_callback
-        2,          // opt_maxRetries
-        goog.net.XhrIo.ResponseType.TEXT // opt_responseType
+    this.listen(
+        goog.dom.getElement('create-account'),
+        goog.events.EventType.CLICK,
+        this.fetchSighUpForm
+    ).listen(
+        goog.dom.getElement('forgot-password'),
+        goog.events.EventType.CLICK,
+        this.fetchLostPasswordForm
+    ).listen(
+        goog.dom.getElement('btn-login'),
+        goog.events.EventType.CLICK,
+        this.submitLoginForm
     );
+    this.slideSignUpIn();
 };
 
 app.Site.prototype.submitLoginForm = function() {
-    var callback = goog.bind(function(e) {
-        var xhr = e.target;
-        if (xhr.isSuccess()) {
-            this.fetchHomePage();
-        } else {
-            console.debug('Submit was not successful. Try again...', e, xhr);
-        }
-    }, this);
 
-    var form = /** @type {HTMLFormElement} */ (
-        goog.dom.getElement('login-form'));
-    var content = goog.dom.forms.getFormDataMap(form).toObject();
-    var constraintsValidate = form.checkValidity();
-    if (constraintsValidate) {
-        this.xMan.send(
-            '/login', // id
-            '/login', // url
-            'POST',      // opt_method
-            goog.uri.utils.buildQueryDataFromMap(content), // opt_content
-            null,       // opt_headers
-            10,         // opt_priority
-            callback,   // opt_callback
-            0,          // opt_maxRetries
-            goog.net.XhrIo.ResponseType.TEXT // opt_responseType
-        );
+    var form = this.getSterileFormFromId_('login-form');
+    if (form.checkValidity()) {
+        this.logIn_(this.getPostContentFromForm(form));
     }
 };
 
-app.Site.prototype.fetchHomePage = function() {
-    var callback = goog.bind(function(e) {
-        var xhr = e.target;
-        var html = goog.dom.htmlToDocumentFragment(xhr.getResponseText());
-        var element = this.layout_.getNestElement('main', 'center');
-
-        // This is not right. It could remove layout elements.
-        goog.dom.removeChildren(element);
-        goog.dom.append(/** @type {!Node} */ (element), html);
-
-        this.slideSignUpOut();
-        this.initHome();
-    }, this);
-    this.xMan.send(
-        '/home', // id
-        '/home', // url
-        'GET',      // opt_method
-        null,       // opt_content
-        null,       // opt_headers
-        10,         // opt_priority
-        callback,   // opt_callback
-        0,          // opt_maxRetries
-        goog.net.XhrIo.ResponseType.TEXT // opt_responseType
+app.Site.prototype.logIn_ = function(credential) {
+    var uri = new goog.Uri('/login');
+    this.xMan.post(
+        uri,
+        credential,
+        goog.bind(this.onSubmitLoginForm, this)
     );
 };
 
+app.Site.prototype.onSubmitLoginForm = function(e) {
+    var xhr = e.target;
+    if (xhr.isSuccess()) {
+        this.fetchHomePage();
+    } else {
+        console.debug('Submit was not successful. Try again...', e, xhr);
+    }
+};
+
+//------------------------------------------------------------[ Sign-Up Form ]--
+
 app.Site.prototype.fetchSighUpForm = function() {
-    var callback = goog.bind(function(e) {
-        var xhr = e.target;
-        var html = goog.dom.htmlToDocumentFragment(xhr.getResponseText());
-        var element = this.layout_.getNestElement('main', 'center');
+    var uri = new goog.Uri('/signup');
+    this.xMan.get(uri, goog.bind(this.onSighUpFormReceived, this));
+};
 
-        // This is not right. It could remove layout elements.
-        goog.dom.removeChildren(element);
+app.Site.prototype.onSighUpFormReceived = function(e) {
+    var xhr = e.target;
+    var html = goog.dom.htmlToDocumentFragment(xhr.getResponseText());
+    var element = this.layout_.getNestElement('main', 'center');
 
-        goog.dom.append(/** @type {!Node} */ (element), html);
-        this.listen(
-            goog.dom.getElement('account-cancel'),
-            goog.events.EventType.CLICK,
-            function() {
-                this.fetchIntro();
-                this.slideSignUpIn();
+    // This is not right. It could remove layout elements.
+    goog.dom.removeChildren(element);
+    goog.dom.append(/** @type {!Node} */ (element), html);
+    this.listen(
+        goog.dom.getElement('account-cancel'),
+        goog.events.EventType.CLICK,
+        function() {
+            this.fetchIntro();
+            this.slideSignUpIn();
 
-            }
-        ).listen(
-            goog.dom.getElement('account-submit'),
-            goog.events.EventType.CLICK,
-            this.submitSignUp
-        );
-
-        this.slideSignUpOut();
-
-    }, this);
-    this.xMan.send(
-        '/signup', // id
-        '/signup', // url
-        'GET',      // opt_method
-        null,       // opt_content
-        null,       // opt_headers
-        10,         // opt_priority
-        callback,   // opt_callback
-        2,          // opt_maxRetries
-        goog.net.XhrIo.ResponseType.TEXT // opt_responseType
+        }
+    ).listen(
+        goog.dom.getElement('account-submit'),
+        goog.events.EventType.CLICK,
+        this.submitSignUp
     );
+    this.slideSignUpOut();
 };
 
 app.Site.prototype.submitSignUp = function() {
-    var callback = goog.bind(function(e) {
-        var xhr = e.target;
-        var html = goog.dom.htmlToDocumentFragment(xhr.getResponseText());
-        var element = this.layout_.getNestElement('main', 'center');
-        console.debug(e, xhr);
-    }, this);
-
-    var form = /** @type {HTMLFormElement} */ (
-        goog.dom.getElement('account-form')
-    );
+    var uri = new goog.Uri('/signup');
+    var form = this.getSterileFormFromId_('account-form');
     var constraintsValidate = form.checkValidity();
     var countryList = goog.dom.forms.getValueByName(form, 'country');
-    console.debug('constraintsValidate', constraintsValidate);
-    console.debug('countryList', countryList);
 
     if (constraintsValidate && countryList !== 'Please select a country') {
         var content = goog.dom.forms.getFormDataMap(form).toObject();
-
-        this.xMan.send(
-            '/signup', // id
-            '/signup', // url
-            'POST',      // opt_method
-            goog.uri.utils.buildQueryDataFromMap(content),
-            null,       // opt_headers
-            10,         // opt_priority
-            callback,   // opt_callback
-            0,          // opt_maxRetries
-            goog.net.XhrIo.ResponseType.TEXT // opt_responseType
+        var queryData = goog.uri.utils.buildQueryDataFromMap(content);
+        this.xMan.post(
+            uri,
+            queryData,
+            goog.bind(this.onSubmitSignUp, this, queryData)
         );
     }
 };
 
-app.Site.prototype.fetchLostPasswordForm = function() {
-    var callback = goog.bind(function(e) {
-        var xhr = e.target;
-        var html = goog.dom.htmlToDocumentFragment(xhr.getResponseText());
-        var element = this.layout_.getNestElement('main', 'center');
-
-        // This is not right. It could remove layout elements.
-        goog.dom.removeChildren(element);
-
-        goog.dom.append(/** @type {!Node} */ (element), html);
-
-        this.listen(
-            goog.dom.getElement('cancel'),
-            goog.events.EventType.CLICK,
-            function() {
-                this.fetchIntro();
-                this.slideSignUpIn();
-            }
-        ).listen(
-            goog.dom.getElement('submit'),
-            goog.events.EventType.CLICK,
-            this.submitLostPasswordForm
-        );
-
-        this.slideSignUpOut();
-
-    }, this);
-    this.xMan.send(
-        '/lost-password', // id
-        '/lost-password', // url
-        'GET',      // opt_method
-        null,       // opt_content
-        null,       // opt_headers
-        10,         // opt_priority
-        callback,   // opt_callback
-        0,          // opt_maxRetries
-        goog.net.XhrIo.ResponseType.TEXT // opt_responseType
-    );
+app.Site.prototype.onSubmitSignUp = function(queryData, e) {
+    var xhr = e.target;
+    if (xhr.isSuccess()) {
+        console.debug('HERE IS THE CONTENT IN THE CALLBACK', queryData);
+        this.logIn_(queryData);
+    } else {
+        console.debug('Submit was not successful. Try again...', e, xhr);
+    }
 };
 
-app.Site.prototype.submitLostPasswordForm = function() {
+//------------------------------------------------------[ Lost Password Form ]--
 
-    var callback = goog.bind(function(e) {
-        var xhr = e.target;
-        var alert = goog.dom.getElementByClass('alert');
-        goog.dom.removeChildren(alert);
-        goog.dom.classes.remove(alert, 'alert-success', 'alert-error');
-        var message = goog.dom.createDom('strong', {}, 'Done. ');
-        if (xhr.isSuccess()) {
-            goog.dom.append(alert, message,
-                'Check your email on how to reset your password.');
-            goog.dom.classes.add(alert, 'alert-success');
-            goog.dom.classes.remove(alert, 'hide');
-        } else {
-            message = goog.dom.createDom('strong', {}, 'Error! ');
-            goog.dom.append(alert, message,
-                'Please enter a valid email address.');
-            goog.dom.classes.add(alert, 'alert-error');
-            goog.dom.classes.remove(alert, 'hide');
+app.Site.prototype.fetchLostPasswordForm = function() {
+    var uri = new goog.Uri('/lost-password');
+    this.xMan.get(uri, goog.bind(this.onLostPasswordFormReceived, this));
+};
+
+app.Site.prototype.onLostPasswordFormReceived = function(e) {
+    var xhr = e.target;
+    var html = goog.dom.htmlToDocumentFragment(xhr.getResponseText());
+    var element = this.layout_.getNestElement('main', 'center');
+
+    // This is not right. It could remove layout elements.
+    goog.dom.removeChildren(element);
+
+    goog.dom.append(/** @type {!Node} */ (element), html);
+
+    this.listen(
+        goog.dom.getElement('cancel'),
+        goog.events.EventType.CLICK,
+        function() {
+            this.fetchIntro();
+            this.slideSignUpIn();
         }
-    }, this);
-
-    var form = /** @type {HTMLFormElement} */ (
-        goog.dom.getElement('get-credentials-form')
+    ).listen(
+        goog.dom.getElement('submit'),
+        goog.events.EventType.CLICK,
+        this.submitLostPasswordForm
     );
+    this.slideSignUpOut();
+};
+
+
+app.Site.prototype.submitLostPasswordForm = function() {
+    var uri = new goog.Uri('/lost-password');
+    var form = this.getSterileFormFromId_('get-credentials-form');
     var constraintsValidate = form.checkValidity();
     if (constraintsValidate) {
         var content = goog.dom.forms.getFormDataMap(form).toObject();
-        this.xMan.send('/lost-password', '/lost-password', 'POST',
-            goog.uri.utils.buildQueryDataFromMap(content),
-            null, 10, callback, 0, goog.net.XhrIo.ResponseType.TEXT
+        var queryData = goog.uri.utils.buildQueryDataFromMap(content);
+        this.xMan.post(
+            uri,
+            queryData,
+            goog.bind(this.onSubmitLostPasswordForm, this)
         );
     }
 };
 
-app.Site.prototype.initHome = function() {
+app.Site.prototype.onSubmitLostPasswordForm = function(e) {
+    var xhr = e.target;
+    var alert = goog.dom.getElementByClass('alert');
+    goog.dom.removeChildren(alert);
+    goog.dom.classes.remove(alert, 'alert-success', 'alert-error');
+    var message = goog.dom.createDom('strong', {}, 'Done. ');
+    if (xhr.isSuccess()) {
+        goog.dom.append(alert, message,
+            'Check your email on how to reset your password.');
+        goog.dom.classes.add(alert, 'alert-success');
+        goog.dom.classes.remove(alert, 'hide');
+    } else {
+        message = goog.dom.createDom('strong', {}, 'Error! ');
+        goog.dom.append(alert, message,
+            'Please enter a valid email address.');
+        goog.dom.classes.add(alert, 'alert-error');
+        goog.dom.classes.remove(alert, 'hide');
+    }
+};
+
+//---------------------------------------------------------------[ Home Page ]--
+
+app.Site.prototype.fetchHomePage = function() {
+    var uri = new goog.Uri('/home');
+    this.xMan.get(uri, goog.bind(this.onHomePageReceived, this));
+};
+
+app.Site.prototype.onHomePageReceived = function(e) {
+    var xhr = e.target;
+    var html = goog.dom.htmlToDocumentFragment(xhr.getResponseText());
+    var element = this.layout_.getNestElement('main', 'center');
+
+    // This is not right. It could remove layout elements.
+    goog.dom.removeChildren(element);
+    goog.dom.append(/** @type {!Node} */ (element), html);
+
+    this.slideSignUpOut();
     this.listen(
         goog.dom.getElement('btn-logout'),
         goog.events.EventType.CLICK,
@@ -398,29 +354,55 @@ app.Site.prototype.initHome = function() {
 };
 
 app.Site.prototype.logOut = function() {
-    var callback = goog.bind(function(e) {
-        var xhr = e.target;
-        if (xhr.isSuccess()) {
-            window.open('/', '_self');
-        } else {
-            console.debug('Log Out was not successful. Try again...', e, xhr);
-        }
-    }, this);
+    var uri = new goog.Uri('/home');
+    var queryData = goog.uri.utils.buildQueryDataFromMap({'logout': true});
+    this.xMan.post(uri, queryData, goog.bind(this.onLogOut, this));
+};
 
-    this.xMan.send(
-        '/logout', // id
-        '/home', // url
-        'POST',      // opt_method
-        goog.uri.utils.buildQueryDataFromMap({'logout': true}),
-        null,       // opt_headers
-        10,         // opt_priority
-        callback,   // opt_callback
-        0,          // opt_maxRetries
-        goog.net.XhrIo.ResponseType.TEXT // opt_responseType
-    );
+app.Site.prototype.onLogOut = function(e) {
+    var xhr = e.target;
+    if (xhr.isSuccess()) {
+        window.open('/', '_self');
+    } else {
+        console.debug('Log Out was not successful. Try again...', e, xhr);
+    }
 };
 
 //-----------------------------------------------------[ Utility Stuff Below ]--
+
+/**
+ * Given a form id, get the form, and intercept and sterilise its submit.
+ * Forms that passed through here will not be able to be submitted with a
+ * normal submit button any more, but built in HTML5 Constraint Validation
+ * will still function on the form. This way, we can still have a button with
+ * type="submit", which will trigger the validation, and we can submit
+ * valid forms with xhrio which allows us to add callbacks to them.
+ *
+ * @param {string} string The id of the form we want to sterilise
+ * @returns {HTMLFormElement}
+ * @private
+ */
+app.Site.prototype.getSterileFormFromId_ = function(string) {
+    var form = /** @type {HTMLFormElement} */ (goog.dom.getElement(string));
+    if (form) {
+        this.listen(form, goog.events.EventType.SUBMIT, function(e) {
+            e.preventDefault();
+        });
+    }
+    return form;
+};
+
+/**
+ * Given a form, get the post content string.
+ * @param form
+ * @returns {string}
+ */
+app.Site.prototype.getPostContentFromForm = function(form) {
+    return goog.uri.utils.buildQueryDataFromMap(
+        goog.dom.forms.getFormDataMap(form).toObject()
+    );
+};
+
 
 app.Site.prototype.hideAllNests = function() {
     var nests = [

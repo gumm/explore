@@ -8,7 +8,6 @@ EM.server = require("emailjs/email").server.connect({
     user: ES.user,
     password: ES.password,
     ssl: true
-
 });
 
 EM.dispatchResetPasswordLink = function (account, callback) {

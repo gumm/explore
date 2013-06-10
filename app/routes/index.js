@@ -49,11 +49,8 @@ exports.login = function (req, res) {
 exports.postLogin = function (req, res) {
     var user = req.param('user');
     var password = req.param('pass');
-    console.log('USER:', user);
-    console.log('PASSWORD:', password);
-    console.log('DID WE GET HERE??????');
 
-    AM.manualLogin(req.param('user'), req.param('pass'), function (e, o) {
+    AM.manualLogin(user, password, function (e, o) {
         if (!o) {
             res.send(e, 400);
         } else {
@@ -94,7 +91,6 @@ exports.postSignUp = function (req, res) {
 exports.home = function (req, res) {
     if (req.session.user == null) {
         // if user is not logged-in redirect back to login page //
-        console.log('USER NOT LOGGED IN - SORRY');
         res.redirect('/');
     } else {
         res.render('home', {
@@ -127,7 +123,6 @@ exports.postHome = function (req, res) {
             }
         });
     } else if (req.param('logout') == 'true') {
-        console.log('LOG OUT Please...');
         res.clearCookie('user');
         res.clearCookie('pass');
         req.session.destroy(function (e) {

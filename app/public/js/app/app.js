@@ -1,6 +1,7 @@
 goog.provide('app');
 
 goog.require('app.Site');
+goog.require('bad.Net');
 goog.require('goog.dom');
 goog.require('goog.net.XhrManager');
 
@@ -16,12 +17,20 @@ app.initSite = function() {
         opt_maxCount = 6,
         opt_timeoutInterval = 0;
 
-    var xMan = new goog.net.XhrManager(
+    /**
+     * @type {!goog.net.XhrManager}
+     */
+    var xhrMan = new goog.net.XhrManager(
         opt_maxRetries,
         opt_headers,
         opt_minCount,
         opt_maxCount,
         opt_timeoutInterval);
+
+    /**
+     * @type {!bad.Net}
+     */
+    var xMan = new bad.Net(xhrMan);
 
 
     /**
