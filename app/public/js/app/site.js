@@ -3,17 +3,18 @@
  */
 goog.provide('app.Site');
 
-goog.require('bad.ui.Component');
+goog.require('app.user.LoginForm');
+goog.require('bad.ui.EventType');
 goog.require('bad.ui.Layout');
+goog.require('goog.Uri');
 goog.require('goog.dom.forms');
 goog.require('goog.events.EventHandler');
 goog.require('goog.net.XhrIo');
-goog.require('goog.Uri');
 
 /**
  * Constructor of the main site object. Inherits from EventHandler, so it
  * can simply subscribe to events on its children.
- * @param {bad.Net} xManWrapper This site's XhrManager wrapped in a bad.Net
+ * @param {!bad.Net} xManWrapper This site's XhrManager wrapped in a bad.Net
  *      convenience wrapper.
  *
  * @constructor
@@ -23,7 +24,7 @@ app.Site = function(xManWrapper) {
     goog.events.EventHandler.call(this, this);
 
     /**
-     * @type {bad.Net}
+     * @type {!bad.Net}
      */
     this.xMan = xManWrapper;
 
@@ -110,7 +111,7 @@ app.Site.prototype.initLayout_ = function() {
         function(e) {
             if (e.target.getId() === id) {
                 this.hideAllNests();
-                this.initNavigation();
+                this.initForms();
             }
         }
     );
@@ -123,9 +124,40 @@ app.Site.prototype.getLayout = function() {
     return this.layout_;
 };
 
-app.Site.prototype.initNavigation = function() {
+app.Site.prototype.initForms = function() {
+    this.loginForm_ = new app.user.LoginForm(
+        this.xMan,
+        'login-form',
+        new goog.Uri('/login'),
+        this.layout_.getNest('main', 'right', 'mid')
+    );
+    this.listen(
+        this.loginForm_,
+        bad.ui.EventType.PANEL_ACTION,
+        function(e) {
+            var value = e.getValue();
+            var data = e.getData();
+            switch (value) {
+                case bad.ui.EventType.PANEL_READY:
+                    this.slideSignUpIn();
+                    break;
+                case 'create-account':
+                    this.fetchSighUpForm();
+                    break;
+                case 'forgot-password':
+                    this.fetchLostPasswordForm();
+                    break;
+                case 'login-success':
+                    this.fetchHomePage(data);
+                    break;
+                default:
+                    console.debug('Unable to understand event from panel', e);
+            }
+        }
+    );
+    this.loginForm_.renderWithTemplate();
+
     this.fetchIntro();
-    this.fetchLoginForm();
 };
 
 //-------------------------------------------------------------------[ Intro ]--
@@ -145,64 +177,6 @@ app.Site.prototype.onIntroReceived = function(e) {
     goog.dom.append(/** @type {!Node} */ (element), html);
 };
 
-//--------------------------------------------------------------[ Login Form ]--
-
-app.Site.prototype.fetchLoginForm = function() {
-    var uri = new goog.Uri('/login');
-    this.xMan.get(uri, goog.bind(this.onLoginFormReceived, this));
-};
-
-app.Site.prototype.onLoginFormReceived = function(e) {
-    var xhr = e.target;
-    var html = goog.dom.htmlToDocumentFragment(xhr.getResponseText());
-    var element = this.layout_.getNestElement('main', 'right', 'mid');
-
-    // This is not right. It could remove layout elements.
-    goog.dom.removeChildren(element);
-    goog.dom.append(/** @type {!Node} */ (element), html);
-
-    this.listen(
-        goog.dom.getElement('create-account'),
-        goog.events.EventType.CLICK,
-        this.fetchSighUpForm
-    ).listen(
-        goog.dom.getElement('forgot-password'),
-        goog.events.EventType.CLICK,
-        this.fetchLostPasswordForm
-    ).listen(
-        goog.dom.getElement('btn-login'),
-        goog.events.EventType.CLICK,
-        this.submitLoginForm
-    );
-    this.slideSignUpIn();
-};
-
-app.Site.prototype.submitLoginForm = function() {
-
-    var form = this.getSterileFormFromId_('login-form');
-    if (form.checkValidity()) {
-        this.logIn_(this.getPostContentFromForm(form));
-    }
-};
-
-app.Site.prototype.logIn_ = function(credential) {
-    var uri = new goog.Uri('/login');
-    this.xMan.post(
-        uri,
-        credential,
-        goog.bind(this.onSubmitLoginForm, this)
-    );
-};
-
-app.Site.prototype.onSubmitLoginForm = function(e) {
-    var xhr = e.target;
-    if (xhr.isSuccess()) {
-        this.fetchHomePage();
-    } else {
-        console.debug('Submit was not successful. Try again...', e, xhr);
-    }
-};
-
 //------------------------------------------------------------[ Sign-Up Form ]--
 
 app.Site.prototype.fetchSighUpForm = function() {
@@ -210,6 +184,9 @@ app.Site.prototype.fetchSighUpForm = function() {
     this.xMan.get(uri, goog.bind(this.onSighUpFormReceived, this));
 };
 
+/**
+ * @param {goog.events.EventLike} e Event object.
+ */
 app.Site.prototype.onSighUpFormReceived = function(e) {
     var xhr = e.target;
     var html = goog.dom.htmlToDocumentFragment(xhr.getResponseText());
@@ -251,11 +228,14 @@ app.Site.prototype.submitSignUp = function() {
     }
 };
 
+/**
+ * @param {string} queryData
+ * @param {goog.events.EventLike} e Event object.
+ */
 app.Site.prototype.onSubmitSignUp = function(queryData, e) {
     var xhr = e.target;
     if (xhr.isSuccess()) {
-        console.debug('HERE IS THE CONTENT IN THE CALLBACK', queryData);
-        this.logIn_(queryData);
+        this.loginForm_.logIn(queryData);
     } else {
         console.debug('Submit was not successful. Try again...', e, xhr);
     }
@@ -311,7 +291,7 @@ app.Site.prototype.submitLostPasswordForm = function() {
 
 app.Site.prototype.onSubmitLostPasswordForm = function(e) {
     var xhr = e.target;
-    var alert = goog.dom.getElementByClass('alert');
+    var alert = /** @type {!Node} */ (goog.dom.getElementByClass('alert'));
     goog.dom.removeChildren(alert);
     goog.dom.classes.remove(alert, 'alert-success', 'alert-error');
     var message = goog.dom.createDom('strong', {}, 'Done. ');
@@ -331,7 +311,7 @@ app.Site.prototype.onSubmitLostPasswordForm = function(e) {
 
 //---------------------------------------------------------------[ Home Page ]--
 
-app.Site.prototype.fetchHomePage = function() {
+app.Site.prototype.fetchHomePage = function(data) {
     var uri = new goog.Uri('/home');
     this.xMan.get(uri, goog.bind(this.onHomePageReceived, this));
 };
@@ -378,8 +358,8 @@ app.Site.prototype.onLogOut = function(e) {
  * type="submit", which will trigger the validation, and we can submit
  * valid forms with xhrio which allows us to add callbacks to them.
  *
- * @param {string} string The id of the form we want to sterilise
- * @returns {HTMLFormElement}
+ * @param {string} string The id of the form we want to sterilise.
+ * @return {HTMLFormElement}
  * @private
  */
 app.Site.prototype.getSterileFormFromId_ = function(string) {
@@ -394,8 +374,8 @@ app.Site.prototype.getSterileFormFromId_ = function(string) {
 
 /**
  * Given a form, get the post content string.
- * @param form
- * @returns {string}
+ * @param {HTMLFormElement} form The form to get the post content from.
+ * @return {string}
  */
 app.Site.prototype.getPostContentFromForm = function(form) {
     return goog.uri.utils.buildQueryDataFromMap(
