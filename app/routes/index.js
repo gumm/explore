@@ -24,26 +24,31 @@ exports.index = function (req, res) {
     });
 };
 
-exports.intro = function (req, res) {
-    var app = req.app;
-    res.render('intro', { title: app.get('title')});
+//------------------------------------------------------------------[ Log In ]--
+
+exports.autoLogin = function(req, res) {
+    var errorReply = {error:'No Auto Login Possible'};
+    if (req.session &&
+        req.session.user &&
+        req.session.user.user &&
+        req.session.user.pass) {
+        var user = req.session.user.user;
+        var pass = req.session.user.pass;
+        AM.autoLogin(user, pass, function(o) {
+            if (o !== null) {
+                req.session.user = o;
+                res.send(req.session.user);
+            } else {
+                res.send(errorReply);
+            }
+        });
+    } else {
+        res.send(errorReply);
+    }
 };
 
 exports.login = function (req, res) {
-    // check if the user's credentials are saved in a cookie //
-    if (req.cookies.user == undefined || req.cookies.pass == undefined) {
-        res.render('login', { title: 'Hello - Please Login To Your Account' });
-    } else {
-        // attempt automatic login //
-        AM.autoLogin(req.cookies.user, req.cookies.pass, function (o) {
-            if (o != null) {
-                req.session.user = o;
-                res.redirect('/home');
-            } else {
-                res.render('login', { title: 'Hello - Please Login To Your Account' });
-            }
-        });
-    }
+    res.render('login', {title: 'Hello - Please Login To Your Account'});
 };
 
 exports.postLogin = function (req, res) {
@@ -55,7 +60,7 @@ exports.postLogin = function (req, res) {
             res.send(e, 400);
         } else {
             req.session.user = o;
-            if (req.param('remember-me') == 'true') {
+            if (req.param('remember-me') === 'true') {
                 res.cookie('user', o.user, { maxAge: 900000 });
                 res.cookie('pass', o.pass, { maxAge: 900000 });
             }
@@ -64,7 +69,13 @@ exports.postLogin = function (req, res) {
     });
 };
 
-// creating new accounts //
+exports.intro = function (req, res) {
+    var app = req.app;
+    res.render('intro', {title: app.get('title')});
+};
+
+//------------------------------------------------------------[ New Accounts ]--
+
 exports.signUp = function (req, res) {
     res.render('signup', {  title: 'Signup', countries: CT });
 };
@@ -80,16 +91,16 @@ exports.postSignUp = function (req, res) {
         if (e) {
             res.send(e, 400);
         } else {
-            res.send('ok', 200);
+            res.send('OK', 200);
         }
     });
 };
 
 
-// logged-in user homepage //
+//-------------------------------------------------[ Logged-in User Homepage ]--
 
 exports.home = function (req, res) {
-    if (req.session.user == null) {
+    if (req.session.user === null) {
         // if user is not logged-in redirect back to login page //
         res.redirect('/');
     } else {
@@ -102,7 +113,7 @@ exports.home = function (req, res) {
 };
 
 exports.postHome = function (req, res) {
-    if (req.param('user') != undefined) {
+    if (req.param('user') !== undefined) {
         AM.updateAccount({
             user: req.param('user'),
             name: req.param('name'),
@@ -115,14 +126,15 @@ exports.postHome = function (req, res) {
             } else {
                 req.session.user = o;
                 // update the user's login cookies if they exists //
-                if (req.cookies.user != undefined && req.cookies.pass != undefined) {
+                if (req.cookies.user !== undefined &&
+                    req.cookies.pass !== undefined) {
                     res.cookie('user', o.user, { maxAge: 900000 });
                     res.cookie('pass', o.pass, { maxAge: 900000 });
                 }
                 res.send('ok', 200);
             }
         });
-    } else if (req.param('logout') == 'true') {
+    } else if (req.param('logout') === 'true') {
         res.clearCookie('user');
         res.clearCookie('pass');
         req.session.destroy(function (e) {
@@ -131,7 +143,7 @@ exports.postHome = function (req, res) {
     }
 };
 
-// password reset //
+//----------------------------------------------------------[ Password Reset ]--
 
 exports.lostPassword = function (req, res) {
     res.render('lost-password', {  title: 'Signup', countries: CT });
@@ -158,7 +170,6 @@ exports.postLostPassword = function (req, res) {
     });
 };
 
-//
 //    app.get('/reset-password', function (req, res) {
 //        var email = req.query["e"];
 //        var passH = req.query["p"];
@@ -172,7 +183,7 @@ exports.postLostPassword = function (req, res) {
 //            }
 //        })
 //    });
-//
+
 //    app.post('/reset-password', function (req, res) {
 //        var nPass = req.param('pass');
 //        // retrieve the user's email from the session to lookup their account and reset password //
@@ -187,15 +198,15 @@ exports.postLostPassword = function (req, res) {
 //            }
 //        })
 //    });
-//
-//// view & delete accounts //
-//
-//    app.get('/print', function (req, res) {
-//        AM.getAllRecords(function (e, accounts) {
-//            res.render('print', { title: 'Account List', accts: accounts });
-//        })
-//    });
-//
+
+//--------------------------------------------------[ View & Delete Accounts ]--
+
+exports.accounts = function (req, res) {
+    AM.getAllRecords(function (e, accounts) {
+        res.render('accounts', { title: 'Account List', accts: accounts });
+    });
+};
+
 //    app.post('/delete', function (req, res) {
 //        AM.deleteAccount(req.body.id, function (e, obj) {
 //            if (!e) {
@@ -209,17 +220,15 @@ exports.postLostPassword = function (req, res) {
 //            }
 //        });
 //    });
-//
+
 //    app.get('/reset', function (req, res) {
 //        AM.delAllRecords(function () {
 //            res.redirect('/print');
 //        });
 //    });
-//
-//    app.get('*', function (req, res) {
-//        res.render('404', { title: 'Page Not Found'});
-//    });
 
-//};
+exports.four_oh_four = function (req, res) {
+    res.render('404', { title: 'Page Not Found'});
+};
 
 

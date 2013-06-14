@@ -3,6 +3,7 @@ var routes = require('../routes');
 
 exports.urls = function(app) {
     app.get('/', routes.index);
+    app.get('/auto_login', routes.autoLogin);
 
     // Intro pages
     app.get('/intro', routes.intro);
@@ -22,6 +23,11 @@ exports.urls = function(app) {
     // Home Page
     app.get('/home', routes.home);
     app.post('/home', routes.postHome);
+
+    // Print all accounts
+    app.get('/accounts', routes.accounts);
+
+    app.get('*', routes.four_oh_four);
 
 
 //    app.get('/api/customers', customers.findAll);

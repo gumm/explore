@@ -4,49 +4,29 @@ goog.require('bad.ui.Form');
 
 /**
  * The basic login form controller.
- * @param {!bad.Net} xMan
  * @param {!string} id
  * @param {!goog.Uri} uri
  * @param {Object} targetNest
+ * @param {Object} activeNest
  * @param {goog.dom.DomHelper=} opt_domHelper Optional DOM helper.
  * @extends {bad.ui.Form}
  * @constructor
  */
-app.user.LoginForm = function(xMan, id, uri, targetNest, opt_domHelper) {
+app.user.LoginForm = function(id, uri, targetNest, activeNest,
+                              opt_domHelper) {
     bad.ui.Form.call(this, id, uri, targetNest, opt_domHelper);
 
-    /**
-     * @type {bad.Net}
-     */
-    this.xMan = xMan;
+    this.activeNest_ = activeNest;
 };
 goog.inherits(app.user.LoginForm, bad.ui.Form);
 
-app.user.LoginForm.prototype.renderWithTemplate = function() {
-    this.xMan.get(
-        this.uri_,
-        goog.bind(this.onRenderWithTemplateReply_, this));
-};
-
-app.user.LoginForm.prototype.onRenderWithTemplateReply_ = function(e) {
-    var xhr = e.target;
-    this.element_ = /** @type {Element} */ (goog.dom.htmlToDocumentFragment(
-        xhr.getResponseText())
-    );
-    this.render(this.nest_.element);
-};
-
 app.user.LoginForm.prototype.enterDocument = function() {
-    app.user.LoginForm.superClass_.enterDocument.call(this);
-
-    this.form_ = this.getSterileFormFromId(this.id_);
-
     this.getHandler().listen(
         goog.dom.getElement('create-account'),
         goog.events.EventType.CLICK,
         function() {
             //noinspection JSPotentiallyInvalidUsageOfThis
-            this.dispatchComponentEvent('create-account');
+            this.dispatchComponentEvent('sign-up');
         }, undefined, this
     ).listen(
         goog.dom.getElement('forgot-password'),
@@ -61,7 +41,8 @@ app.user.LoginForm.prototype.enterDocument = function() {
         this.submitLoginForm
     );
 
-    this.dispatchComponentEvent(bad.ui.EventType.PANEL_READY);
+    this.topFix = goog.dom.getElement('signup');
+    app.user.LoginForm.superClass_.enterDocument.call(this);
 };
 
 app.user.LoginForm.prototype.submitLoginForm = function() {
@@ -86,4 +67,30 @@ app.user.LoginForm.prototype.onSubmitLoginForm = function(e) {
     } else {
         console.debug('Submit was not successful. Try again...', e, xhr);
     }
+};
+
+//-----------------------------------------------------------------[ Utility ]--
+
+app.user.LoginForm.prototype.slideIn = function() {
+    this.activeNest_.slideOpen(null, 350,
+        goog.bind(this.showSignUpButton_, this)
+    );
+};
+
+/**
+ * @param {Function=} opt_callback
+ */
+app.user.LoginForm.prototype.slideOut = function(opt_callback) {
+    this.hideSignUpButton_();
+    this.activeNest_.slideClosed(
+        goog.bind(this.activeNest_.hide, this.activeNest_, opt_callback)
+    );
+};
+
+app.user.LoginForm.prototype.showSignUpButton_ = function() {
+    goog.dom.classes.remove(this.topFix, 'hide');
+};
+
+app.user.LoginForm.prototype.hideSignUpButton_ = function() {
+    goog.dom.classes.add(this.topFix, 'hide');
 };

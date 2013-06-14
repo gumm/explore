@@ -3,9 +3,16 @@
  */
 goog.provide('app.Site');
 
+goog.require('app.base.HomeView');
+goog.require('app.base.LoginView');
+goog.require('app.user.HomePanel');
 goog.require('app.user.LoginForm');
+goog.require('app.user.LostPasswordForm');
+goog.require('app.user.SignUpForm');
 goog.require('bad.ui.EventType');
 goog.require('bad.ui.Layout');
+goog.require('bad.ui.Panel');
+
 goog.require('goog.Uri');
 goog.require('goog.dom.forms');
 goog.require('goog.events.EventHandler');
@@ -26,16 +33,20 @@ app.Site = function(xManWrapper) {
     /**
      * @type {!bad.Net}
      */
-    this.xMan = xManWrapper;
+    this.xMan_ = xManWrapper;
 
     /**
-     * @type {?bad.ui.Layout}
+     * @type {bad.ui.Layout}
      * @private
      */
-    this.layout_ = null;
+    this.layout_ = undefined;
 };
 goog.inherits(app.Site, goog.events.EventHandler);
 
+app.Site.viewMap = {
+    LOGIN: app.base.LoginView,
+    HOME: app.base.HomeView
+};
 
 /**
  * Home page and landing page after login.
@@ -105,13 +116,21 @@ app.Site.prototype.initLayout_ = function() {
     rightVerticalLayout.setInitialSize(innerCellsVertical[0], 50);
     rightVerticalLayout.setInitialSize(innerCellsVertical[2], 50);
 
+    /**
+     * Each if the internal layouts will fire a LAYOUT_READY event, and all
+     * of those events bubble to this_layout_. Only when all the internal
+     * layouts are ready, does this.layout_ fire its LAYOUT_READY event.
+     * So if we just want to react the this.layout_, then we need to
+     * check the target id of all events, and simply act when it is the same
+     * as this.layout_'s id.
+     */
     this.listen(
         this.layout_,
         bad.ui.Layout.EventType.LAYOUT_READY,
         function(e) {
             if (e.target.getId() === id) {
                 this.hideAllNests();
-                this.initForms();
+                this.autoLogin();
             }
         }
     );
@@ -120,269 +139,50 @@ app.Site.prototype.initLayout_ = function() {
     this.layout_.render();
 };
 
-app.Site.prototype.getLayout = function() {
-    return this.layout_;
+//--------------------------------------------------------------[ Auto Login ]--
+
+app.Site.prototype.autoLogin = function() {
+    var callback = goog.bind(this.onAutoLoginReply, this);
+    this.xMan_.get(new goog.Uri('/auto_login'), callback);
 };
 
-app.Site.prototype.initForms = function() {
-    this.loginForm_ = new app.user.LoginForm(
-        this.xMan,
-        'login-form',
-        new goog.Uri('/login'),
-        this.layout_.getNest('main', 'right', 'mid')
-    );
-    this.listen(
-        this.loginForm_,
-        bad.ui.EventType.PANEL_ACTION,
-        function(e) {
-            var value = e.getValue();
-            var data = e.getData();
-            switch (value) {
-                case bad.ui.EventType.PANEL_READY:
-                    this.slideSignUpIn();
-                    break;
-                case 'create-account':
-                    this.fetchSighUpForm();
-                    break;
-                case 'forgot-password':
-                    this.fetchLostPasswordForm();
-                    break;
-                case 'login-success':
-                    this.fetchHomePage(data);
-                    break;
-                default:
-                    console.debug('Unable to understand event from panel', e);
-            }
-        }
-    );
-    this.loginForm_.renderWithTemplate();
-
-    this.fetchIntro();
-};
-
-//-------------------------------------------------------------------[ Intro ]--
-
-app.Site.prototype.fetchIntro = function() {
-    var uri = new goog.Uri('/intro');
-    this.xMan.get(uri, goog.bind(this.onIntroReceived, this));
-};
-
-app.Site.prototype.onIntroReceived = function(e) {
-    var xhr = e.target;
-    var html = goog.dom.htmlToDocumentFragment(xhr.getResponseText());
-    var element = this.layout_.getNestElement('main', 'center');
-
-    // This is not right. It could remove layout elements.
-    goog.dom.removeChildren(element);
-    goog.dom.append(/** @type {!Node} */ (element), html);
-};
-
-//------------------------------------------------------------[ Sign-Up Form ]--
-
-app.Site.prototype.fetchSighUpForm = function() {
-    var uri = new goog.Uri('/signup');
-    this.xMan.get(uri, goog.bind(this.onSighUpFormReceived, this));
-};
-
-/**
- * @param {goog.events.EventLike} e Event object.
- */
-app.Site.prototype.onSighUpFormReceived = function(e) {
-    var xhr = e.target;
-    var html = goog.dom.htmlToDocumentFragment(xhr.getResponseText());
-    var element = this.layout_.getNestElement('main', 'center');
-
-    // This is not right. It could remove layout elements.
-    goog.dom.removeChildren(element);
-    goog.dom.append(/** @type {!Node} */ (element), html);
-    this.listen(
-        goog.dom.getElement('account-cancel'),
-        goog.events.EventType.CLICK,
-        function() {
-            this.fetchIntro();
-            this.slideSignUpIn();
-
-        }
-    ).listen(
-        goog.dom.getElement('account-submit'),
-        goog.events.EventType.CLICK,
-        this.submitSignUp
-    );
-    this.slideSignUpOut();
-};
-
-app.Site.prototype.submitSignUp = function() {
-    var uri = new goog.Uri('/signup');
-    var form = this.getSterileFormFromId_('account-form');
-    var constraintsValidate = form.checkValidity();
-    var countryList = goog.dom.forms.getValueByName(form, 'country');
-
-    if (constraintsValidate && countryList !== 'Please select a country') {
-        var content = goog.dom.forms.getFormDataMap(form).toObject();
-        var queryData = goog.uri.utils.buildQueryDataFromMap(content);
-        this.xMan.post(
-            uri,
-            queryData,
-            goog.bind(this.onSubmitSignUp, this, queryData)
-        );
-    }
-};
-
-/**
- * @param {string} queryData
- * @param {goog.events.EventLike} e Event object.
- */
-app.Site.prototype.onSubmitSignUp = function(queryData, e) {
+app.Site.prototype.onAutoLoginReply = function(e) {
     var xhr = e.target;
     if (xhr.isSuccess()) {
-        this.loginForm_.logIn(queryData);
-    } else {
-        console.debug('Submit was not successful. Try again...', e, xhr);
-    }
-};
-
-//------------------------------------------------------[ Lost Password Form ]--
-
-app.Site.prototype.fetchLostPasswordForm = function() {
-    var uri = new goog.Uri('/lost-password');
-    this.xMan.get(uri, goog.bind(this.onLostPasswordFormReceived, this));
-};
-
-app.Site.prototype.onLostPasswordFormReceived = function(e) {
-    var xhr = e.target;
-    var html = goog.dom.htmlToDocumentFragment(xhr.getResponseText());
-    var element = this.layout_.getNestElement('main', 'center');
-
-    // This is not right. It could remove layout elements.
-    goog.dom.removeChildren(element);
-
-    goog.dom.append(/** @type {!Node} */ (element), html);
-
-    this.listen(
-        goog.dom.getElement('cancel'),
-        goog.events.EventType.CLICK,
-        function() {
-            this.fetchIntro();
-            this.slideSignUpIn();
+        var data = xhr.getResponseJson();
+        if (data.error) {
+            this.viewLogin();
+        } else {
+            this.viewHome();
         }
-    ).listen(
-        goog.dom.getElement('submit'),
-        goog.events.EventType.CLICK,
-        this.submitLostPasswordForm
-    );
-    this.slideSignUpOut();
-};
-
-
-app.Site.prototype.submitLostPasswordForm = function() {
-    var uri = new goog.Uri('/lost-password');
-    var form = this.getSterileFormFromId_('get-credentials-form');
-    var constraintsValidate = form.checkValidity();
-    if (constraintsValidate) {
-        var content = goog.dom.forms.getFormDataMap(form).toObject();
-        var queryData = goog.uri.utils.buildQueryDataFromMap(content);
-        this.xMan.post(
-            uri,
-            queryData,
-            goog.bind(this.onSubmitLostPasswordForm, this)
-        );
-    }
-};
-
-app.Site.prototype.onSubmitLostPasswordForm = function(e) {
-    var xhr = e.target;
-    var alert = /** @type {!Node} */ (goog.dom.getElementByClass('alert'));
-    goog.dom.removeChildren(alert);
-    goog.dom.classes.remove(alert, 'alert-success', 'alert-error');
-    var message = goog.dom.createDom('strong', {}, 'Done. ');
-    if (xhr.isSuccess()) {
-        goog.dom.append(alert, message,
-            'Check your email on how to reset your password.');
-        goog.dom.classes.add(alert, 'alert-success');
-        goog.dom.classes.remove(alert, 'hide');
     } else {
-        message = goog.dom.createDom('strong', {}, 'Error! ');
-        goog.dom.append(alert, message,
-            'Please enter a valid email address.');
-        goog.dom.classes.add(alert, 'alert-error');
-        goog.dom.classes.remove(alert, 'hide');
+        this.viewLogin();
     }
 };
 
-//---------------------------------------------------------------[ Home Page ]--
+//-------------------------------------------------------------------[ Views ]--
 
-app.Site.prototype.fetchHomePage = function(data) {
-    var uri = new goog.Uri('/home');
-    this.xMan.get(uri, goog.bind(this.onHomePageReceived, this));
-};
-
-app.Site.prototype.onHomePageReceived = function(e) {
-    var xhr = e.target;
-    var html = goog.dom.htmlToDocumentFragment(xhr.getResponseText());
-    var element = this.layout_.getNestElement('main', 'center');
-
-    // This is not right. It could remove layout elements.
-    goog.dom.removeChildren(element);
-    goog.dom.append(/** @type {!Node} */ (element), html);
-
-    this.slideSignUpOut();
-    this.listen(
-        goog.dom.getElement('btn-logout'),
-        goog.events.EventType.CLICK,
-        this.logOut
-    );
-};
-
-app.Site.prototype.logOut = function() {
-    var uri = new goog.Uri('/home');
-    var queryData = goog.uri.utils.buildQueryDataFromMap({'logout': true});
-    this.xMan.post(uri, queryData, goog.bind(this.onLogOut, this));
-};
-
-app.Site.prototype.onLogOut = function(e) {
-    var xhr = e.target;
-    if (xhr.isSuccess()) {
-        window.open('/', '_self');
-    } else {
-        console.debug('Log Out was not successful. Try again...', e, xhr);
+app.Site.prototype.switchView = function(view) {
+    if (this.activeView_) {
+        this.activeView_.dispose();
     }
+    this.activeView_ = view;
+    this.activeView_.setLayout(this.layout_);
+    this.activeView_.setXMan(this.xMan_);
+    this.activeView_.render();
+};
+
+app.Site.prototype.viewLogin = function() {
+    var view = new app.Site.viewMap.LOGIN();
+    this.switchView(view);
+};
+
+app.Site.prototype.viewHome = function() {
+    var view = new app.Site.viewMap.HOME();
+    this.switchView(view);
 };
 
 //-----------------------------------------------------[ Utility Stuff Below ]--
-
-/**
- * Given a form id, get the form, and intercept and sterilise its submit.
- * Forms that passed through here will not be able to be submitted with a
- * normal submit button any more, but built in HTML5 Constraint Validation
- * will still function on the form. This way, we can still have a button with
- * type="submit", which will trigger the validation, and we can submit
- * valid forms with xhrio which allows us to add callbacks to them.
- *
- * @param {string} string The id of the form we want to sterilise.
- * @return {HTMLFormElement}
- * @private
- */
-app.Site.prototype.getSterileFormFromId_ = function(string) {
-    var form = /** @type {HTMLFormElement} */ (goog.dom.getElement(string));
-    if (form) {
-        this.listen(form, goog.events.EventType.SUBMIT, function(e) {
-            e.preventDefault();
-        });
-    }
-    return form;
-};
-
-/**
- * Given a form, get the post content string.
- * @param {HTMLFormElement} form The form to get the post content from.
- * @return {string}
- */
-app.Site.prototype.getPostContentFromForm = function(form) {
-    return goog.uri.utils.buildQueryDataFromMap(
-        goog.dom.forms.getFormDataMap(form).toObject()
-    );
-};
-
 
 app.Site.prototype.hideAllNests = function() {
     var nests = [
@@ -396,94 +196,4 @@ app.Site.prototype.hideAllNests = function() {
     goog.array.forEach(nests, function(nest) {
         nest.hide();
     }, this);
-};
-
-app.Site.prototype.slideSignUpIn = function() {
-    var nest = this.layout_.getNest('main', 'right');
-    nest.slideOpen(null, 350, goog.bind(this.showSignUp, this));
-};
-
-app.Site.prototype.slideSignUpOut = function() {
-    var nest = this.layout_.getNest('main', 'right');
-    var hideSignup = goog.bind(this.hideSignUp, this);
-    nest.slideClosed(goog.bind(nest.hide, nest, hideSignup));
-};
-
-app.Site.prototype.showSignUp = function() {
-    var topFix = goog.dom.getElement('signup');
-    goog.dom.classes.remove(topFix, 'hide');
-};
-
-app.Site.prototype.hideSignUp = function() {
-    var topFix = goog.dom.getElement('signup');
-    goog.dom.classes.add(topFix, 'hide');
-};
-
-app.Site.prototype.slideHideAllNests = function() {
-    goog.object.forEach(this.getLayout().getNests(), function(nest) {
-        this.slideHideNest(nest);
-    }, this);
-};
-
-app.Site.prototype.slideOpenAllNests = function() {
-    goog.object.forEach(this.getLayout().getNests(), function(nest) {
-        this.slideOpenNest(nest);
-    }, this);
-};
-
-/**
-* @param {Object} nest
-*/
-app.Site.prototype.slideOpenNest = function(nest) {
-    if (nest.slideOpen) {
-        nest.slideOpen();
-    }
-};
-
-/**
-* @param {Object} nest
-*/
-app.Site.prototype.slideHideNest = function(nest) {
-    if (nest.slideClosed) {
-        nest.slideClosed(function() {
-            nest.hide();
-        });
-    }
-};
-
-/**
-* @param {Object} nest
-*/
-app.Site.prototype.hideNest = function(nest) {
-    if (nest.hide) {
-        nest.hide();
-    }
-};
-
-/**
-* @param {number=} op_perCent
-* @param {number=} opt_pixels
-* @param {Function=} opt_callback
-*/
-app.Site.prototype.openLeft = function(op_perCent, opt_pixels, opt_callback) {
-    this.getLayout().getNest('main', 'left').slideOpen(
-        op_perCent, opt_pixels, opt_callback);
-};
-
-/**
-* @param {number=} op_perCent
-* @param {number=} opt_pixels
-* @param {Function=} opt_callback
-*/
-app.Site.prototype.openRight = function(op_perCent, opt_pixels, opt_callback) {
-    this.getLayout().getNest('main', 'right').slideOpen(
-        op_perCent, opt_pixels, opt_callback);
-};
-
-app.Site.prototype.closeLeft = function() {
-    this.slideHideNest(this.getLayout().getNest('main', 'left'));
-};
-
-app.Site.prototype.closeRight = function() {
-    this.slideHideNest(this.getLayout().getNest('main', 'right'));
 };

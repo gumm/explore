@@ -5,7 +5,7 @@ var moment = require('moment');
 
 var dbPort = 27017;
 var dbHost = 'localhost';
-var dbName = 'node-login';
+var dbName = 'explore';
 
 /* establish the database connection */
 
@@ -22,9 +22,9 @@ var accounts = db.collection('accounts');
 /* login validation methods */
 
 exports.autoLogin = function (user, pass, callback) {
-    accounts.findOne({user: user}, function (e, o) {
-        if (o) {
-            o.pass == pass ? callback(o) : callback(null);
+    accounts.findOne({user: user}, function(e, o) {
+        if (o && o.pass === pass) {
+            callback(o);
         } else {
             callback(null);
         }
@@ -32,7 +32,7 @@ exports.autoLogin = function (user, pass, callback) {
 };
 
 exports.manualLogin = function (user, pass, callback) {
-    accounts.findOne({user: user}, function (e, o) {
+    accounts.findOne({user: user}, function(e, o) {
         if (o == null) {
             callback('user-not-found');
         } else {
