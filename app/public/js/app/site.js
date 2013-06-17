@@ -28,7 +28,7 @@ goog.require('goog.net.XhrIo');
  * @extends {goog.events.EventHandler}
  */
 app.Site = function(xManWrapper) {
-    goog.events.EventHandler.call(this, this);
+    goog.events.EventHandler.call(this);
 
     /**
      * @type {!bad.Net}
@@ -39,14 +39,9 @@ app.Site = function(xManWrapper) {
      * @type {bad.ui.Layout}
      * @private
      */
-    this.layout_ = undefined;
+    this.layout_ = null;
 };
 goog.inherits(app.Site, goog.events.EventHandler);
-
-app.Site.viewMap = {
-    LOGIN: app.base.LoginView,
-    HOME: app.base.HomeView
-};
 
 /**
  * Home page and landing page after login.
@@ -162,6 +157,9 @@ app.Site.prototype.onAutoLoginReply = function(e) {
 
 //-------------------------------------------------------------------[ Views ]--
 
+/**
+ * @param {bad.ui.View} view
+ */
 app.Site.prototype.switchView = function(view) {
     if (this.activeView_) {
         this.activeView_.dispose();
@@ -173,12 +171,24 @@ app.Site.prototype.switchView = function(view) {
 };
 
 app.Site.prototype.viewLogin = function() {
-    var view = new app.Site.viewMap.LOGIN();
+    /**
+     * @type {app.base.LoginView}
+     */
+    var view = new app.base.LoginView();
+    this.listenOnce(
+        view,
+        'login-success', function(e) {
+            console.debug('HERE WE GO!!!', e.data);
+            this.viewHome();
+        });
     this.switchView(view);
 };
 
 app.Site.prototype.viewHome = function() {
-    var view = new app.Site.viewMap.HOME();
+    /**
+     * @type {app.base.HomeView}
+     */
+    var view = new app.base.HomeView();
     this.switchView(view);
 };
 

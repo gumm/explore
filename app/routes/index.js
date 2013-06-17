@@ -100,13 +100,13 @@ exports.postSignUp = function (req, res) {
 //-------------------------------------------------[ Logged-in User Homepage ]--
 
 exports.home = function (req, res) {
-    if (req.session.user === null) {
+    if (!req.session.user) {
         // if user is not logged-in redirect back to login page //
         res.redirect('/');
     } else {
         res.render('home', {
             title: 'Control Panel',
-            countries: CT,
+//            countries: CT,
             udata: req.session.user
         });
     }

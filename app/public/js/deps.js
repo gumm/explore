@@ -17,4 +17,4 @@ goog.addDependency('../../../bad-library/bad/ui/form.js', ['bad.ui.Form'], ['bad
 goog.addDependency('../../../bad-library/bad/ui/layout.js', ['bad.ui.Layout', 'bad.ui.Layout.CssClassMap', 'bad.ui.Layout.IdFragment'], ['bad.CssClassMap', 'bad.ui.Component', 'bad.ui.EventType', 'goog.dom.ViewportSizeMonitor', 'goog.fx.Animation', 'goog.fx.Dragger']);
 goog.addDependency('../../../bad-library/bad/ui/panel.js', ['bad.ui.Panel'], ['bad.ui.Component', 'goog.uri.utils']);
 goog.addDependency('../../../bad-library/bad/ui/uieventtype.js', ['bad.ui.EventType', 'bad.ui.Resizable.EventType'], ['goog.fx.Dragger.EventType']);
-goog.addDependency('../../../bad-library/bad/ui/view.js', ['bad.ui.View'], ['goog.events.EventHandler']);
+goog.addDependency('../../../bad-library/bad/ui/view.js', ['bad.ui.View'], ['goog.ui.Component']);

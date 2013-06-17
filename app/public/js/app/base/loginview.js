@@ -3,16 +3,11 @@ goog.provide('app.base.LoginView');
 goog.require('bad.ui.View');
 
 /**
- * @param {!bad.Net} xManWrapper This site's XhrManager wrapped in a bad.Net
- *      convenience wrapper.
- *
  * @constructor
  * @extends {bad.ui.View}
  */
-app.base.LoginView = function(xManWrapper) {
-    bad.ui.View.call(this, this);
-
-
+app.base.LoginView = function() {
+    bad.ui.View.call(this);
 };
 goog.inherits(app.base.LoginView, bad.ui.View);
 
@@ -55,12 +50,10 @@ app.base.LoginView.prototype.onPanelAction = function(e) {
     var value = e.getValue();
     var data = e.getData();
 
-    console.debug(panel, value, data);
-
     switch (value) {
         case bad.ui.EventType.PANEL_READY:
             if (panel.slideIn) {
-                panel.slideIn();
+                panel.slideIn(350);
             }
             break;
         case 'sign-up':
@@ -70,13 +63,15 @@ app.base.LoginView.prototype.onPanelAction = function(e) {
             this.enterLostPasswordForm();
             break;
         case 'login-success':
+            console.debug('LOGIN SUCCESS', data);
             this.fetchHomePage(data);
             break;
         case 'account-cancel':
             this.exitSignUpForm();
             break;
         case 'signup-success':
-//            this.loginForm_.logIn(data);
+            console.debug('SIGN UP SUCCESS - HERE IS THE DATA:', data);
+            this.panelMap['LOGIN-FORM'].logIn(data);
             break;
         case 'cancel':
             this.exitLostPasswordForm();
@@ -141,21 +136,11 @@ app.base.LoginView.prototype.exitLostPasswordForm = function() {
 //---------------------------------------------------------------[ Home Page ]--
 
 app.base.LoginView.prototype.fetchHomePage = function(data) {
-    if (!this.homePanel_) {
-        this.homePanel_ = new app.user.HomePanel(
-            this.xMan_,
-            new goog.Uri('/home'),
-            this.layout_.getNest('main', 'center')
-        );
-        this.homePanel_.setUserData(data);
-        this.homePanel_.renderWithTemplate();
-    } else {
-        this.homePanel_.setUserData(data);
-        this.introPanel_.dispose();
-        this.signUpForm_.dispose();
-        this.homePanel_.renderWithTemplate();
+    var loginForm = this.panelMap['LOGIN-FORM'];
 
-        var dispose = goog.bind(this.loginForm_.dispose, this.loginForm_);
-        this.loginForm_.slideOut(dispose);
-    }
+    var callback = goog.bind(function() {
+        console.debug('INNER CALLBACK TO DISPATCH EVENT');
+        this.dispatchEvent({type:'login-success', data:data});
+    }, this);
+    loginForm.slideOut(callback);
 };

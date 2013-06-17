@@ -61,8 +61,8 @@ app.user.LoginForm.prototype.logIn = function(credential) {
 
 app.user.LoginForm.prototype.onSubmitLoginForm = function(e) {
     var xhr = e.target;
-    var data = xhr.getResponseJson();
     if (xhr.isSuccess()) {
+        var data = xhr.getResponseJson();
         this.dispatchComponentEvent('login-success', data);
     } else {
         console.debug('Submit was not successful. Try again...', e, xhr);
@@ -71,8 +71,8 @@ app.user.LoginForm.prototype.onSubmitLoginForm = function(e) {
 
 //-----------------------------------------------------------------[ Utility ]--
 
-app.user.LoginForm.prototype.slideIn = function() {
-    this.activeNest_.slideOpen(null, 350,
+app.user.LoginForm.prototype.slideIn = function(size) {
+    this.activeNest_.slideOpen(null, size,
         goog.bind(this.showSignUpButton_, this)
     );
 };
@@ -82,9 +82,10 @@ app.user.LoginForm.prototype.slideIn = function() {
  */
 app.user.LoginForm.prototype.slideOut = function(opt_callback) {
     this.hideSignUpButton_();
-    this.activeNest_.slideClosed(
-        goog.bind(this.activeNest_.hide, this.activeNest_, opt_callback)
+    var callback = goog.bind(
+        this.activeNest_.hide, this.activeNest_, opt_callback
     );
+    this.activeNest_.slideClosed(callback);
 };
 
 app.user.LoginForm.prototype.showSignUpButton_ = function() {

@@ -93,11 +93,13 @@ exports.configure = function(app, express, dev) {
         .set('mongo', mongo);
 
     // Middle-ware
+    app.use(express.compress());
     app.use(express.favicon(conf.path.FAVICON));
     app.use(express.bodyParser());
     app.use(express.cookieParser());
     app.use(express.session({ secret: 'super-duper-secret-secret' }));
-    app.use(express.static(conf.path.PUBLIC));
+    app.use(express.static(conf.path.PUBLIC, {maxAge: 8640000000}));
+
 
     // Development only
     if ('development' === app.get('env')) {

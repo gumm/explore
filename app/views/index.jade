@@ -1,6 +1,15 @@
 extends layout
 
 block bottomScripts
+    if jsIsCompiled
+            script(src = jsCompiled)
+            script(src = bootstrap)
+        else
+            script(src = goog)
+            script(src = deps)
+            script()
+                goog.require('app');
+            script(src = bootstrap)
     script()
         bootstrap.setDefaults('#{wsServer}', '#{wsPort}');
         bootstrap.addApp('site');

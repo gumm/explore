@@ -7,7 +7,7 @@ goog.require('bad.ui.View');
  * @extends {bad.ui.View}
  */
 app.base.HomeView = function() {
-    bad.ui.View.call(this, this);
+    bad.ui.View.call(this);
 };
 goog.inherits(app.base.HomeView, bad.ui.View);
 

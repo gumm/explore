@@ -7,16 +7,6 @@ html
         else
             link(rel='stylesheet', href = cssBasic)
 
-        if jsIsCompiled
-            script(src = jsCompiled)
-            script(src = bootstrap)
-        else
-            script(src = goog)
-            script(src = deps)
-            script()
-                goog.require('app');
-            script(src = bootstrap)
-
             block head
 
     body.expr_body

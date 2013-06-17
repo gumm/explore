@@ -7,12 +7,11 @@ goog.require('bad.ui.Panel');
  * @param {!goog.Uri} uri
  * @param {Object} targetNest
  * @param {goog.dom.DomHelper=} opt_domHelper Optional DOM helper.
- * @param {Function=} opt_callback Optional DOM helper.
  * @extends {bad.ui.Panel}
  * @constructor
  */
-app.user.HomePanel = function(uri, targetNest, opt_domHelper, opt_callback) {
-    bad.ui.Panel.call(this, uri, targetNest, opt_domHelper, opt_callback);
+app.user.HomePanel = function(uri, targetNest, opt_domHelper) {
+    bad.ui.Panel.call(this, uri, targetNest, opt_domHelper);
 
     /**
      * @type {Object}
