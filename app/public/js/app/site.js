@@ -76,7 +76,7 @@ app.Site.prototype.initLayout_ = function() {
 
     // Set the defaults for the site.
     this.layout_.setTarget(goog.dom.getDocument().body);
-    this.layout_.setInitialSize(mainCells[0], 41);
+    this.layout_.setInitialSize(mainCells[0], 72);
     this.layout_.setInitialSize(mainCells[2], 23);
     this.layout_.setDraggerThickness(0);
     this.layout_.setWidthToViewport(true);
@@ -178,7 +178,6 @@ app.Site.prototype.viewLogin = function() {
     this.listenOnce(
         view,
         'login-success', function(e) {
-            console.debug('HERE WE GO!!!', e.data);
             this.viewHome();
         });
     this.switchView(view);

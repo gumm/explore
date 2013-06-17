@@ -5,14 +5,12 @@ goog.require('bad.ui.Form');
 /**
  * The basic login form controller.
  * @param {!string} id
- * @param {!goog.Uri} uri
- * @param {Object} targetNest
  * @param {goog.dom.DomHelper=} opt_domHelper Optional DOM helper.
  * @extends {bad.ui.Form}
  * @constructor
  */
-app.user.LostPasswordForm = function(id, uri, targetNest, opt_domHelper) {
-    bad.ui.Form.call(this, id, uri, targetNest, opt_domHelper);
+app.user.LostPasswordForm = function(id, opt_domHelper) {
+    bad.ui.Form.call(this, id, opt_domHelper);
 };
 goog.inherits(app.user.LostPasswordForm, bad.ui.Form);
 

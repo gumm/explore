@@ -12,36 +12,36 @@ app.base.LoginView = function() {
 goog.inherits(app.base.LoginView, bad.ui.View);
 
 app.base.LoginView.prototype.configurePanels = function() {
-    this.addPanelToView('INTRO', new bad.ui.Panel(
-        new goog.Uri('/intro'),
-        this.layout_.getNest('main', 'center')
-    ));
+    var layout = this.getLayout();
 
-    this.addPanelToView('LOGIN-FORM', new app.user.LoginForm(
-        'login-form',
-        new goog.Uri('/login'),
-        this.layout_.getNest('main', 'right', 'mid'),
-        this.layout_.getNest('main', 'right')
-    ));
+    // Intro Panel
+    this.introPanel = new bad.ui.Panel();
+    this.introPanel.setUri(new goog.Uri('/intro'));
+    this.introPanel.setNestAsTarget(layout.getNest('main', 'center'));
+    this.addPanelToView('INTRO', this.introPanel);
 
-    this.addPanelToView('SIGNUP-FORM', new app.user.SignUpForm(
-        'account-form',
-        new goog.Uri('/signup'),
-        this.layout_.getNest('main', 'center')
-    ));
+    // Login Form
+    this.loginPanel = new app.user.LoginForm('login-form');
+    this.loginPanel.setUri(new goog.Uri('/login'));
+    this.loginPanel.setNestAsTarget(layout.getNest('main', 'right', 'mid'));
+    this.addPanelToView('LOGIN-FORM', this.loginPanel);
 
-    this.addPanelToView('LOST-PASSWORD-FORM', new app.user.LostPasswordForm(
-        'get-credentials-form',
-        new goog.Uri('/lost-password'),
-        this.layout_.getNest('main', 'center')
-    ));
+    // Signup Form
+    this.signUpForm = new app.user.SignUpForm('account-form');
+    this.signUpForm.setUri(new goog.Uri('/signup'));
+    this.signUpForm.setNestAsTarget(layout.getNest('main', 'center'));
+    this.addPanelToView('SIGNUP-FORM', this.signUpForm);
+
+    // Lost Password Form
+    this.lostPwForm = new app.user.LostPasswordForm('get-credentials-form');
+    this.lostPwForm.setUri(new goog.Uri('/lost-password'));
+    this.lostPwForm.setNestAsTarget(layout.getNest('main', 'center'));
+    this.addPanelToView('LOST-PASSWORD-FORM', this.lostPwForm);
 };
 
 app.base.LoginView.prototype.displayPanels = function() {
-    var arr = ['INTRO', 'LOGIN-FORM'];
-    goog.array.forEach(arr, function(name) {
-        this.panelMap[name].renderWithTemplate();
-    }, this);
+    this.introPanel.renderWithTemplate();
+    this.loginPanel.renderWithTemplate();
 };
 
 app.base.LoginView.prototype.onPanelAction = function(e) {
@@ -52,8 +52,8 @@ app.base.LoginView.prototype.onPanelAction = function(e) {
 
     switch (value) {
         case bad.ui.EventType.PANEL_READY:
-            if (panel.slideIn) {
-                panel.slideIn(350);
+            if (panel === this.loginPanel) {
+                this.slideLoginIn();
             }
             break;
         case 'sign-up':
@@ -70,8 +70,7 @@ app.base.LoginView.prototype.onPanelAction = function(e) {
             this.exitSignUpForm();
             break;
         case 'signup-success':
-            console.debug('SIGN UP SUCCESS - HERE IS THE DATA:', data);
-            this.panelMap['LOGIN-FORM'].logIn(data);
+            this.loginPanel.logIn(data);
             break;
         case 'cancel':
             this.exitLostPasswordForm();
@@ -81,66 +80,71 @@ app.base.LoginView.prototype.onPanelAction = function(e) {
     }
 };
 
+//-------------------------------------------------------------[ Log-In Form ]--
+app.base.LoginView.prototype.slideLoginIn = function() {
+    var size = 350;
+    var nest = this.getLayout().getNest('main', 'right');
+    nest.slideOpen(null, size,
+        goog.bind(this.loginPanel.showSignUpButton_, this.loginPanel)
+    );
+};
+
+/**
+ * @param {Function=} opt_callback
+ */
+app.base.LoginView.prototype.slideLoginOut = function(opt_callback) {
+    var nest = this.getLayout().getNest('main', 'right');
+
+    this.loginPanel.hideSignUpButton_();
+    var callback = goog.bind(nest.hide, nest, opt_callback);
+    nest.slideClosed(callback);
+};
+
 //------------------------------------------------------------[ Sign-Up Form ]--
 
 app.base.LoginView.prototype.enterSignUpForm = function() {
-    var signUpForm = this.panelMap['SIGNUP-FORM'];
-    var loginForm = this.panelMap['LOGIN-FORM'];
-    var intro = this.panelMap['INTRO'];
-    if (signUpForm.isInDocument()) {
-        intro.hide();
-        signUpForm.show();
-        loginForm.slideOut();
+    if (this.signUpForm.isInDocument()) {
+        this.introPanel.hide();
+        this.signUpForm.show();
+        this.slideLoginOut();
     } else {
-        signUpForm.renderWithTemplate();
-        intro.hide();
-        loginForm.slideOut();
+        this.signUpForm.renderWithTemplate();
+        this.introPanel.hide();
+        this.slideLoginOut();
     }
 };
 
 app.base.LoginView.prototype.exitSignUpForm = function() {
-    var signUpForm = this.panelMap['SIGNUP-FORM'];
-    var loginForm = this.panelMap['LOGIN-FORM'];
-    var intro = this.panelMap['INTRO'];
-    signUpForm.hide();
-    intro.show();
-    loginForm.slideIn();
+    this.signUpForm.hide();
+    this.introPanel.show();
+    this.slideLoginIn();
 };
 
 //------------------------------------------------------[ Lost Password Form ]--
 
 app.base.LoginView.prototype.enterLostPasswordForm = function() {
-    var loginForm = this.panelMap['LOGIN-FORM'];
-    var intro = this.panelMap['INTRO'];
-    var lpwf = this.panelMap['LOST-PASSWORD-FORM'];
-    if (lpwf.isInDocument()) {
-        intro.hide();
-        lpwf.show();
-        loginForm.slideOut();
+    if (this.lostPwForm.isInDocument()) {
+        this.introPanel.hide();
+        this.lostPwForm.show();
+        this.slideLoginOut();
     } else {
-        lpwf.renderWithTemplate();
-        intro.hide();
-        loginForm.slideOut();
+        this.lostPwForm.renderWithTemplate();
+        this.introPanel.hide();
+        this.slideLoginOut();
     }
 };
 
 app.base.LoginView.prototype.exitLostPasswordForm = function() {
-    var loginForm = this.panelMap['LOGIN-FORM'];
-    var intro = this.panelMap['INTRO'];
-    var lpwf = this.panelMap['LOST-PASSWORD-FORM'];
-    lpwf.hide();
-    intro.show();
-    loginForm.slideIn();
+    this.lostPwForm.hide();
+    this.introPanel.show();
+    this.slideLoginIn();
 };
 
 //---------------------------------------------------------------[ Home Page ]--
 
 app.base.LoginView.prototype.fetchHomePage = function(data) {
-    var loginForm = this.panelMap['LOGIN-FORM'];
-
     var callback = goog.bind(function() {
-        console.debug('INNER CALLBACK TO DISPATCH EVENT');
-        this.dispatchEvent({type:'login-success', data:data});
+        this.dispatchEvent({type: 'login-success', data: data});
     }, this);
-    loginForm.slideOut(callback);
+    this.slideLoginOut(callback);
 };

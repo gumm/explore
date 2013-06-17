@@ -12,7 +12,7 @@
     text-decoration: underline;
 }
 .signup {
-    color: #f5f5f5;
+    color: rgb(133, 133, 133);
 }
 .signup button {
     margin-left: 10px;
@@ -31,7 +31,8 @@
 }
 
 .layout-nest-header {
-    background-color: #1F1F1F;
+    background-color: rgb(241, 241, 241);
+    border-bottom: 1px solid rgb(229, 229, 229);
 }
 
 .layout-nest-main {
