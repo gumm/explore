@@ -101,45 +101,10 @@ exports.postSignUp = function(req, res) {
 //-----------------------------------------------------------[ Edit Accounts ]--
 
 exports.editAccount = function(req, res) {
-    res.render('editaccount', {countries: CT});
+    res.render('editaccount', {countries: CT, udata: req.session.user});
 };
 
-exports.postSignUp = function(req, res) {
-    var credentials = {
-        name: req.param('name'),
-        email: req.param('email'),
-        user: req.param('user'),
-        pass: req.param('pass'),
-        country: req.param('country')
-    };
-    var callback = function(e) {
-        if (e) {
-            res.send(e, 400);
-        } else {
-            res.send('OK', 200);
-        }
-    };
-    AM.addNewAccount(credentials, callback);
-};
-
-
-//-------------------------------------------------[ Logged-in User Homepage ]--
-
-exports.home = function(req, res) {
-    if (!req.session.user) {
-        // if user is not logged-in redirect back to login page //
-        res.redirect('/');
-    } else {
-        res.render('home', {
-            title: 'Control Panel',
-//            countries: CT,
-            udata: req.session.user
-        });
-    }
-};
-
-exports.postHome = function(req, res) {
-
+exports.postEditAccount = function(req, res) {
     var credentials = {
         user: req.param('user'),
         name: req.param('name'),
@@ -164,7 +129,28 @@ exports.postHome = function(req, res) {
 
     if (req.param('user') !== undefined) {
         AM.updateAccount(credentials, callback);
-    } else if (req.param('logout') === 'true') {
+    }
+};
+
+
+//-------------------------------------------------[ Logged-in User Homepage ]--
+
+exports.home = function(req, res) {
+    if (!req.session.user) {
+        // if user is not logged-in redirect back to login page //
+        res.redirect('/');
+    } else {
+        res.render('home', {
+            title: 'Control Panel',
+//            countries: CT,
+            udata: req.session.user
+        });
+    }
+};
+
+exports.postHome = function(req, res) {
+
+    if (req.param('logout') === 'true') {
         res.clearCookie('user');
         res.clearCookie('pass');
         req.session.destroy(function(e) {

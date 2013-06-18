@@ -25,8 +25,8 @@ exports.urls = function(app) {
     app.post('/home', routes.postHome);
 
     // Account Editing
-    app.get('/home/edit', routes.editAccount);
-    app.post('/home/edit', routes.postSignUp);
+    app.get('/account/edit', routes.editAccount);
+    app.post('/account/edit', routes.postEditAccount);
 
     // Print all accounts
     app.get('/accounts', routes.accounts);
