@@ -75,9 +75,24 @@ app.base.LoginView.prototype.onPanelAction = function(e) {
         case 'cancel':
             this.exitLostPasswordForm();
             break;
+        case 'have-sign-up':
+            this.signUp = data;
+            goog.dom.appendChild(
+                this.getLayout().getNestElement('header'), this.signUp);
+            break;
         default:
             console.log('View does not understand action:', value);
     }
+};
+
+//-----------------------------------------------------------------[ Sign-Up ]--
+
+app.base.LoginView.prototype.showSignUpButton_ = function() {
+    goog.dom.classes.remove(this.signUp, 'hide');
+};
+
+app.base.LoginView.prototype.hideSignUpButton_ = function() {
+    goog.dom.classes.add(this.signUp, 'hide');
 };
 
 //-------------------------------------------------------------[ Log-In Form ]--
@@ -85,7 +100,7 @@ app.base.LoginView.prototype.slideLoginIn = function() {
     var size = 350;
     var nest = this.getLayout().getNest('main', 'right');
     nest.slideOpen(null, size,
-        goog.bind(this.loginPanel.showSignUpButton_, this.loginPanel)
+        goog.bind(this.showSignUpButton_, this)
     );
 };
 
@@ -95,7 +110,7 @@ app.base.LoginView.prototype.slideLoginIn = function() {
 app.base.LoginView.prototype.slideLoginOut = function(opt_callback) {
     var nest = this.getLayout().getNest('main', 'right');
 
-    this.loginPanel.hideSignUpButton_();
+    this.hideSignUpButton_();
     var callback = goog.bind(nest.hide, nest, opt_callback);
     nest.slideClosed(callback);
 };

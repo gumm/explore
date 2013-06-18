@@ -24,15 +24,11 @@ exports.urls = function(app) {
     app.get('/home', routes.home);
     app.post('/home', routes.postHome);
 
+    // Account Editing
+    app.get('/home/edit', routes.editAccount);
+    app.post('/home/edit', routes.postSignUp);
+
     // Print all accounts
     app.get('/accounts', routes.accounts);
-
     app.get('*', routes.four_oh_four);
-
-
-//    app.get('/api/customers', customers.findAll);
-//    app.get('/api/customers/:id', customers.findById);
-//    app.post('/api/customers', customers.addCustomer);
-//    app.put('/api/customers/:id', customers.updateCustomer);
-//    app['delete']('/api/customers/:id', customers.deleteCustomer);
 };

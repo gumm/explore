@@ -49,7 +49,7 @@ Bridge.prototype.initListeners = function() {
     }).bind(this);
     this.client.on('close', closeCallback);
 
-    this.client.on('puback', function(){
+    this.client.on('puback', function() {
         console.log('>>>>>>>>> PUBACK');
     });
 
@@ -66,8 +66,8 @@ Bridge.prototype.initListeners = function() {
 Bridge.prototype.packageMqttForWs = function(target, topic, message) {
     return JSON.stringify({
         'target': target,
-        'topic':topic,
-        'message':message
+        'topic': topic,
+        'message': message
     });
 };
 

@@ -20,43 +20,19 @@ ExploreMongoDB.prototype.initServer = function() {
     var errorCallback = (function(err, collection) {
         if (err) {
             console.log("The 'customers' collection doesn't exist. " +
-                "Creating it with sample data...");
-            this.populateDB();
+                'Creating it with sample data...');
         }
     }).bind(this);
 
     // Do this when opening the db
     var openCallback = (function(err, db) {
-        if(!err) {
+        if (!err) {
             console.log("Connected to 'explore' database");
-            db.collection('customers', {strict:true}, errorCallback);
+            db.collection('customers', {strict: true}, errorCallback);
         }
     }).bind(this);
 
     db.open(openCallback);
-};
-
-// Populate database with sample data -- Only used once: the first time the
-// application is started. You'd typically not find this code in a real-life
-// app, since the database would already exist.
-ExploreMongoDB.prototype.populateDB = function() {
-    var db = this.db;
-    var customers = [
-        {
-            name: "ACME",
-            description: "Our first customer",
-            picture: "saint_cosme.jpg"
-        },
-        {
-            name: "BLAH",
-            description: "Our 2nd customer",
-            picture: "cat.jpg"
-        }
-    ];
-
-    db.collection('customers', function(err, collection) {
-        collection.insert(customers, {safe:true}, function(err, result) {});
-    });
 };
 
 module.exports = ExploreMongoDB;

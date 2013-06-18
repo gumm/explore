@@ -1,20 +1,21 @@
-block content
-    #login-container
-        form()#login-form.well
-            h4 Sign in
-            label Username
-            input(type="text", name="user", id='user-tf', required).required
-            label Password
-            input(type="password", name="pass", id='pass-tf', required).required
-            label#remember-me.checkbox Remember Me
-                    input(type="checkbox", checked='checked')
-            .form-actions
-                button(type="submit")#btn-login.btn.btn-primary
-                    i.icon-lock.icon-white
-                    | Sign in
-        div.btm-links
-            #forgot-password.linklike Forgot Your Password?
-    #signup.topfixed.hide
-        .signup New Explorer?
-            button#create-account.btn.btn-danger
-                | Sign Up
+
+#login-container
+    form()#login-form.well
+        h4 Sign in
+        label Username
+        input(type="text", name="user", id='user-tf', required).required
+        label Password
+        input(type="password", name="pass", id='pass-tf', required).required
+        label#remember-me.checkbox Remember Me
+                input(type="checkbox", checked='checked')
+        .form-actions
+            button(type="submit")#btn-login.btn.btn-primary
+                i.icon-lock.icon-white
+                | Sign in
+    div.btm-links
+        #forgot-password.linklike Forgot Your Password?
+
+#signup.topfixed.hide
+    .signup New Explorer?
+        button#create-account.btn.btn-danger
+            | Sign Up

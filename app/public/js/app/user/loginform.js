@@ -15,6 +15,13 @@ app.user.LoginForm = function(id, opt_domHelper) {
 goog.inherits(app.user.LoginForm, bad.ui.Form);
 
 app.user.LoginForm.prototype.enterDocument = function() {
+
+    // Pass the sign-up portion of the dom up to the view to be added
+    // elsewhere.
+    this.dispatchComponentEvent('have-sign-up',
+        goog.dom.removeNode(goog.dom.getElement('signup'))
+    );
+
     this.getHandler().listen(
         goog.dom.getElement('create-account'),
         goog.events.EventType.CLICK,
@@ -35,7 +42,8 @@ app.user.LoginForm.prototype.enterDocument = function() {
         this.submitLoginForm
     );
 
-    this.topFix = goog.dom.getElement('signup');
+    // Calling this last makes sure that the final PANEL-READY event really is
+    // dispatched right at the end of all of the enterDocument calls.
     app.user.LoginForm.superClass_.enterDocument.call(this);
 };
 
@@ -61,14 +69,4 @@ app.user.LoginForm.prototype.onSubmitLoginForm = function(e) {
     } else {
         console.debug('Submit was not successful. Try again...', e, xhr);
     }
-};
-
-//-----------------------------------------------------------------[ Utility ]--
-
-app.user.LoginForm.prototype.showSignUpButton_ = function() {
-    goog.dom.classes.remove(this.topFix, 'hide');
-};
-
-app.user.LoginForm.prototype.hideSignUpButton_ = function() {
-    goog.dom.classes.add(this.topFix, 'hide');
 };

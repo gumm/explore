@@ -22,11 +22,13 @@ goog.inherits(app.user.HomePanel, bad.ui.Panel);
 app.user.HomePanel.prototype.enterDocument = function() {
 
     this.getHandler().listen(
-        goog.dom.getElement('user_list'),
+        goog.dom.getElement('user_button'),
         goog.events.EventType.CLICK,
-        this.fetchUserList
+        function() {
+            this.dispatchComponentEvent('edit-account');
+        }
     ).listen(
-        goog.dom.getElement('btn-logout'),
+        goog.dom.getElement('logout-link'),
         goog.events.EventType.CLICK,
         this.logOut
     );
@@ -42,29 +44,6 @@ app.user.HomePanel.prototype.setUserData = function(data) {
 app.user.HomePanel.prototype.logOut = function() {
     var queryData = goog.uri.utils.buildQueryDataFromMap({'logout': true});
     this.xMan.post(this.uri_, queryData, goog.bind(this.onLogOut, this));
-};
-
-app.user.HomePanel.prototype.fetchUserList = function() {
-    if (!this.userListContainer) {
-        this.userListContainer = goog.dom.createDom(goog.dom.TagName.DIV, {});
-        goog.dom.append(
-            /** @type {!Node} */ (this.getElement()),
-            this.userListContainer
-        );
-    }
-    var uri = new goog.Uri('/accounts');
-    this.xMan.get(uri, goog.bind(this.onUserListReceived, this));
-};
-
-app.user.HomePanel.prototype.onUserListReceived = function(e) {
-    var xhr = e.target;
-    var table = /** @type {Element} */ (goog.dom.htmlToDocumentFragment(
-        xhr.getResponseText())
-    );
-    var replace = goog.dom.createDom(goog.dom.TagName.DIV, 'card', table);
-    goog.dom.replaceNode(replace, this.userListContainer);
-    this.userListContainer = replace;
-
 };
 
 app.user.HomePanel.prototype.onLogOut = function(e) {

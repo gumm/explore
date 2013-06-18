@@ -2,7 +2,7 @@ var ES = require('./email-settings');
 var EM = {};
 module.exports = EM;
 
-EM.server = require("emailjs/email").server.connect({
+EM.server = require('emailjs/email').server.connect({
 
     host: ES.host,
     user: ES.user,
@@ -10,7 +10,7 @@ EM.server = require("emailjs/email").server.connect({
     ssl: true
 });
 
-EM.dispatchResetPasswordLink = function (account, callback) {
+EM.dispatchResetPasswordLink = function(account, callback) {
     EM.server.send({
         from: ES.sender,
         to: account.email,
@@ -18,7 +18,7 @@ EM.dispatchResetPasswordLink = function (account, callback) {
         text: 'something went wrong... :(',
         attachment: EM.composeEmail(account)
     }, callback);
-}
+};
 
 EM.composeEmail = function (o) {
     var link = 'http://node-login.braitsch.io/reset-password?e=' + o.email + '&p=' + o.pass;
@@ -32,4 +32,4 @@ EM.composeEmail = function (o) {
     return  [
         {data: html, alternative: true}
     ];
-}
+};

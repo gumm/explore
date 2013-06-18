@@ -1,13 +1,11 @@
 // preset form values if we receive a userdata object //
 - user = typeof(udata) != 'undefined' ? udata : { }
 
-div.navbar.navbar-fixed-top
-    div.container-fluid
-        ul#global-nav.nav.pull-left
-            #user_list.brand User List
-        button#btn-logout.btn.btn-primary
-            i.icon-lock.icon-white
-            | Sign Out
+#signup.topfixed
+    .signup Welcome
+        button#user_button.btn
+            | #{user.name}
+        span#logout-link.linklike Sign out
 
 .container.span3
     h2 Hello #{user.name}
@@ -25,7 +23,6 @@ div.navbar.navbar-fixed-top
     p
         | All further comms from your device will have to have the topic prefix
     h4 #{user._id}/UID
-
 
 script
     console.debug('Hello Bloody hello')

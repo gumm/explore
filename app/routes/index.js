@@ -6,7 +6,7 @@ var CT = require('../modules/country-list');
 var AM = require('../modules/account-manager');
 var EM = require('../modules/email-dispatcher');
 
-exports.index = function (req, res) {
+exports.index = function(req, res) {
     var app = req.app;
 
     res.render('index', {
@@ -27,7 +27,7 @@ exports.index = function (req, res) {
 //------------------------------------------------------------------[ Log In ]--
 
 exports.autoLogin = function(req, res) {
-    var errorReply = {error:'No Auto Login Possible'};
+    var errorReply = {error: 'No Auto Login Possible'};
     if (req.session &&
         req.session.user &&
         req.session.user.user &&
@@ -47,15 +47,15 @@ exports.autoLogin = function(req, res) {
     }
 };
 
-exports.login = function (req, res) {
+exports.login = function(req, res) {
     res.render('login', {title: 'Hello - Please Login To Your Account'});
 };
 
-exports.postLogin = function (req, res) {
+exports.postLogin = function(req, res) {
     var user = req.param('user');
     var password = req.param('pass');
 
-    AM.manualLogin(user, password, function (e, o) {
+    AM.manualLogin(user, password, function(e, o) {
         if (!o) {
             res.send(e, 400);
         } else {
@@ -69,37 +69,63 @@ exports.postLogin = function (req, res) {
     });
 };
 
-exports.intro = function (req, res) {
+exports.intro = function(req, res) {
     var app = req.app;
     res.render('intro', {title: app.get('title')});
 };
 
 //------------------------------------------------------------[ New Accounts ]--
 
-exports.signUp = function (req, res) {
-    res.render('signup', {  title: 'Signup', countries: CT });
+exports.signUp = function(req, res) {
+    res.render('signup', {countries: CT});
 };
 
-exports.postSignUp = function (req, res) {
-    AM.addNewAccount({
+exports.postSignUp = function(req, res) {
+    var credentials = {
         name: req.param('name'),
         email: req.param('email'),
         user: req.param('user'),
         pass: req.param('pass'),
         country: req.param('country')
-    }, function (e) {
+    };
+    var callback = function(e) {
         if (e) {
             res.send(e, 400);
         } else {
             res.send('OK', 200);
         }
-    });
+    };
+    AM.addNewAccount(credentials, callback);
+};
+
+//-----------------------------------------------------------[ Edit Accounts ]--
+
+exports.editAccount = function(req, res) {
+    res.render('editaccount', {countries: CT});
+};
+
+exports.postSignUp = function(req, res) {
+    var credentials = {
+        name: req.param('name'),
+        email: req.param('email'),
+        user: req.param('user'),
+        pass: req.param('pass'),
+        country: req.param('country')
+    };
+    var callback = function(e) {
+        if (e) {
+            res.send(e, 400);
+        } else {
+            res.send('OK', 200);
+        }
+    };
+    AM.addNewAccount(credentials, callback);
 };
 
 
 //-------------------------------------------------[ Logged-in User Homepage ]--
 
-exports.home = function (req, res) {
+exports.home = function(req, res) {
     if (!req.session.user) {
         // if user is not logged-in redirect back to login page //
         res.redirect('/');
@@ -112,32 +138,36 @@ exports.home = function (req, res) {
     }
 };
 
-exports.postHome = function (req, res) {
-    if (req.param('user') !== undefined) {
-        AM.updateAccount({
-            user: req.param('user'),
-            name: req.param('name'),
-            email: req.param('email'),
-            country: req.param('country'),
-            pass: req.param('pass')
-        }, function (e, o) {
-            if (e) {
-                res.send('error-updating-account', 400);
-            } else {
-                req.session.user = o;
-                // update the user's login cookies if they exists //
-                if (req.cookies.user !== undefined &&
-                    req.cookies.pass !== undefined) {
-                    res.cookie('user', o.user, { maxAge: 900000 });
-                    res.cookie('pass', o.pass, { maxAge: 900000 });
-                }
-                res.send('ok', 200);
+exports.postHome = function(req, res) {
+
+    var credentials = {
+        user: req.param('user'),
+        name: req.param('name'),
+        email: req.param('email'),
+        country: req.param('country'),
+        pass: req.param('pass')
+    };
+    var callback = function(e, o) {
+        if (e) {
+            res.send('error-updating-account', 400);
+        } else {
+            req.session.user = o;
+            // update the user's login cookies if they exists //
+            if (req.cookies.user !== undefined &&
+                req.cookies.pass !== undefined) {
+                res.cookie('user', o.user, { maxAge: 900000 });
+                res.cookie('pass', o.pass, { maxAge: 900000 });
             }
-        });
+            res.send('ok', 200);
+        }
+    };
+
+    if (req.param('user') !== undefined) {
+        AM.updateAccount(credentials, callback);
     } else if (req.param('logout') === 'true') {
         res.clearCookie('user');
         res.clearCookie('pass');
-        req.session.destroy(function (e) {
+        req.session.destroy(function(e) {
             res.send('ok', 200);
         });
     }
@@ -145,20 +175,20 @@ exports.postHome = function (req, res) {
 
 //----------------------------------------------------------[ Password Reset ]--
 
-exports.lostPassword = function (req, res) {
-    res.render('lost-password', {  title: 'Signup', countries: CT });
+exports.lostPassword = function(req, res) {
+    res.render('lost-password', {title: 'Signup', countries: CT});
 };
 
-exports.postLostPassword = function (req, res) {
+exports.postLostPassword = function(req, res) {
     // look up the user's account via their email //
-    AM.getAccountByEmail(req.param('email'), function (o) {
+    AM.getAccountByEmail(req.param('email'), function(o) {
         if (o) {
             res.send('ok', 200);
-            EM.dispatchResetPasswordLink(o, function (e, m) {
+            EM.dispatchResetPasswordLink(o, function(e, m) {
                 // this callback takes a moment to return //
                 // should add an ajax loader to give user feedback //
                 if (!e) {
-                    //	res.send('ok', 200);
+                    //res.send('ok', 200);
                 } else {
                     res.send('email-server-error', 400);
                     for (k in e) console.log('error : ', k, e[k]);
@@ -170,10 +200,10 @@ exports.postLostPassword = function (req, res) {
     });
 };
 
-//    app.get('/reset-password', function (req, res) {
+//    app.get('/reset-password', function(req, res) {
 //        var email = req.query["e"];
 //        var passH = req.query["p"];
-//        AM.validateResetLink(email, passH, function (e) {
+//        AM.validateResetLink(email, passH, function(e) {
 //            if (e != 'ok') {
 //                res.redirect('/');
 //            } else {
@@ -184,13 +214,13 @@ exports.postLostPassword = function (req, res) {
 //        })
 //    });
 
-//    app.post('/reset-password', function (req, res) {
+//    app.post('/reset-password', function(req, res) {
 //        var nPass = req.param('pass');
 //        // retrieve the user's email from the session to lookup their account and reset password //
 //        var email = req.session.reset.email;
 //        // destory the session immediately after retrieving the stored email //
 //        req.session.destroy();
-//        AM.updatePassword(email, nPass, function (e, o) {
+//        AM.updatePassword(email, nPass, function(e, o) {
 //            if (o) {
 //                res.send('ok', 200);
 //            } else {
@@ -201,18 +231,18 @@ exports.postLostPassword = function (req, res) {
 
 //--------------------------------------------------[ View & Delete Accounts ]--
 
-exports.accounts = function (req, res) {
-    AM.getAllRecords(function (e, accounts) {
+exports.accounts = function(req, res) {
+    AM.getAllRecords(function(e, accounts) {
         res.render('accounts', { title: 'Account List', accts: accounts });
     });
 };
 
-//    app.post('/delete', function (req, res) {
-//        AM.deleteAccount(req.body.id, function (e, obj) {
+//    app.post('/delete', function(req, res) {
+//        AM.deleteAccount(req.body.id, function(e, obj) {
 //            if (!e) {
 //                res.clearCookie('user');
 //                res.clearCookie('pass');
-//                req.session.destroy(function (e) {
+//                req.session.destroy(function(e) {
 //                    res.send('ok', 200);
 //                });
 //            } else {
@@ -221,13 +251,13 @@ exports.accounts = function (req, res) {
 //        });
 //    });
 
-//    app.get('/reset', function (req, res) {
-//        AM.delAllRecords(function () {
+//    app.get('/reset', function(req, res) {
+//        AM.delAllRecords(function() {
 //            res.redirect('/print');
 //        });
 //    });
 
-exports.four_oh_four = function (req, res) {
+exports.four_oh_four = function(req, res) {
     res.render('404', { title: 'Page Not Found'});
 };
 
