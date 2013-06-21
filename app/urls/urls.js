@@ -1,5 +1,4 @@
 var routes = require('../routes');
-//var customers = require('../routes/api/customers');
 
 exports.urls = function(app) {
     app.get('/', routes.index);
@@ -30,5 +29,7 @@ exports.urls = function(app) {
 
     // Print all accounts
     app.get('/accounts', routes.accounts);
+
+    // Catch all else
     app.get('*', routes.four_oh_four);
 };

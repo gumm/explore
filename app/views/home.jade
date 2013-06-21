@@ -1,13 +1,13 @@
 // preset form values if we receive a userdata object //
 - user = typeof(udata) != 'undefined' ? udata : { }
 
-#signup.topfixed
+#active_user_container.topfixed
     .signup Welcome
-        button#user_button.btn
+        div#user_button.goog-css3-menu-button.btn
+            i.icon-user
             | #{user.name}
-        span#logout-link.linklike Sign out
 
-.container.span3
+.container.span3.expr_wrapper
     h2 Hello #{user.name}
     p
         | We are waiting for your devices to register to:

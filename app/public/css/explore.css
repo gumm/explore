@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------[ Explore ]--*/
-/*.layout-nest-header {*/
-    /*z-index: 10;*/
-/*}*/
+.layout-drag-handle {
+    background-color: rgb(250, 250, 250) !important;
+}
 .linklike {
     color: rgb(0, 136, 204);
     text-decoration: none;
@@ -14,25 +14,20 @@
 .signup {
     color: rgb(133, 133, 133);
 }
-.signup button {
-    margin-left: 10px;
-    padding: 2px 20px;
-}
 .topfixed {
     position: relative;
     top: 18px;
     right: 18px;
-    width: 190px;
+    width: 260px;
     line-height: 34px;
     float: right;
 }
-
 .expr_wrapper {
     padding: 30px;
 }
 
 .layout-nest-header {
-    background-color: rgb(241, 241, 241);
+    background-color: rgb(66, 66, 66);
     border-bottom: 1px solid rgb(229, 229, 229);
 }
 
@@ -62,11 +57,6 @@
     float: right;
     margin-right: 13px;
 }
-
-#user_button {
-    margin-right: 13px;
-}
-
 #login-container #forgot-password {
   float: left;
   margin-left: 10px;
@@ -83,25 +73,6 @@
 
 #country-list {
   width: 280px;
-}
-
-button#btn-login {
-  width: 100px;
-  padding: 6px 10px 6px 10px;
-  float: left;
-  margin-top: 15px;
-}
-
-button#submit,
-button#account-submit {
-    margin-left:10px;
-}
-
-#btn-logout {
-  width: 120px;
-  top: 1px;
-  right: 8px;
-  position: absolute;
 }
 
 #print {
@@ -124,20 +95,16 @@ button#account-submit {
 .form-horizontal .control-label {
   width: 80px;
 }
-
 .form-horizontal .controls {
   margin-left: 120px;
 }
-
 #lost-password-container {
     width: 400px;
     margin: 30px auto;
 }
-
 #get-credentials-form {
 
 }
-
 #get-credentials-form > input {
     width: calc(100% - 14px);
 }
@@ -167,23 +134,7 @@ label {
   -webkit-text-shadow: -1px 1px 0 #fff;
   margin-top: 3px;
 }
-button i {
-  padding-left: 8px;
-}
-
 .pan-wrapper {
     height: 100%;
     overflow: auto;
-}
-
-.card {
-    -webkit-border-radius: 3px;
-    border-radius: 3px;
-    -webkit-box-sizing: border-box;
-    box-sizing: border-box;
-    background-color: rgb(255, 255, 255);
-    border: 1px solid rgb(216, 216, 216);
-    border-bottom-width: 2px;
-    border-top-width: 0;
-    vertical-align: top;
 }

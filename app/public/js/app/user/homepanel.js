@@ -1,6 +1,10 @@
 goog.provide('app.user.HomePanel');
 
 goog.require('bad.ui.Panel');
+goog.require('goog.ui.Css3MenuButtonRenderer');
+goog.require('goog.ui.Menu');
+goog.require('goog.ui.MenuItem');
+goog.require('goog.ui.MenuSeparator');
 
 /**
  * The basic login form controller.
@@ -21,19 +25,43 @@ goog.inherits(app.user.HomePanel, bad.ui.Panel);
 
 app.user.HomePanel.prototype.enterDocument = function() {
 
+    var menuButton = this.initDom();
+
     this.getHandler().listen(
-        goog.dom.getElement('user_button'),
-        goog.events.EventType.CLICK,
-        function() {
-            this.dispatchComponentEvent('edit-account');
+        menuButton,
+        goog.ui.Component.EventType.ACTION,
+        function(e) {
+            e.target.getModel().callback();
         }
     ).listen(
-        goog.dom.getElement('logout-link'),
+        goog.dom.getElement('logout'),
         goog.events.EventType.CLICK,
         this.logOut
     );
 
     app.user.HomePanel.superClass_.enterDocument.call(this);
+};
+
+app.user.HomePanel.prototype.initDom = function() {
+    var domHelper = goog.dom.getDomHelper(this.getElement());
+
+    var logOut = goog.bind(this.logOut, this);
+    var editProfile = goog.bind(this.dispatchComponentEvent, this,
+        'edit-account'
+    );
+    var menu = new goog.ui.Menu(domHelper);
+    menu.addChild(
+        new goog.ui.MenuItem('Edit Profile',
+            {callback: editProfile},
+            domHelper), true);
+    menu.addChild(
+        new goog.ui.MenuSeparator(domHelper), true);
+    menu.addChild(
+        new goog.ui.MenuItem('Log Out', {callback: logOut}, domHelper), true);
+
+    var menuButton = goog.ui.decorate(goog.dom.getElement('user_button'));
+    menuButton.setMenu(menu);
+    return menuButton;
 };
 
 app.user.HomePanel.prototype.setUserData = function(data) {

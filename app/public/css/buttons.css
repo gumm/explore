@@ -1,0 +1,22 @@
+button i {
+  padding-left: 8px;
+}
+button#btn-login {
+  width: 100px;
+  padding: 6px 10px 6px 10px;
+  float: left;
+  margin-top: 15px;
+}
+
+.topfixed button,
+button#submit,
+button#account-submit {
+    margin-left:10px;
+}
+
+#btn-logout {
+  width: 120px;
+  top: 1px;
+  right: 8px;
+  position: absolute;
+}

@@ -37,6 +37,10 @@ app.base.HomeView.prototype.onPanelAction = function(e) {
     var data = e.getData();
 
     switch (value) {
+        case 'have-user-container':
+            goog.dom.appendChild(
+                this.getLayout().getNestElement('header'), data);
+            break;
         case 'edit-account':
             this.enterSignUpForm();
             break;

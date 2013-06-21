@@ -5,7 +5,6 @@ goog.require('bad.Net');
 goog.require('goog.dom');
 goog.require('goog.net.XhrManager');
 
-
 /**
  * Init the site
  */
@@ -31,7 +30,6 @@ app.initSite = function() {
      * @type {!bad.Net}
      */
     var xMan = new bad.Net(xhrMan);
-
 
     /**
      * @type {app.Site}
