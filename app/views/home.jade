@@ -3,8 +3,8 @@
 
 #active_user_container.topfixed
     .signup Welcome
-        div#user_button.goog-css3-menu-button.btn
-            i.icon-user
+        #user_button
+            i.icon-cog
             | #{user.name}
 
 .container.span3.expr_wrapper
@@ -26,18 +26,3 @@
 
 script
     console.debug('Hello Bloody hello')
-
-//.container.offset3.span2(style='margin-top:20px')
-//    table.table
-//        thead
-//            tr
-//                th #
-//                th Field
-//                th Value
-//        tbody
-//        - var num = 1
-//        - for (var i in user)
-//            tr
-//                td= num++
-//                td= i
-//                td= user[i]

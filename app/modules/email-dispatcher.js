@@ -1,6 +1,5 @@
 var ES = require('./email-settings');
 var EM = {};
-module.exports = EM;
 
 EM.server = require('emailjs/email').server.connect({
 
@@ -10,7 +9,7 @@ EM.server = require('emailjs/email').server.connect({
     ssl: true
 });
 
-EM.dispatchResetPasswordLink = function(account, callback) {
+exports.dispatchResetPasswordLink = function(account, callback) {
     EM.server.send({
         from: ES.sender,
         to: account.email,

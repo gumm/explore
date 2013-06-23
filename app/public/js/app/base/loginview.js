@@ -63,7 +63,6 @@ app.base.LoginView.prototype.onPanelAction = function(e) {
             this.enterLostPasswordForm();
             break;
         case 'login-success':
-            console.debug('LOGIN SUCCESS', data);
             this.fetchHomePage(data);
             break;
         case 'account-cancel':

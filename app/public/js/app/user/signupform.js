@@ -15,30 +15,71 @@ app.user.SignUpForm = function(id, opt_domHelper) {
 goog.inherits(app.user.SignUpForm, bad.ui.Form);
 
 app.user.SignUpForm.prototype.enterDocument = function() {
+
+    this.dom_ = goog.dom.getDomHelper(this.getElement());
+    this.initDom();
+
     this.getHandler().listen(
-        goog.dom.getElement('account-cancel'),
-        goog.events.EventType.CLICK,
+        this.cancelButton,
+        goog.ui.Component.EventType.ACTION,
         function() {
+            this.clearAlerts();
             //noinspection JSPotentiallyInvalidUsageOfThis
             this.dispatchComponentEvent('account-cancel');
         }, undefined, this
     ).listen(
-        goog.dom.getElement('account-submit'),
-        goog.events.EventType.CLICK,
+        this.submitButton,
+        goog.ui.Component.EventType.ACTION,
         this.submitSignUp
     );
+
+    // Calling this last makes sure that the final PANEL-READY event really is
+    // dispatched right at the end of all of the enterDocument calls.
     app.user.SignUpForm.superClass_.enterDocument.call(this);
 };
 
+app.user.SignUpForm.prototype.initDom = function() {
+    this.initCancelButton();
+    this.initSubmitButton();
+};
+
+app.user.SignUpForm.prototype.initCancelButton = function() {
+    var button = new goog.ui.CustomButton('',
+        goog.ui.Css3ButtonRenderer.getInstance(), this.dom_);
+    button.setSupportedState(goog.ui.Component.State.FOCUSED, false);
+    button.decorate(goog.dom.getElement('account-cancel'));
+    this.cancelButton = button;
+};
+
+app.user.SignUpForm.prototype.initSubmitButton = function() {
+    var button = new goog.ui.CustomButton('',
+        goog.ui.Css3ButtonRenderer.getInstance(), this.dom_);
+    button.setSupportedState(goog.ui.Component.State.FOCUSED, false);
+    button.decorate(goog.dom.getElement('account-submit'));
+    this.submitButton = button;
+};
+
 app.user.SignUpForm.prototype.submitSignUp = function() {
-    var countryList = goog.dom.forms.getValueByName(this.form_, 'country');
-    if (this.form_.checkValidity() &&
-        countryList !== 'Please select a country') {
-        var content = goog.dom.forms.getFormDataMap(this.form_).toObject();
+    var form = this.getForm();
+    this.checkValidation();
+
+    var countryCheck = goog.bind(function() {
+        var field = form.elements['country'];
+        var country = field.value;
+        if (country !== 'Please select a country') {
+            return true;
+        } else {
+            this.displayError(field, 'Please select a country');
+            return false;
+        }
+    }, this);
+
+    if (countryCheck() && form.checkValidity()) {
+        var content = goog.dom.forms.getFormDataMap(form).toObject();
         var queryData = goog.uri.utils.buildQueryDataFromMap(content);
         this.xMan.post(
-            this.uri_,
-            queryData,
+            this.getUri(),
+            this.getPostContentFromForm(form),
             goog.bind(this.onSubmitSignUp, this, queryData)
         );
     }
@@ -50,10 +91,11 @@ app.user.SignUpForm.prototype.submitSignUp = function() {
  */
 app.user.SignUpForm.prototype.onSubmitSignUp = function(queryData, e) {
     var xhr = e.target;
-
+    var data = xhr.getResponseJson();
+    this.clearAlerts();
     if (xhr.isSuccess()) {
         this.dispatchComponentEvent('signup-success', queryData);
     } else {
-        console.debug('Submit was not successful. Try again...', e, xhr);
+        this.displayErrors(data);
     }
 };

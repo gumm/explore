@@ -3,6 +3,7 @@ goog.provide('app.user.HomePanel');
 goog.require('bad.ui.Panel');
 goog.require('goog.ui.Css3MenuButtonRenderer');
 goog.require('goog.ui.Menu');
+goog.require('goog.ui.MenuButton');
 goog.require('goog.ui.MenuItem');
 goog.require('goog.ui.MenuSeparator');
 
@@ -24,54 +25,69 @@ app.user.HomePanel = function(opt_domHelper) {
 goog.inherits(app.user.HomePanel, bad.ui.Panel);
 
 app.user.HomePanel.prototype.enterDocument = function() {
-
-    var menuButton = this.initDom();
-
+    this.dom_ = goog.dom.getDomHelper(this.getElement());
+    this.initDom();
     this.getHandler().listen(
-        menuButton,
+        this.userButton,
         goog.ui.Component.EventType.ACTION,
         function(e) {
             e.target.getModel().callback();
         }
-    ).listen(
-        goog.dom.getElement('logout'),
-        goog.events.EventType.CLICK,
-        this.logOut
     );
-
     app.user.HomePanel.superClass_.enterDocument.call(this);
 };
 
 app.user.HomePanel.prototype.initDom = function() {
-    var domHelper = goog.dom.getDomHelper(this.getElement());
-
-    var logOut = goog.bind(this.logOut, this);
-    var editProfile = goog.bind(this.dispatchComponentEvent, this,
-        'edit-account'
+    // Pass the sign-up portion of the dom up to the view to be added
+    // elsewhere.
+    this.dispatchComponentEvent('have-user-container',
+        goog.dom.removeNode(goog.dom.getElement('active_user_container'))
     );
-    var menu = new goog.ui.Menu(domHelper);
-    menu.addChild(
-        new goog.ui.MenuItem('Edit Profile',
-            {callback: editProfile},
-            domHelper), true);
-    menu.addChild(
-        new goog.ui.MenuSeparator(domHelper), true);
-    menu.addChild(
-        new goog.ui.MenuItem('Log Out', {callback: logOut}, domHelper), true);
 
-    var menuButton = goog.ui.decorate(goog.dom.getElement('user_button'));
-    menuButton.setMenu(menu);
-    return menuButton;
+    this.buildUserButton();
 };
 
-app.user.HomePanel.prototype.setUserData = function(data) {
-    this.userData_ = data;
-    console.debug('Home page received', this.userData_);
+app.user.HomePanel.prototype.buildUserButton = function() {
+
+    // Item Names & Callbacks
+    var menuItems = [
+        {
+            name: bad.utils.getIconString('Edit Profile', 'icon-user', '#ccc'),
+            action: goog.bind(
+                this.dispatchComponentEvent, this, 'edit-account')
+        },
+        {/*Seperator*/},
+        {
+            name: bad.utils.getIconString('Log Out', 'icon-signout'),
+            action: goog.bind(this.logOut, this)
+        }
+    ];
+
+    // Menu
+    var menu = new goog.ui.Menu(this.dom_);
+    goog.array.forEach(menuItems, function(obj) {
+        var item;
+        if (obj.name) {
+            item = new goog.ui.MenuItem(
+                obj.name, {callback: obj.action}, this.dom_);
+        } else {
+            item = new goog.ui.MenuSeparator(this.dom_);
+        }
+        menu.addChild(item, true);
+    }, this);
+
+    // Menu Button
+    var menuButton = new goog.ui.MenuButton('', menu,
+        new goog.ui.Css3MenuButtonRenderer(), this.dom_
+    );
+    menuButton.decorate(goog.dom.getElement('user_button'));
+
+    this.userButton = menuButton;
 };
 
 app.user.HomePanel.prototype.logOut = function() {
     var queryData = goog.uri.utils.buildQueryDataFromMap({'logout': true});
-    this.xMan.post(this.uri_, queryData, goog.bind(this.onLogOut, this));
+    this.xMan.post(this.getUri(), queryData, goog.bind(this.onLogOut, this));
 };
 
 app.user.HomePanel.prototype.onLogOut = function(e) {

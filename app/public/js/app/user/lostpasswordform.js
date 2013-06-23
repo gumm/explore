@@ -15,32 +15,58 @@ app.user.LostPasswordForm = function(id, opt_domHelper) {
 goog.inherits(app.user.LostPasswordForm, bad.ui.Form);
 
 app.user.LostPasswordForm.prototype.enterDocument = function() {
-    app.user.LostPasswordForm.superClass_.enterDocument.call(this);
+
+    this.dom_ = goog.dom.getDomHelper(this.getElement());
+    this.initDom();
 
     this.getHandler().
         listen(
-            goog.dom.getElement('cancel'),
-            goog.events.EventType.CLICK,
+            this.cancelButton,
+            goog.ui.Component.EventType.ACTION,
             function() {
+                this.clearAlerts();
                 //noinspection JSPotentiallyInvalidUsageOfThis
                 this.dispatchComponentEvent('cancel');
             },undefined, this
         ).listen(
-            goog.dom.getElement('submit'),
-            goog.events.EventType.CLICK,
+            this.submitButton,
+            goog.ui.Component.EventType.ACTION,
             this.submitLostPasswordForm
         );
-    this.dispatchComponentEvent(bad.ui.EventType.PANEL_READY);
+
+
+    // Calling this last makes sure that the final PANEL-READY event really is
+    // dispatched right at the end of all of the enterDocument calls.
+    app.user.LostPasswordForm.superClass_.enterDocument.call(this);
+};
+
+app.user.LostPasswordForm.prototype.initDom = function() {
+    this.initCancelButton();
+    this.initSubmitButton();
+};
+
+app.user.LostPasswordForm.prototype.initCancelButton = function() {
+    var button = new goog.ui.CustomButton('',
+        goog.ui.Css3ButtonRenderer.getInstance(), this.dom_);
+    button.setSupportedState(goog.ui.Component.State.FOCUSED, false);
+    button.decorate(goog.dom.getElement('cancel'));
+    this.cancelButton = button;
+};
+
+app.user.LostPasswordForm.prototype.initSubmitButton = function() {
+    var button = new goog.ui.CustomButton('',
+        goog.ui.Css3ButtonRenderer.getInstance(), this.dom_);
+    button.setSupportedState(goog.ui.Component.State.FOCUSED, false);
+    button.decorate(goog.dom.getElement('submit'));
+    this.submitButton = button;
 };
 
 app.user.LostPasswordForm.prototype.submitLostPasswordForm = function() {
-    var constraintsValidate = this.form_.checkValidity();
-    if (constraintsValidate) {
-        var content = goog.dom.forms.getFormDataMap(this.form_).toObject();
-        var queryData = goog.uri.utils.buildQueryDataFromMap(content);
+    this.checkValidation();
+    if (this.getForm().checkValidity()) {
         this.xMan.post(
-            this.uri_,
-            queryData,
+            this.getUri(),
+            this.getPostContentFromForm(this.getForm()),
             goog.bind(this.onSubmitLostPasswordForm, this)
         );
     }
@@ -48,20 +74,12 @@ app.user.LostPasswordForm.prototype.submitLostPasswordForm = function() {
 
 app.user.LostPasswordForm.prototype.onSubmitLostPasswordForm = function(e) {
     var xhr = e.target;
-    var alert = /** @type {!Node} */ (goog.dom.getElementByClass('alert'));
-    goog.dom.removeChildren(alert);
-    goog.dom.classes.remove(alert, 'alert-success', 'alert-error');
-    var message = goog.dom.createDom('strong', {}, 'Done. ');
+    var data = xhr.getResponseJson();
+    this.clearAlerts();
     if (xhr.isSuccess()) {
-        goog.dom.append(alert, message,
-            'Check your email on how to reset your password.');
-        goog.dom.classes.add(alert, 'alert-success');
-        goog.dom.classes.remove(alert, 'hide');
+        var fields = this.getForm().elements;
+        this.displaySuccess(fields['email'], data.message);
     } else {
-        message = goog.dom.createDom('strong', {}, 'Error! ');
-        goog.dom.append(alert, message,
-            'Please enter a valid email address.');
-        goog.dom.classes.add(alert, 'alert-error');
-        goog.dom.classes.remove(alert, 'hide');
+        this.displayErrors(data);
     }
 };

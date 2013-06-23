@@ -1,5 +1,7 @@
-@import url('bootstrap.min.css');
+@import url('lib/twitter-bootstrap/css/bootstrap.min.css');
+@import url('lib/font-awesome/css/font-awesome.min.css');
 
+@import url('../js/bad-library/bad/css/common.css');
 @import url('../js/bad-library/bad/css/css3button.css');
 @import url('../js/bad-library/bad/css/css3menubutton.css');
 @import url('../js/bad-library/bad/css/layout.css');

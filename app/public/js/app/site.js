@@ -40,6 +40,12 @@ app.Site = function(xManWrapper) {
      * @private
      */
     this.layout_ = null;
+
+    /**
+     * @type {Object}
+     * @private
+     */
+    this.user_ = {};
 };
 goog.inherits(app.Site, goog.events.EventHandler);
 
@@ -148,7 +154,7 @@ app.Site.prototype.onAutoLoginReply = function(e) {
         if (data.error) {
             this.viewLogin();
         } else {
-            this.viewHome();
+            this.onLogin({data: data});
         }
     } else {
         this.viewLogin();
@@ -167,7 +173,13 @@ app.Site.prototype.switchView = function(view) {
     this.activeView_ = view;
     this.activeView_.setLayout(this.layout_);
     this.activeView_.setXMan(this.xMan_);
+    this.activeView_.setUser(this.user_);
     this.activeView_.render();
+};
+
+app.Site.prototype.onLogin = function(e) {
+    this.user_ = e.data;
+    this.viewHome();
 };
 
 app.Site.prototype.viewLogin = function() {
@@ -177,9 +189,9 @@ app.Site.prototype.viewLogin = function() {
     var view = new app.base.LoginView();
     this.listenOnce(
         view,
-        'login-success', function(e) {
-            this.viewHome();
-        });
+        'login-success',
+        this.onLogin
+    );
     this.switchView(view);
 };
 

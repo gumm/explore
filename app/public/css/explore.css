@@ -1,4 +1,11 @@
 /*---------------------------------------------------------------[ Explore ]--*/
+input.error {
+    border-color: rgb(233, 50, 45);
+-webkit-box-shadow: 0 0 6px rgb(248, 185, 183);
+-moz-box-shadow: 0 0 6px #f8b9b7;
+box-shadow: 0 0 6px rgb(248, 185, 183);
+    color: rgb(185, 74, 72);
+}
 .layout-drag-handle {
     background-color: rgb(250, 250, 250) !important;
 }
@@ -13,32 +20,38 @@
 }
 .signup {
     color: rgb(133, 133, 133);
+    float: right;
 }
 .topfixed {
     position: relative;
     top: 18px;
     right: 18px;
     width: 260px;
-    line-height: 34px;
     float: right;
 }
 .expr_wrapper {
     padding: 30px;
 }
-
 .layout-nest-header {
     background-color: rgb(66, 66, 66);
     border-bottom: 1px solid rgb(229, 229, 229);
 }
-
 .layout-nest-main {
     background-color: #FCFCFC;
 }
-
 .layout-nest-footer {
     background-color: #EEE;
     border-top: 1px solid #CCC;
 }
+
+/* Buttons and things created with bad.utils.getIconString have space between
+ * the icon and the text.
+ */
+.goog-css3-button i[class^="icon-"], .goog-css3-button i[class*=" icon-"],
+span i[class^="icon-"], span i[class*=" icon-"] {
+    margin-right: 10px;
+}
+
 
 #login-container {
   width: 260px;
@@ -67,7 +80,7 @@
 }
 
 #account-form-container {
-  width: 460px;
+  width: 440px;
   margin: 100px auto;
 }
 
@@ -118,9 +131,10 @@
   margin-top: 7px;
 }
 
-.form-horizontal .form-actions {
-  padding: 17px 0 0 255px;
+#account-form .form-actions {
+  padding: 17px 0 0 265px;
 }
+
 label {
   color: #808080;
   text-shadow: -1px 1px 0 #fff;

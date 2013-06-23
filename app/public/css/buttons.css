@@ -1,13 +1,13 @@
 button i {
   padding-left: 8px;
 }
-button#btn-login {
-  width: 100px;
-  padding: 6px 10px 6px 10px;
-  float: left;
-  margin-top: 15px;
+
+#btn-login {
+    margin-top: 15px;
 }
 
+#get-credentials-form .g-button-submit,
+#account-form .g-button-submit,
 .topfixed button,
 button#submit,
 button#account-submit {
@@ -19,4 +19,9 @@ button#account-submit {
   top: 1px;
   right: 8px;
   position: absolute;
+}
+
+#create-account,
+#user_button {
+ margin-left: 15px;
 }

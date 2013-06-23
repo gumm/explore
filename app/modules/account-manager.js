@@ -35,15 +35,21 @@ exports.autoLogin = function(user, pass, callback) {
 };
 
 exports.manualLogin = function(user, pass, callback) {
+    var error = {
+        user: null,
+        pass: null
+    };
     accounts.findOne({user: user}, function(e, o) {
         if (o === null) {
-            callback('user-not-found');
+            error.user = 'User not found';
+            callback(error);
         } else {
             validatePassword(pass, o.pass, function(err, res) {
-                if (res) {
-                    callback(null, o);
+                if (!res) {
+                    error.pass = 'User password mismatch';
+                    callback(error);
                 } else {
-                    callback('invalid-password');
+                    callback(null, o);
                 }
             });
         }
@@ -53,13 +59,19 @@ exports.manualLogin = function(user, pass, callback) {
 /* record insertion, update & deletion methods */
 
 exports.addNewAccount = function(newData, callback) {
+    var error = {
+        user: null,
+        email: null
+    };
     accounts.findOne({user: newData.user}, function(e, o) {
         if (o) {
-            callback('username-taken');
+            error.user = 'This username is not available';
+            callback(error);
         } else {
             accounts.findOne({email: newData.email}, function(e, o) {
                 if (o) {
-                    callback('email-taken');
+                    error.email = 'This email is already registered';
+                    callback(error);
                 } else {
                     saltAndHash(newData.pass, function(hash) {
                         newData.pass = hash;
@@ -111,8 +123,16 @@ exports.deleteAccount = function(id, callback) {
 };
 
 exports.getAccountByEmail = function(email, callback) {
-    accounts.findOne({email: email}, function(e, o) {
-        callback(o);
+    var error = {
+        email: null
+    };
+    accounts.findOne({email: email}, function(e, account) {
+        if (account === null) {
+            error.email = 'User not found';
+            callback(error, null);
+        } else {
+            callback(null, account);
+        }
     });
 };
 

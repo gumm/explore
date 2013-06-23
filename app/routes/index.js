@@ -50,17 +50,25 @@ exports.login = function(req, res) {
 exports.postLogin = function(req, res) {
     var user = req.param('user');
     var password = req.param('pass');
+    var remember = req.param('remember');
+    var reply = {
+        error: null,
+        data: null,
+        message: null
+    };
 
-    AM.manualLogin(user, password, function(e, o) {
-        if (!o) {
-            res.send(e, 400);
+    AM.manualLogin(user, password, function(err, obj) {
+        if (!obj) {
+            reply.error = err;
+            res.send(reply, 400);
         } else {
-            req.session.user = o;
-            if (req.param('remember-me') === 'true') {
-                res.cookie('user', o.user, { maxAge: 900000 });
-                res.cookie('pass', o.pass, { maxAge: 900000 });
+            req.session.user = obj;
+            if (remember === 'on') {
+                res.cookie('user', obj.user, { maxAge: 900000 });
+                res.cookie('pass', obj.pass, { maxAge: 900000 });
             }
-            res.send(o, 200);
+            reply.data = obj;
+            res.send(reply, 200);
         }
     });
 };
@@ -84,11 +92,19 @@ exports.postSignUp = function(req, res) {
         pass: req.param('pass'),
         country: req.param('country')
     };
-    var callback = function(e) {
-        if (e) {
-            res.send(e, 400);
+
+    var reply = {
+        error: null,
+        data: null,
+        message: null
+    };
+
+    var callback = function(error) {
+        if (error) {
+            reply.error = error;
+            res.send(reply, 400);
         } else {
-            res.send('OK', 200);
+            res.send(reply, 200);
         }
     };
     AM.addNewAccount(credentials, callback);
@@ -162,22 +178,36 @@ exports.lostPassword = function(req, res) {
 };
 
 exports.postLostPassword = function(req, res) {
-    // look up the user's account via their email //
-    AM.getAccountByEmail(req.param('email'), function(o) {
-        if (o) {
-            res.send('ok', 200);
-            EM.dispatchResetPasswordLink(o, function(e, m) {
+    var email = req.param('email');
+    var reply = {
+        error: null,
+        data: null,
+        message: null
+    };
+
+    AM.getAccountByEmail(email, function(err, obj) {
+        if (obj) {
+            EM.dispatchResetPasswordLink(obj, function(e, m) {
                 // this callback takes a moment to return //
                 // should add an ajax loader to give user feedback //
                 if (!e) {
-                    //res.send('ok', 200);
+                    reply.data = {
+                        email: 'Reset link sent. Please check your email.'
+                    };
+                    res.send(reply, 200);
                 } else {
-                    res.send('email-server-error', 400);
-                    for (k in e) console.log('error : ', k, e[k]);
+                    reply.error = {email: 'Server Error. No reset email sent.'};
+                    res.send(reply, 400);
+
+                    // This is just debug...
+                    for (k in e) {
+                        console.log('error : ', k, e[k]);
+                    }
                 }
             });
         } else {
-            res.send('email-not-found', 400);
+            reply.error = err;
+            res.send(reply, 400);
         }
     });
 };

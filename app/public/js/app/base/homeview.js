@@ -68,7 +68,6 @@ app.base.HomeView.prototype.enterSignUpForm = function() {
 };
 
 app.base.HomeView.prototype.exitSignUpForm = function() {
-    console.debug('Did we come here???');
     this.accEditForm.hide();
     this.homePanel.show();
 };
