@@ -26,10 +26,11 @@ exports.autoLogin = function(req, res) {
     var errorReply = {error: 'No Auto Login Possible'};
     if (req.session &&
         req.session.user &&
-        req.session.user.user &&
-        req.session.user.pass) {
-        var user = req.session.user.user;
-        var pass = req.session.user.pass;
+        req.session.user.credentials &&
+        req.session.user.credentials.user &&
+        req.session.user.credentials.pass) {
+        var user = req.session.user.credentials.user;
+        var pass = req.session.user.credentials.pass;
         AM.autoLogin(user, pass, function(o) {
             if (o !== null) {
                 req.session.user = o;
@@ -44,7 +45,7 @@ exports.autoLogin = function(req, res) {
 };
 
 exports.login = function(req, res) {
-    res.render('login', {title: 'Hello - Please Login To Your Account'});
+    res.render('login', {});
 };
 
 exports.postLogin = function(req, res) {
@@ -63,10 +64,12 @@ exports.postLogin = function(req, res) {
             res.send(reply, 400);
         } else {
             req.session.user = obj;
+            /* These not necessary with sessions
             if (remember === 'on') {
-                res.cookie('user', obj.user, { maxAge: 900000 });
-                res.cookie('pass', obj.pass, { maxAge: 900000 });
+                res.cookie('user', obj.credentials.user, { maxAge: 900000 });
+                res.cookie('pass', obj.credentials.pass, { maxAge: 900000 });
             }
+            */
             reply.data = obj;
             res.send(reply, 200);
         }
@@ -81,7 +84,8 @@ exports.intro = function(req, res) {
 //------------------------------------------------------------[ New Accounts ]--
 
 exports.signUp = function(req, res) {
-    res.render('signup', {countries: CT});
+    var user = AM.makeAccount({});
+    res.render('signup', {countries: CT, udata: user});
 };
 
 exports.postSignUp = function(req, res) {
@@ -113,20 +117,32 @@ exports.postSignUp = function(req, res) {
 //-----------------------------------------------------------[ Edit Accounts ]--
 
 exports.editAccount = function(req, res) {
-    res.render('editaccount', {countries: CT, udata: req.session.user});
+    var user = req.session.user;
+    res.render('editaccount', {countries: CT, udata: user});
 };
 
 exports.postEditAccount = function(req, res) {
-    var credentials = {
-        user: req.param('user'),
+    var currentUser = req.session.user;
+
+    // This is from the form.
+    var newData = {
         name: req.param('name'),
         email: req.param('email'),
-        country: req.param('country'),
-        pass: req.param('pass')
+        country: req.param('country')
     };
-    var callback = function(e, o) {
-        if (e) {
-            res.send('error-updating-account', 400);
+
+    // This is the reply object
+    var reply = {
+        error: null,
+        data: null,
+        message: null
+    };
+
+    // This is what comes back from the Account Manager
+    var callback = function(err, o) {
+        if (err) {
+            reply.error = 'Error updating account: ' + e;
+            res.send(reply, 400);
         } else {
             req.session.user = o;
             // update the user's login cookies if they exists //
@@ -135,12 +151,16 @@ exports.postEditAccount = function(req, res) {
                 res.cookie('user', o.user, { maxAge: 900000 });
                 res.cookie('pass', o.pass, { maxAge: 900000 });
             }
-            res.send('ok', 200);
+            reply.message = 'Account updated';
+            res.send(reply, 200);
         }
     };
 
     if (req.param('user') !== undefined) {
-        AM.updateAccount(credentials, callback);
+        AM.updateAccount(currentUser.credentials.user, newData, callback);
+    } else {
+        reply.message = 'User not recognised';
+        res.send(reply, 400);
     }
 };
 
@@ -161,7 +181,6 @@ exports.home = function(req, res) {
 };
 
 exports.postHome = function(req, res) {
-
     if (req.param('logout') === 'true') {
         res.clearCookie('user');
         res.clearCookie('pass');

@@ -24,7 +24,7 @@ var buildParms = process.argv[3];
 var build = spawn('sh', ['bin/build/build.sh', rootPath, buildJob, buildParms]);
 
 build.stdout.on('data', function(data) {
-  console.log(c.GRAY + data + c.RESET);
+  console.log(c.WHITE + data + c.RESET);
 });
 
 build.stderr.on('data', function(data) {

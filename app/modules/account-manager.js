@@ -22,34 +22,58 @@ db.open(function(e, d) {
 });
 var accounts = db.collection('accounts');
 
+var makeAccount = function(data) {
+    return {
+        profile: {
+            name: data.name || null,
+            email: data.email || null,
+            url: data.url || null,
+            location: {
+                city: data.city || null,
+                country: data.country || null
+            }
+        },
+        contact: {
+            phone: data.phone || null,
+            cell: data.cell || null
+        },
+        credentials: {
+            pass: data.pass || null,
+            user: data.user || null
+
+        },
+        date: moment().format('MMMM Do YYYY, h:mm:ss a')
+    };
+};
+
 /* login validation methods */
 
-exports.autoLogin = function(user, pass, callback) {
-    accounts.findOne({user: user}, function(e, o) {
-        if (o && o.pass === pass) {
-            callback(o);
+var autoLogin = function(user, pass, callback) {
+    accounts.findOne({'credentials.user': user}, function(err, res) {
+        if (res && res.credentials.pass === pass) {
+            callback(res);
         } else {
             callback(null);
         }
     });
 };
 
-exports.manualLogin = function(user, pass, callback) {
+var manualLogin = function(user, pass, callback) {
     var error = {
         user: null,
         pass: null
     };
-    accounts.findOne({user: user}, function(e, o) {
-        if (o === null) {
+    accounts.findOne({'credentials.user': user}, function(e, account) {
+        if (account === null) {
             error.user = 'User not found';
             callback(error);
         } else {
-            validatePassword(pass, o.pass, function(err, res) {
+            validatePassword(pass, account.credentials.pass, function(err, res) {
                 if (!res) {
                     error.pass = 'User password mismatch';
                     callback(error);
                 } else {
-                    callback(null, o);
+                    callback(null, account);
                 }
             });
         }
@@ -58,52 +82,55 @@ exports.manualLogin = function(user, pass, callback) {
 
 /* record insertion, update & deletion methods */
 
-exports.addNewAccount = function(newData, callback) {
+var addNewAccount = function(data, callback) {
     var error = {
         user: null,
         email: null
     };
-    accounts.findOne({user: newData.user}, function(e, o) {
-        if (o) {
-            error.user = 'This username is not available';
-            callback(error);
+    var newAccount = makeAccount(data);
+    accounts.findOne({'credentials.user': newAccount.credentials.user},
+        function(err, account) {
+            if (account) {
+                error.user = 'This username is not available';
+                callback(error);
+            } else {
+                accounts.findOne({email: newAccount.profile.email},
+                    function(e, o) {
+                        if (o) {
+                            error.email = 'This email is already registered';
+                            callback(error);
+                        } else {
+                            saltAndHash(newAccount.credentials.pass,
+                                function(hash) {
+                                    newAccount.credentials.pass = hash;
+                                    accounts.insert(newAccount, {safe: true}, callback);
+                                }
+                            );
+                        }
+                    }
+                );
+            }
+        }
+    );
+};
+
+var updateAccount = function(user, newData, callback) {
+
+    // This does not include changing user names or passwords here.
+    accounts.findOne({'credentials.user': user}, function(err, result) {
+        if (result) {
+            result.profile.name = newData.name;
+            result.profile.email = newData.email;
+            result.contact.country = newData.country;
+            accounts.save(result, {safe: true}, callback);
         } else {
-            accounts.findOne({email: newData.email}, function(e, o) {
-                if (o) {
-                    error.email = 'This email is already registered';
-                    callback(error);
-                } else {
-                    saltAndHash(newData.pass, function(hash) {
-                        newData.pass = hash;
-                        // append date stamp when record was created //
-                        newData.date = moment().format(
-                            'MMMM Do YYYY, h:mm:ss a'
-                        );
-                        accounts.insert(newData, {safe: true}, callback);
-                    });
-                }
-            });
+            console.log('NO ACCOUNT TO UPDATE:', err);
+            callback('Account not found');
         }
     });
 };
 
-exports.updateAccount = function(newData, callback) {
-    accounts.findOne({user: newData.user}, function(e, o) {
-        o.name = newData.name;
-        o.email = newData.email;
-        o.country = newData.country;
-        if (newData.pass === '') {
-            accounts.save(o, {safe: true}, callback);
-        } else {
-            saltAndHash(newData.pass, function(hash) {
-                o.pass = hash;
-                accounts.save(o, {safe: true}, callback);
-            });
-        }
-    });
-};
-
-exports.updatePassword = function(email, newPass, callback) {
+var updatePassword = function(email, newPass, callback) {
     accounts.findOne({email: email}, function(e, o) {
         if (e) {
             callback(e, null);
@@ -118,15 +145,15 @@ exports.updatePassword = function(email, newPass, callback) {
 
 /* account lookup methods */
 
-exports.deleteAccount = function(id, callback) {
+var deleteAccount = function(id, callback) {
     accounts.remove({_id: getObjectId(id)}, callback);
 };
 
-exports.getAccountByEmail = function(email, callback) {
+var getAccountByEmail = function(email, callback) {
     var error = {
         email: null
     };
-    accounts.findOne({email: email}, function(e, account) {
+    accounts.findOne({'profile.email': email}, function(e, account) {
         if (account === null) {
             error.email = 'User not found';
             callback(error, null);
@@ -136,7 +163,21 @@ exports.getAccountByEmail = function(email, callback) {
     });
 };
 
-exports.validateResetLink = function(email, passHash, callback) {
+var getAccountByUser = function(user, callback) {
+    var error = {
+        user: null
+    };
+    accounts.findOne({'credentials.user': user}, function(e, account) {
+        if (account === null) {
+            error.user = 'User not found';
+            callback(error, null);
+        } else {
+            callback(null, account);
+        }
+    });
+};
+
+var validateResetLink = function(email, passHash, callback) {
     accounts.find({ $and: [
         {email: email, pass: passHash}
     ] }, function(e, o) {
@@ -144,7 +185,7 @@ exports.validateResetLink = function(email, passHash, callback) {
     });
 };
 
-exports.getAllRecords = function(callback) {
+var getAllRecords = function(callback) {
     var whenFound = function(e, res) {
         if (e) {
             callback(e);
@@ -155,8 +196,22 @@ exports.getAllRecords = function(callback) {
     accounts.find().toArray(whenFound);
 };
 
-exports.delAllRecords = function(callback) {
+var delAllRecords = function(callback) {
     accounts.remove({}, callback); // reset accounts collection for testing //
+};
+
+module.exports = {
+    makeAccount: makeAccount,
+    autoLogin: autoLogin,
+    manualLogin: manualLogin,
+    addNewAccount: addNewAccount,
+    updateAccount: updateAccount,
+    updatePassword: updatePassword,
+    deleteAccount: deleteAccount,
+    getAccountByEmail: getAccountByEmail,
+    validateResetLink: validateResetLink,
+    getAllRecords: getAllRecords,
+    delAllRecords: delAllRecords
 };
 
 /* private encryption & validation methods */

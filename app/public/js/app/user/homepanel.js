@@ -52,13 +52,13 @@ app.user.HomePanel.prototype.buildUserButton = function() {
     // Item Names & Callbacks
     var menuItems = [
         {
-            name: bad.utils.getIconString('Edit Profile', 'icon-user', '#ccc'),
+            name: bad.utils.getIconString('Edit Your Profile', 'icon-user'),
             action: goog.bind(
                 this.dispatchComponentEvent, this, 'edit-account')
         },
         {/*Seperator*/},
         {
-            name: bad.utils.getIconString('Log Out', 'icon-signout'),
+            name: bad.utils.getIconString('Sign Out', 'icon-signout'),
             action: goog.bind(this.logOut, this)
         }
     ];
