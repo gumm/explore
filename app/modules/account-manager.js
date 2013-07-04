@@ -1,5 +1,6 @@
 var crypto = require('crypto');
 var MongoDB = require('mongodb').Db;
+var BSON = require('mongodb').BSONPure;
 var Server = require('mongodb').Server;
 var moment = require('moment');
 
@@ -21,30 +22,6 @@ db.open(function(e, d) {
     }
 });
 var accounts = db.collection('accounts');
-
-var makeAccount = function(data) {
-    return {
-        profile: {
-            name: data.name || null,
-            email: data.email || null,
-            url: data.url || null,
-            location: {
-                city: data.city || null,
-                country: data.country || null
-            }
-        },
-        contact: {
-            phone: data.phone || null,
-            cell: data.cell || null
-        },
-        credentials: {
-            pass: data.pass || null,
-            user: data.user || null
-
-        },
-        date: moment().format('MMMM Do YYYY, h:mm:ss a')
-    };
-};
 
 /* login validation methods */
 
@@ -82,28 +59,30 @@ var manualLogin = function(user, pass, callback) {
 
 /* record insertion, update & deletion methods */
 
-var addNewAccount = function(data, callback) {
+var addNewAccount = function(newAccount, callback) {
     var error = {
         user: null,
         email: null
     };
-    var newAccount = makeAccount(data);
+    newAccount.date = moment().format('MMMM Do YYYY, h:mm:ss a');
     accounts.findOne({'credentials.user': newAccount.credentials.user},
-        function(err, account) {
-            if (account) {
+        function(err, existingAccount) {
+            if (existingAccount) {
                 error.user = 'This username is not available';
                 callback(error);
             } else {
                 accounts.findOne({email: newAccount.profile.email},
-                    function(e, o) {
-                        if (o) {
+                    function(err, existingAccount) {
+                        if (existingAccount) {
                             error.email = 'This email is already registered';
                             callback(error);
                         } else {
                             saltAndHash(newAccount.credentials.pass,
                                 function(hash) {
                                     newAccount.credentials.pass = hash;
-                                    accounts.insert(newAccount, {safe: true}, callback);
+                                    accounts.insert(newAccount, {safe: true},
+                                        function() {callback(null, newAccount);}
+                                    );
                                 }
                             );
                         }
@@ -114,20 +93,30 @@ var addNewAccount = function(data, callback) {
     );
 };
 
-var updateAccount = function(user, newData, callback) {
-
-    // This does not include changing user names or passwords here.
-    accounts.findOne({'credentials.user': user}, function(err, result) {
-        if (result) {
-            result.profile.name = newData.name;
-            result.profile.email = newData.email;
-            result.contact.country = newData.country;
-            accounts.save(result, {safe: true}, callback);
-        } else {
-            console.log('NO ACCOUNT TO UPDATE:', err);
-            callback('Account not found');
+/**
+ * This does not include changing user names or passwords here.
+ * @param uid
+ * @param newData
+ * @param callback
+ */
+var updateProfile = function(uid, newData, callback) {
+    accounts.findAndModify(
+        {_id: BSON.ObjectID(uid)}, // query
+        [['_id','asc']],           // sort order
+        {$set: {
+            profile: newData.profile}
+        },
+        {new: true}, // options new - if set to true, callback function returns the modified record. Default is false (original record is returned)
+        function(err, account) {
+            if (err){
+                console.warn(err.message);
+                callback(err); // returns error if no matching object found
+            }else{
+                console.dir(account);
+                callback(null, account);
+            }
         }
-    });
+    );
 };
 
 var updatePassword = function(email, newPass, callback) {
@@ -201,11 +190,10 @@ var delAllRecords = function(callback) {
 };
 
 module.exports = {
-    makeAccount: makeAccount,
     autoLogin: autoLogin,
     manualLogin: manualLogin,
     addNewAccount: addNewAccount,
-    updateAccount: updateAccount,
+    updateProfile: updateProfile,
     updatePassword: updatePassword,
     deleteAccount: deleteAccount,
     getAccountByEmail: getAccountByEmail,

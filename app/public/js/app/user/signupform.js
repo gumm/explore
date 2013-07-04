@@ -63,18 +63,7 @@ app.user.SignUpForm.prototype.submitSignUp = function() {
     var form = this.getForm();
     this.checkValidation();
 
-    var countryCheck = goog.bind(function() {
-        var field = form.elements['country'];
-        var country = field.value;
-        if (country !== 'Please select a country') {
-            return true;
-        } else {
-            this.displayError(field, 'Please select a country');
-            return false;
-        }
-    }, this);
-
-    if (countryCheck() && form.checkValidity()) {
+    if (form.checkValidity()) {
         var content = goog.dom.forms.getFormDataMap(form).toObject();
         var queryData = goog.uri.utils.buildQueryDataFromMap(content);
         this.xMan.post(
@@ -94,7 +83,9 @@ app.user.SignUpForm.prototype.onSubmitSignUp = function(queryData, e) {
     var data = xhr.getResponseJson();
     this.clearAlerts();
     if (xhr.isSuccess()) {
-        this.dispatchComponentEvent('signup-success', queryData);
+        this.dispatchComponentEvent('signup-success',
+            {query: queryData, reply: data}
+        );
     } else {
         this.displayErrors(data);
     }

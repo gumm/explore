@@ -69,7 +69,7 @@ app.base.LoginView.prototype.onPanelAction = function(e) {
             this.exitSignUpForm();
             break;
         case 'signup-success':
-            this.loginPanel.logIn(data);
+            this.loginPanel.logIn(data.query);
             break;
         case 'cancel':
             this.exitLostPasswordForm();

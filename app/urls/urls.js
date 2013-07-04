@@ -9,23 +9,23 @@ exports.urls = function(app) {
 
     // Login
     app.get('/login', routes.login);
-    app.post('/login', routes.postLogin);
+    app.post('/login', routes.login);
 
     // Account Creation
     app.get('/signup', routes.signUp);
-    app.post('/signup', routes.postSignUp);
+    app.post('/signup', routes.signUp);
 
     // Password Management
     app.get('/lost-password', routes.lostPassword);
-    app.post('/lost-password', routes.postLostPassword);
+    app.post('/lost-password', routes.lostPassword);
 
     // Home Page
     app.get('/home', routes.home);
-    app.post('/home', routes.postHome);
+    app.post('/home', routes.home);
 
     // Account Editing
-    app.get('/account/edit', routes.editAccount);
-    app.post('/account/edit', routes.postEditAccount);
+    app.get('/profile/edit', routes.editProfile);
+    app.post('/profile/edit', routes.editProfile);
 
     // Print all accounts
     app.get('/accounts', routes.accounts);

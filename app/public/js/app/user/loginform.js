@@ -80,6 +80,7 @@ app.user.LoginForm.prototype.submitLoginForm = function() {
 };
 
 app.user.LoginForm.prototype.logIn = function(credential) {
+    console.debug('CREDENTIALS--->>>', credential);
     this.xMan.post(
         this.getUri(),
         credential,

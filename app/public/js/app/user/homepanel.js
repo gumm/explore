@@ -43,7 +43,6 @@ app.user.HomePanel.prototype.initDom = function() {
     this.dispatchComponentEvent('have-user-container',
         goog.dom.removeNode(goog.dom.getElement('active_user_container'))
     );
-
     this.buildUserButton();
 };
 
@@ -55,6 +54,11 @@ app.user.HomePanel.prototype.buildUserButton = function() {
             name: bad.utils.getIconString('Edit Your Profile', 'icon-user'),
             action: goog.bind(
                 this.dispatchComponentEvent, this, 'edit-account')
+        },
+        {
+            name: bad.utils.getIconString('Change Your Password', 'icon-key'),
+            action: goog.bind(
+                this.dispatchComponentEvent, this, 'edit-password')
         },
         {/*Seperator*/},
         {
@@ -83,6 +87,11 @@ app.user.HomePanel.prototype.buildUserButton = function() {
     menuButton.decorate(goog.dom.getElement('user_button'));
 
     this.userButton = menuButton;
+};
+
+app.user.HomePanel.prototype.updateUserButtonCaption = function(caption) {
+    var icon = goog.dom.createDom('i', 'icon-cog');
+    this.userButton.setContent([icon, caption]);
 };
 
 app.user.HomePanel.prototype.logOut = function() {

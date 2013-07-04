@@ -21,7 +21,7 @@ app.base.HomeView.prototype.configurePanels = function() {
 
     // Signup Form
     this.accEditForm = new app.user.SignUpForm('account-form');
-    this.accEditForm.setUri(new goog.Uri('/account/edit'));
+    this.accEditForm.setUri(new goog.Uri('/profile/edit'));
     this.accEditForm.setNestAsTarget(layout.getNest('main', 'center'));
     this.addPanelToView('EDIT-ACCOUNT', this.accEditForm);
 };
@@ -44,11 +44,14 @@ app.base.HomeView.prototype.onPanelAction = function(e) {
         case 'edit-account':
             this.enterSignUpForm();
             break;
+        case 'edit-password':
+            this.enterSignUpForm();
+            break;
         case 'account-cancel':
             this.exitSignUpForm();
             break;
         case 'signup-success':
-            console.debug('Thank user for updated info...');
+            this.updateUserDisplay(data);
             break;
         default:
             console.log('View does not understand action:', value);
@@ -70,4 +73,9 @@ app.base.HomeView.prototype.enterSignUpForm = function() {
 app.base.HomeView.prototype.exitSignUpForm = function() {
     this.accEditForm.hide();
     this.homePanel.show();
+};
+
+app.base.HomeView.prototype.updateUserDisplay = function(data) {
+    this.homePanel.updateUserButtonCaption(data.reply.data.name);
+    this.exitSignUpForm();
 };
