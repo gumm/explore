@@ -27,6 +27,10 @@ exports.urls = function(app) {
     app.get('/profile/edit', routes.editProfile);
     app.post('/profile/edit', routes.editProfile);
 
+    // Password Editing
+    app.get('/password/edit', routes.editPassword);
+    app.post('/password/edit', routes.editPassword);
+
     // Print all accounts
     app.get('/accounts', routes.accounts);
 

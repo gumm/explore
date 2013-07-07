@@ -1,11 +1,18 @@
 /*---------------------------------------------------------------[ Explore ]--*/
 input.error {
     border-color: rgb(233, 50, 45);
--webkit-box-shadow: 0 0 6px rgb(248, 185, 183);
--moz-box-shadow: 0 0 6px #f8b9b7;
-box-shadow: 0 0 6px rgb(248, 185, 183);
+    -webkit-box-shadow: 0 0 6px rgb(248, 185, 183);
+    -moz-box-shadow: 0 0 6px #f8b9b7;
+    box-shadow: 0 0 6px rgb(248, 185, 183);
     color: rgb(185, 74, 72);
 }
+
+
+.control-group .alert {
+    margin-top:10px;
+    margin-bottom: 0;
+}
+
 .layout-drag-handle {
     background-color: rgb(250, 250, 250) !important;
 }

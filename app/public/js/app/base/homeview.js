@@ -18,12 +18,6 @@ app.base.HomeView.prototype.configurePanels = function() {
     this.homePanel.setUri(new goog.Uri('/home'));
     this.homePanel.setNestAsTarget(layout.getNest('main', 'center'));
     this.addPanelToView('HOME', this.homePanel);
-
-    // Signup Form
-    this.accEditForm = new app.user.SignUpForm('account-form');
-    this.accEditForm.setUri(new goog.Uri('/profile/edit'));
-    this.accEditForm.setNestAsTarget(layout.getNest('main', 'center'));
-    this.addPanelToView('EDIT-ACCOUNT', this.accEditForm);
 };
 
 app.base.HomeView.prototype.displayPanels = function() {
@@ -45,7 +39,7 @@ app.base.HomeView.prototype.onPanelAction = function(e) {
             this.enterSignUpForm();
             break;
         case 'edit-password':
-            this.enterSignUpForm();
+            this.enterPassEditForm();
             break;
         case 'account-cancel':
             this.exitSignUpForm();
@@ -61,17 +55,27 @@ app.base.HomeView.prototype.onPanelAction = function(e) {
 //------------------------------------------------------------[ Sign-Up Form ]--
 
 app.base.HomeView.prototype.enterSignUpForm = function() {
-    if (this.accEditForm.isInDocument()) {
-        this.accEditForm.show();
-        this.homePanel.hide();
-    } else {
-        this.accEditForm.renderWithTemplate();
-        this.homePanel.hide();
-    }
+    this.editForm = new app.user.SignUpForm('account-form');
+    this.editForm.setNestAsTarget(this.getLayout().getNest('main', 'center'));
+    this.editForm.setUri(new goog.Uri('/profile/edit'));
+    this.addPanelToView('EDIT_PROFILE', this.editForm);
+    this.editForm.renderWithTemplate();
+    this.homePanel.hide();
+};
+
+app.base.HomeView.prototype.enterPassEditForm = function() {
+    this.editForm = new app.user.SignUpForm('account-form');
+    this.editForm.setNestAsTarget(this.getLayout().getNest('main', 'center'));
+    this.editForm.setUri(new goog.Uri('/password/edit'));
+    this.addPanelToView('EDIT_PROFILE', this.editForm);
+    this.editForm.renderWithTemplate();
+    this.homePanel.hide();
 };
 
 app.base.HomeView.prototype.exitSignUpForm = function() {
-    this.accEditForm.hide();
+    if (this.editForm) {
+        this.editForm.dispose();
+    }
     this.homePanel.show();
 };
 

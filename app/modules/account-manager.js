@@ -45,8 +45,8 @@ var manualLogin = function(user, pass, callback) {
             error.user = 'User not found';
             callback(error);
         } else {
-            validatePassword(pass, account.credentials.pass, function(err, res) {
-                if (!res) {
+            validatePassword(pass, account.credentials.pass, function(isValid) {
+                if (!isValid) {
                     error.pass = 'User password mismatch';
                     callback(error);
                 } else {
@@ -64,7 +64,9 @@ var addNewAccount = function(newAccount, callback) {
         user: null,
         email: null
     };
+
     newAccount.date = moment().format('MMMM Do YYYY, h:mm:ss a');
+
     accounts.findOne({'credentials.user': newAccount.credentials.user},
         function(err, existingAccount) {
             if (existingAccount) {
@@ -100,34 +102,56 @@ var addNewAccount = function(newAccount, callback) {
  * @param callback
  */
 var updateProfile = function(uid, newData, callback) {
+
+    var findAndModifyCallback = function(err, account) {
+        if (err){
+            callback(err); // returns error if no matching object found
+        } else {
+            callback(null, account);
+        }
+    };
+
     accounts.findAndModify(
         {_id: BSON.ObjectID(uid)}, // query
         [['_id','asc']],           // sort order
-        {$set: {
-            profile: newData.profile}
-        },
-        {new: true}, // options new - if set to true, callback function returns the modified record. Default is false (original record is returned)
-        function(err, account) {
-            if (err){
-                console.warn(err.message);
-                callback(err); // returns error if no matching object found
-            }else{
-                console.dir(account);
-                callback(null, account);
-            }
-        }
+        {$set: {profile: newData.profile}},
+        {new: true}, // options new - if set to true, callback function
+                     // returns the modified record.
+                     // Default is false (original record is returned)
+        findAndModifyCallback
     );
 };
 
-var updatePassword = function(email, newPass, callback) {
-    accounts.findOne({email: email}, function(e, o) {
-        if (e) {
-            callback(e, null);
-        } else {
-            saltAndHash(newPass, function(hash) {
-                o.pass = hash;
-                accounts.save(o, {safe: true}, callback);
+var updatePassword = function(uid, passwords, callback) {
+
+    var pass = passwords.currentPass;
+    var newPass = passwords.newPass;
+    var error = {
+        currpass: null
+    };
+
+    accounts.findOne({_id: BSON.ObjectID(uid)}, function(err, account) {
+        if (err) {
+            error.pass = 'Error getting account to update';
+            callback(err);
+        } else if(account) {
+            // Validate the given current password to stored hash
+            validatePassword(pass, account.credentials.pass, function(isValid) {
+                if (!isValid) {
+                    error.currpass = 'This is not your current password';
+                    callback(error);
+                } else {
+                    saltAndHash(newPass, function(hash) {
+                        account.credentials.pass = hash;
+                        accounts.save(account, {safe: true}, function() {
+                            callback(null, account.profile);
+                        });
+                    });
+                }
             });
+        } else {
+            error.currpass = 'Could not find the account to update';
+            callback(err);
         }
     });
 };
@@ -157,11 +181,11 @@ var getAccountByUser = function(user, callback) {
         user: null
     };
     accounts.findOne({'credentials.user': user}, function(e, account) {
-        if (account === null) {
+        if (account) {
+            callback(null, account);
+        } else {
             error.user = 'User not found';
             callback(error, null);
-        } else {
-            callback(null, account);
         }
     });
 };
@@ -226,7 +250,7 @@ var saltAndHash = function(pass, callback) {
 var validatePassword = function(plainPass, hashedPass, callback) {
     var salt = hashedPass.substr(0, 10);
     var validHash = salt + md5(plainPass + salt);
-    callback(null, hashedPass === validHash);
+    callback(hashedPass === validHash);
 };
 
 /* auxiliary methods */

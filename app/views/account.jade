@@ -10,25 +10,26 @@ input(type='hidden', value= account._id)#accountId
         p#sub1.subheading #{subhead}
         hr
         fieldset
-            #name-cg.control-group
-                label.control-label(for='name-tf') Name
-                .controls
-                    input#name-tf.input-xlarge(
-                    type='text',
-                    name='name',
-                    value=account.name,
-                    placeholder='Your real name',
-                    required)
-            #email-cg.control-group
-                label.control-label(for='email-tf') Email
-                .controls
-                    input#email-tf.input-xlarge(
-                    type='email',
-                    name='email',
-                    value=account.email,
-                    placeholder='Your email address',
-                    required)
-            if edit
+            if (formtype === 'signup' || formtype === 'edit')
+                #name-cg.control-group
+                    label.control-label(for='name-tf') Name
+                    .controls
+                        input#name-tf.input-xlarge(
+                        type='text',
+                        name='name',
+                        value=account.name,
+                        placeholder='Your real name',
+                        required)
+                #email-cg.control-group
+                    label.control-label(for='email-tf') Email
+                    .controls
+                        input#email-tf.input-xlarge(
+                        type='email',
+                        name='email',
+                        value=account.email,
+                        placeholder='Your email address',
+                        required)
+            if (formtype === 'edit')
                 #url-cg.control-group
                     label.control-label(for='url-tf') URL
                     .controls
@@ -61,7 +62,7 @@ input(type='hidden', value= account._id)#accountId
                         type='text',
                         name='cell',
                         value=account.contact.cell,
-                        placeholder='+cc ac nnn nnn')
+                        placeholder='+00 12 3456789')
                 #phone-cg.control-group
                         label.control-label(for='phone-tf') Landline
                         .controls
@@ -69,9 +70,9 @@ input(type='hidden', value= account._id)#accountId
                             type='text',
                             name='phone',
                             value=account.contact.phone,
-                            placeholder='+cc ac nnn nnn')
+                            placeholder='+00 12 3456789')
 
-            if !edit
+            if (formtype === 'signup')
                 hr
                 p#sub2.subheading
                 #user-cg.control-group
@@ -84,14 +85,38 @@ input(type='hidden', value= account._id)#accountId
                         placeholder='Pick a username',
                         required)
 
+            if (formtype === 'editpassword')
+                #currpass-cg.control-group
+                    label.control-label(for='currpass-tf') Current Password
+                    .controls
+                        input#currpass-tf.input-xlarge(
+                        type='password',
+                        name='currpass',
+                        value='',
+                        placeholder='Current password',
+                        required)
+
+            if (formtype === 'signup' || formtype === 'editpassword')
+                - var passLab = (formtype === 'editpassword' ? 'New Password' : 'Password')
                 #pass-cg.control-group
-                    label.control-label(for='pass-tf') Password
+                    label.control-label(for='pass-tf') #{passLab}
                     .controls
                         input#pass-tf.input-xlarge(
                         type='password',
                         name='pass',
                         value='',
                         placeholder='Create a password',
+                        required)
+
+            if (formtype === 'editpassword')
+                #confpass-cg.control-group
+                    label.control-label(for='confpass-tf') Confirm Password
+                    .controls
+                        input#confpass-tf.input-xlarge(
+                        type='password',
+                        name='confpass',
+                        value='',
+                        placeholder='Confirm password',
                         required)
 
             .form-actions

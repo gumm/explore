@@ -61,6 +61,7 @@ app.user.SignUpForm.prototype.initSubmitButton = function() {
 
 app.user.SignUpForm.prototype.submitSignUp = function() {
     var form = this.getForm();
+    this.checkPasswordMatch();
     this.checkValidation();
 
     if (form.checkValidity()) {
@@ -72,6 +73,21 @@ app.user.SignUpForm.prototype.submitSignUp = function() {
             goog.bind(this.onSubmitSignUp, this, queryData)
         );
     }
+};
+
+app.user.SignUpForm.prototype.checkPasswordMatch = function() {
+    var password1 = document.getElementById('pass-tf');
+    var password2 = document.getElementById('confpass-tf');
+    if (password1 && password2) {
+        if (password1.value !== password2.value) {
+            password2.setCustomValidity('Passwords must match.');
+            return false;
+        } else {
+            password2.setCustomValidity('');
+            return true;
+        }
+    }
+    return true;
 };
 
 /**

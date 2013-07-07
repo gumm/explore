@@ -121,7 +121,7 @@ exports.intro = function(req, res) {
 exports.signUp = function(req, res) {
     var getCall = function() {
         var user = makeAccount({});
-        res.render('signup', {countries: CT, udata: user.profile});
+        res.render('signup', {udata: user.profile});
     };
 
     var postCall = function() {
@@ -230,24 +230,17 @@ exports.editPassword = function(req, res) {
 
     var getCall = function() {
         var user = req.session.user;
-        res.render('editpassword', {countries: CT, udata: user.profile});
+        res.render('editpassword', {udata: user.profile});
     };
 
     var postCall = function() {
         var currentUser = req.session.user;
 
         // This is from the form.
-        var newData = makeAccount({
-            name: req.param('name'),
-            email: req.param('email'),
-            url: req.param('url'),
-            user: req.param('user'),
-            pass: req.param('pass'),
-            city: req.param('city'),
-            country: req.param('country'),
-            phone: req.param('phone'),
-            cell: req.param('cell')
-        });
+        var passwords = {
+            currentPass: req.param('currpass'),
+            newPass: req.param('pass')
+        };
 
         // This is the reply object
         var reply = {
@@ -257,21 +250,17 @@ exports.editPassword = function(req, res) {
         };
 
         // This is what comes back from the Account Manager
-        var callback = function(err, user) {
+        var callback = function(err, account) {
             if (err) {
-                reply.error = 'Error updating account: ' + err;
+                reply.error = err;
                 res.send(reply, 400);
-            } else if(user) {
-                req.session.user = user;
-                reply.data = user.profile;
-                reply.message = 'Account updated';
+            } else if(account) {
+                reply.data = account;
+                reply.message = 'Password updated';
                 res.send(reply, 200);
-            } else {
-                reply.error = 'Could not find account';
-                res.send(reply, 400);
             }
         };
-        AM.updateProfile(currentUser._id, newData, callback);
+        AM.updatePassword(currentUser._id, passwords, callback);
     };
 
     switch (req.method) {
