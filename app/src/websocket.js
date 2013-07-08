@@ -25,6 +25,8 @@ var ExploreWebSocket = function(server, app) {
 
 ExploreWebSocket.prototype.init = function(app) {
 
+    console.log('Web Socket server is up...');
+
     //----------------------------------------------------------[ Web Socket ]--
     this.wss.on('connection', function (ws) {
         ws.bridge = new Bridge(ws, app);

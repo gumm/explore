@@ -7,6 +7,16 @@
             i.icon-cog
             | #{account.profile.name}
 
+#sysreadout
+    .sysreadout.topfixed-left Active Clients:
+        #active_clients.number
+
+    .sysreadout.topfixed-left Bytes Sent:
+        #bytes_sent.number
+
+    .sysreadout.topfixed-left Bytes Received:
+        #bytes_received.number
+
 .row.expr_wrapper
     .span4
         h2 Hello #{account.profile.name}
@@ -24,6 +34,11 @@
         p
             | All further comms from your device will have to have the topic prefix
         h4 #{account._id}/UID
+
+    .span3
+        #in_mqtt
+    .span3
+        #in_sys
 
 script
     console.debug('Hello Bloody hello')

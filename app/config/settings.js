@@ -1,7 +1,7 @@
 var pjson = require('../../package.json');
 var path = require('path');
 var urls = require('../urls/urls').urls;
-var ExploreMongoDB = require('../src/mongodbserver');
+//var ExploreMongoDB = require('../src/mongodbserver');
 var root = path.resolve(__dirname, '../../');
 var appPath = path.resolve(__dirname, '../');
 
@@ -71,7 +71,7 @@ exports.configure = function(app, express, dev) {
     init(dev);
 
     // Set up the database interaction.
-    var mongo = new ExploreMongoDB();
+//    var mongo = new ExploreMongoDB();
 
     // all environments
     app.set('port', conf.port)
@@ -89,8 +89,8 @@ exports.configure = function(app, express, dev) {
         .set('title', pjson.name)
         .set('version', pjson.version)
         .set('jsCompiled', conf.path.COMPILED.JS)
-        .set('cssCompiled', conf.path.COMPILED.CSS)
-        .set('mongo', mongo);
+        .set('cssCompiled', conf.path.COMPILED.CSS);
+//        .set('mongo', mongo);
 
     // Middle-ware
     app.use(express.compress());

@@ -20,7 +20,7 @@ ExploreMongoDB.prototype.initServer = function() {
     var errorCallback = (function(err, collection) {
         if (err) {
             console.log("The 'customers' collection doesn't exist. " +
-                'Creating it with sample data...');
+                'Creating it with sample data...', err);
         }
     }).bind(this);
 
@@ -28,7 +28,7 @@ ExploreMongoDB.prototype.initServer = function() {
     var openCallback = (function(err, db) {
         if (!err) {
             console.log("Connected to 'explore' database");
-            db.collection('customers', {strict: true}, errorCallback);
+//            db.collection('customers', {strict: true}, errorCallback);
         }
     }).bind(this);
 

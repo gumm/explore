@@ -9,7 +9,7 @@ goog.require('goog.net.XhrManager');
 /**
  * Init the site
  */
-app.initSite = function() {
+app.initSite = function(wsServer, wsPort) {
 
     var opt_maxRetries = 0,
         opt_headers = null,
@@ -33,9 +33,15 @@ app.initSite = function() {
     var xMan = new bad.Net(xhrMan);
 
     /**
+     * @type {bad.MqttWsIo}
+     */
+    var mqtt = new bad.MqttWsIo(wsServer, wsPort);
+    mqtt.openWebsocket();
+
+    /**
      * @type {app.Site}
      */
-    var site = new app.Site(xMan);
+    var site = new app.Site(xMan, mqtt);
     site.initSite();
     goog.exportSymbol('debugSite', site);
 };

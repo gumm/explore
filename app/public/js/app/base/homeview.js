@@ -6,7 +6,8 @@ goog.require('bad.ui.View');
  * @constructor
  * @extends {bad.ui.View}
  */
-app.base.HomeView = function() {
+app.base.HomeView = function(mqtt) {
+    this.mqtt = mqtt;
     bad.ui.View.call(this);
 };
 goog.inherits(app.base.HomeView, bad.ui.View);
@@ -14,7 +15,7 @@ goog.inherits(app.base.HomeView, bad.ui.View);
 app.base.HomeView.prototype.configurePanels = function() {
     var layout = this.getLayout();
 
-    this.homePanel = new app.user.HomePanel();
+    this.homePanel = new app.user.HomePanel(this.mqtt);
     this.homePanel.setUri(new goog.Uri('/home'));
     this.homePanel.setNestAsTarget(layout.getNest('main', 'center'));
     this.addPanelToView('HOME', this.homePanel);
@@ -32,6 +33,7 @@ app.base.HomeView.prototype.onPanelAction = function(e) {
 
     switch (value) {
         case 'have-user-container':
+        case 'have-mqtt-container':
             goog.dom.appendChild(
                 this.getLayout().getNestElement('header'), data);
             break;

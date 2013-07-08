@@ -32,10 +32,53 @@ input.error {
 .topfixed {
     position: relative;
     top: 18px;
-    right: 18px;
     width: 260px;
+    right: 18px;
     float: right;
 }
+
+.topfixed-left {
+    position: relative;
+    top: 18px;
+    width: 260px;
+    left: 18px;
+    float: left;
+}
+#sysreadout {
+    color: rgb(133, 133, 133);
+}
+
+.sysreadout .number {
+    display: inline-block;
+    font-size: 14px;
+    font-weight: bold;
+    opacity: 1;
+    color: rgb(255, 255, 255);
+}
+
+.sysreadout .number {
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
+    -webkit-transition: background-color .218s,border-color .218s,box-shadow .218s;
+    transition: background-color .218s,border-color .218s,box-shadow .218s;
+    -webkit-user-select: none;
+    cursor: pointer;
+    /*float: left;*/
+    height: 28px;
+    line-height: 28px;
+    margin-left: 8px;
+    outline: none;
+    width: auto;
+    background-image: none;
+    -webkit-appearance: none;
+    -webkit-box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
+    background-color: rgb(221, 75, 57);
+    border: none;
+    padding: 1px 11px 1px 11px;
+}
+
+
 .expr_wrapper {
     padding: 30px;
 }
@@ -89,6 +132,10 @@ span i[class^="icon-"], span i[class*=" icon-"] {
 #account-form-container {
   width: 440px;
   margin: 100px auto;
+}
+
+#account-form .control-label {
+    width: 100px;
 }
 
 #country-list {

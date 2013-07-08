@@ -8,7 +8,7 @@ var bootstrap = {
         switch (bootstrap.todo) {
             case 'site':
                 (function () {
-                    app_.site(); // Add the defaults here
+                    app_.site(bootstrap.wsServer, bootstrap.wsPort); // Add the defaults here
                 })();
                 break;
             default:

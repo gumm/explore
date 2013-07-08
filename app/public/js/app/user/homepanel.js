@@ -1,5 +1,6 @@
 goog.provide('app.user.HomePanel');
 
+goog.require('bad.MqttWsIo');
 goog.require('bad.ui.Panel');
 goog.require('goog.ui.Css3MenuButtonRenderer');
 goog.require('goog.ui.Menu');
@@ -7,14 +8,17 @@ goog.require('goog.ui.MenuButton');
 goog.require('goog.ui.MenuItem');
 goog.require('goog.ui.MenuSeparator');
 
+
 /**
  * The basic login form controller.
  * @param {goog.dom.DomHelper=} opt_domHelper Optional DOM helper.
  * @extends {bad.ui.Panel}
  * @constructor
  */
-app.user.HomePanel = function(opt_domHelper) {
+app.user.HomePanel = function(mqtt, opt_domHelper) {
     bad.ui.Panel.call(this, opt_domHelper);
+
+    this.mqtt = mqtt;
 
     /**
      * @type {Object}
@@ -34,6 +38,14 @@ app.user.HomePanel.prototype.enterDocument = function() {
             e.target.getModel().callback();
         }
     );
+
+    var mqttEl = document.getElementById('in_mqtt');
+    var sysEl = document.getElementById('in_sys');
+    this.mqtt.init_(mqttEl, sysEl);
+    this.mqtt.trackActiveClients(goog.dom.getElement('active_clients'));
+    this.mqtt.trackBytesSent(goog.dom.getElement('bytes_sent'));
+    this.mqtt.trackBytesReceived(goog.dom.getElement('bytes_received'));
+
     app.user.HomePanel.superClass_.enterDocument.call(this);
 };
 
@@ -43,6 +55,11 @@ app.user.HomePanel.prototype.initDom = function() {
     this.dispatchComponentEvent('have-user-container',
         goog.dom.removeNode(goog.dom.getElement('active_user_container'))
     );
+
+    this.dispatchComponentEvent('have-mqtt-container',
+        goog.dom.removeNode(goog.dom.getElement('sysreadout'))
+    );
+
     this.buildUserButton();
 };
 

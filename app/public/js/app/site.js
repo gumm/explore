@@ -23,17 +23,22 @@ goog.require('goog.net.XhrIo');
  * can simply subscribe to events on its children.
  * @param {!bad.Net} xManWrapper This site's XhrManager wrapped in a bad.Net
  *      convenience wrapper.
- *
+ * @param {bad.MqttWsIo} mqtt A mqtt web-socket implementation.
  * @constructor
  * @extends {goog.events.EventHandler}
  */
-app.Site = function(xManWrapper) {
+app.Site = function(xManWrapper, mqtt) {
     goog.events.EventHandler.call(this);
 
     /**
      * @type {!bad.Net}
      */
     this.xMan_ = xManWrapper;
+
+    /**
+     * @type {bad.MqttWsIo}
+     */
+    this.mqtt = mqtt;
 
     /**
      * @type {bad.ui.Layout}
@@ -199,7 +204,7 @@ app.Site.prototype.viewHome = function() {
     /**
      * @type {app.base.HomeView}
      */
-    var view = new app.base.HomeView();
+    var view = new app.base.HomeView(this.mqtt);
     this.switchView(view);
 };
 
