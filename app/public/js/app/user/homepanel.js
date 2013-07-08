@@ -45,6 +45,7 @@ app.user.HomePanel.prototype.enterDocument = function() {
     this.mqtt.trackActiveClients(goog.dom.getElement('active_clients'));
     this.mqtt.trackBytesSent(goog.dom.getElement('bytes_sent'));
     this.mqtt.trackBytesReceived(goog.dom.getElement('bytes_received'));
+    this.mqtt.mqttSubscribe(this.getUser()._id);
 
     app.user.HomePanel.superClass_.enterDocument.call(this);
 };

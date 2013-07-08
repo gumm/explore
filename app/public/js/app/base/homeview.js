@@ -17,6 +17,7 @@ app.base.HomeView.prototype.configurePanels = function() {
 
     this.homePanel = new app.user.HomePanel(this.mqtt);
     this.homePanel.setUri(new goog.Uri('/home'));
+    this.homePanel.setUser(this.getUser());
     this.homePanel.setNestAsTarget(layout.getNest('main', 'center'));
     this.addPanelToView('HOME', this.homePanel);
 };
