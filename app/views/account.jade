@@ -20,6 +20,14 @@ input(type='hidden', value= account._id)#accountId
                         value=account.name,
                         placeholder='Your real name',
                         required)
+                #surname-cg.control-group
+                    label.control-label(for='surname-tf') Surname
+                    .controls
+                        input#surname-tf.input-xlarge(
+                        type='text',
+                        name='surname',
+                        value=account.surname,
+                        placeholder='Your surname')
                 #email-cg.control-group
                     label.control-label(for='email-tf') Email
                     .controls

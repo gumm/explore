@@ -23,6 +23,32 @@ db.open(function(e, d) {
 });
 var accounts = db.collection('accounts');
 
+
+var makeAccount = function(data) {
+    return {
+        profile: {
+            name: data.name || null,
+            surname: data.surname || null,
+            email: data.email || null,
+            url: data.url || null,
+            location: {
+                city: data.city || null,
+                country: data.country || null
+            },
+            contact: {
+                phone: data.phone || null,
+                cell: data.cell || null
+            }
+        },
+        credentials: {
+            pass: data.pass || null,
+            user: data.user || null
+
+        }
+    };
+};
+
+
 /* login validation methods */
 
 var autoLogin = function(user, pass, callback) {
@@ -223,7 +249,8 @@ module.exports = {
     getAccountByEmail: getAccountByEmail,
     validateResetLink: validateResetLink,
     getAllRecords: getAllRecords,
-    delAllRecords: delAllRecords
+    delAllRecords: delAllRecords,
+    makeAccount: makeAccount
 };
 
 /* private encryption & validation methods */

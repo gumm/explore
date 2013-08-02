@@ -2,29 +2,6 @@ var CT = require('../modules/country-list');
 var AM = require('../modules/account-manager');
 var EM = require('../modules/email-dispatcher');
 
-var makeAccount = function(data) {
-    return {
-        profile: {
-            name: data.name || null,
-            email: data.email || null,
-            url: data.url || null,
-            location: {
-                city: data.city || null,
-                country: data.country || null
-            },
-            contact: {
-                phone: data.phone || null,
-                cell: data.cell || null
-            }
-        },
-        credentials: {
-            pass: data.pass || null,
-            user: data.user || null
-
-        }
-    };
-};
-
 exports.index = function(req, res) {
     var app = req.app;
 
@@ -120,12 +97,12 @@ exports.intro = function(req, res) {
 
 exports.signUp = function(req, res) {
     var getCall = function() {
-        var user = makeAccount({});
+        var user = AM.makeAccount({});
         res.render('signup', {udata: user.profile});
     };
 
     var postCall = function() {
-        var newAccount = makeAccount({
+        var newAccount = AM.makeAccount({
             name: req.param('name'),
             email: req.param('email'),
             user: req.param('user'),
@@ -177,8 +154,9 @@ exports.editProfile = function(req, res) {
         var currentUser = req.session.user;
 
         // This is from the form.
-        var newData = makeAccount({
+        var newData = AM.makeAccount({
             name: req.param('name'),
+            surname: req.param('surname'),
             email: req.param('email'),
             url: req.param('url'),
             user: req.param('user'),
