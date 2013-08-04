@@ -2,10 +2,17 @@ var CT = require('../modules/country-list');
 var AM = require('../modules/account-manager');
 var EM = require('../modules/email-dispatcher');
 
-exports.index = function(req, res) {
-    var app = req.app;
+var okGo = function(req, res, obj) {
+    if(obj[req.method]) {
+        obj[req.method]();
+    } else {
+        notSupported(res);
+    }
+};
 
-    res.render('index', {
+var getBasicSetup = function(req) {
+    var app = req.app;
+    return {
         jsIsCompiled: app.enabled('jsIsCompiled'),
         cssIsCompiled: app.enabled('cssIsCompiled'),
         title: app.get('title'),
@@ -16,76 +23,102 @@ exports.index = function(req, res) {
         deps: app.get('deps'),
         bootstrap: app.get('bootstrap'),
         wsPort: app.get('wsPort'),
-        wsServer: app.get('wsServer')
-    });
+        wsServer: app.get('wsServer'),
+        landing: null
+    };
+};
+
+/**
+ * A generic reply object.
+ * @param {?(Object|string)=} opt_err
+ * @param {?(Object|string)=} opt_data
+ * @param {?string=} opt_message
+ * @returns {{error: (*|null), data: (*|null), message: (*|null)}}
+ */
+var getReply = function(opt_err, opt_data, opt_message) {
+    return {
+        error: opt_err || null,
+        data: opt_data || null,
+        message: opt_message || null
+    };
+};
+
+var notSupported = function(res) {
+    res.send('Method not supported', 400);
+};
+
+exports.index = function(req, res) {
+    res.render('index', getBasicSetup(req));
 };
 
 //------------------------------------------------------------------[ Log In ]--
 
 exports.autoLogin = function(req, res) {
-    var errorReply = {error: 'No Auto Login Possible'};
-    if (req.session &&
-        req.session.user &&
-        req.session.user.credentials &&
-        req.session.user.credentials.user &&
-        req.session.user.credentials.pass) {
-        var user = req.session.user.credentials.user;
-        var pass = req.session.user.credentials.pass;
-        AM.autoLogin(user, pass, function(o) {
-            if (o !== null) {
-                req.session.user = o;
-                res.send(req.session.user);
-            } else {
-                res.send(errorReply);
-            }
-        });
-    } else {
-        res.send(errorReply);
-    }
+    var errString = 'No Auto Login Possible';
+
+    /**
+     * BEWARE: The account passed in here contains the full account.
+     * Only pass the profile component to the user.
+     * @param {Object} account The full account object from mongo.
+     */
+    var callback = function(account) {
+        if (account) {
+            req.session.user = account;
+            res.send(getReply(null, account.profile));
+        } else {
+            res.send(getReply(errString), 200);
+        }
+    };
+
+    /**
+     * If the session has all the required info to identify a user,
+     * use the session info to log in.
+     */
+    var getCall = function() {
+        if (req.session &&
+            req.session.user &&
+            req.session.user.credentials &&
+            req.session.user.credentials.user &&
+            req.session.user.credentials.pass) {
+                AM.autoLogin(
+                    req.session.user.credentials.user,
+                    req.session.user.credentials.pass,
+                    callback);
+        } else {
+            res.send(getReply(errString), 200);
+        }
+    };
+
+    okGo(req, res, {'GET': getCall});
 };
 
 exports.login = function(req, res) {
+    /**
+     * BEWARE: The account passed in here contains the full account.
+     * Only pass the profile component to the user.
+     * @param {Object} err The Error object if any.
+     * @param {Object} account The full account object from mongo.
+     */
+    var callback = function(err, account) {
+        if (!account) {
+            res.send(getReply(err), 400);
+        } else {
+            req.session.user = account;
+            res.send(getReply(null, account.profile, 'Login Successful'), 200);
+        }
+    };
+
     var getCall = function() {
         res.render('login', {});
     };
 
     var postCall = function() {
         var user = req.param('user');
-        var password = req.param('pass');
-        var reply = {
-            error: null,
-            data: null,
-            message: null
-        };
-
-        AM.manualLogin(user, password, function(err, obj) {
-            if (!obj) {
-                reply.error = err;
-                res.send(reply, 400);
-            } else {
-                req.session.user = obj;
-            /* These not necessary with sessions
-            if (remember === 'on') {
-                res.cookie('user', obj.credentials.user, { maxAge: 900000 });
-                res.cookie('pass', obj.credentials.pass, { maxAge: 900000 });
-            }
-            */
-                reply.data = obj;
-                res.send(reply, 200);
-            }
-        });
+        var pass = req.param('pass');
+        AM.manualLogin(user, pass, callback);
     };
 
-    switch (req.method) {
-        case 'GET':
-            getCall();
-            break;
-        case 'POST':
-            postCall();
-            break;
-        default:
-            res.send('Method not supported', 400);
-    }
+    okGo(req, res, {'GET': getCall, 'POST': postCall});
 };
 
 exports.intro = function(req, res) {
@@ -104,46 +137,44 @@ exports.signUp = function(req, res) {
     var postCall = function() {
         var newAccount = AM.makeAccount({
             name: req.param('name'),
+            surname: req.param('surname'),
             email: req.param('email'),
             user: req.param('user'),
             pass: req.param('pass'),
             country: req.param('country')
         });
-
-        var reply = {
-            error: null,
-            data: null,
-            message: null
-        };
-
-        var callback = function(error, account) {
+        var callback = function(error, profile) {
             if (error) {
-                reply.error = error;
-                res.send(reply, 400);
+                res.send(getReply(error), 400);
             } else {
-                reply.data = account;
-                reply.message = 'New account created';
-                res.send(reply, 200);
+                res.send(getReply(null, profile, 'New account created'), 200);
             }
         };
         AM.addNewAccount(newAccount, callback);
     };
 
-    switch (req.method) {
-        case 'GET':
-            getCall();
-            break;
-        case 'POST':
-            postCall();
-            break;
-        default:
-            res.send('Method not supported', 400);
-    }
+    okGo(req, res, {'GET': getCall, 'POST': postCall});
 };
 
 //-----------------------------------------------------------[ Edit Accounts ]--
 
 exports.editProfile = function(req, res) {
+    /**
+     * BEWARE: The account passed in here contains the full account.
+     * Only pass the profile component to the user.
+     * @param {Object} err The Error object if any.
+     * @param {Object} account The full account object from mongo.
+     */
+    var callback = function(err, account) {
+        if (err) {
+            res.send(getReply('Error updating account: ' + err), 400);
+        } else if(account) {
+            req.session.user = account;
+            res.send(getReply(null, account.profile, 'Account updated'), 200);
+        } else {
+            res.send(getReply('Could not find account'), 400);
+        }
+    };
 
     var getCall = function() {
         var user = req.session.user;
@@ -166,42 +197,10 @@ exports.editProfile = function(req, res) {
             phone: req.param('phone'),
             cell: req.param('cell')
         });
-
-        // This is the reply object
-        var reply = {
-            error: null,
-            data: null,
-            message: null
-        };
-
-        // This is what comes back from the Account Manager
-        var callback = function(err, user) {
-            if (err) {
-                reply.error = 'Error updating account: ' + err;
-                res.send(reply, 400);
-            } else if(user) {
-                req.session.user = user;
-                reply.data = user.profile;
-                reply.message = 'Account updated';
-                res.send(reply, 200);
-            } else {
-                reply.error = 'Could not find account';
-                res.send(reply, 400);
-            }
-        };
         AM.updateProfile(currentUser._id, newData, callback);
     };
 
-    switch (req.method) {
-        case 'GET':
-            getCall();
-            break;
-        case 'POST':
-            postCall();
-            break;
-        default:
-            res.send('Method not supported', 400);
-    }
+    okGo(req, res, {'GET': getCall, 'POST': postCall});
 };
 
 exports.editPassword = function(req, res) {
@@ -220,37 +219,18 @@ exports.editPassword = function(req, res) {
             newPass: req.param('pass')
         };
 
-        // This is the reply object
-        var reply = {
-            error: null,
-            data: null,
-            message: null
-        };
-
         // This is what comes back from the Account Manager
-        var callback = function(err, account) {
+        var callback = function(err, profile) {
             if (err) {
-                reply.error = err;
-                res.send(reply, 400);
-            } else if(account) {
-                reply.data = account;
-                reply.message = 'Password updated';
-                res.send(reply, 200);
+                res.send(getReply(err), 400);
+            } else if(profile) {
+                res.send(getReply(null, profile, 'Password updated'), 200);
             }
         };
         AM.updatePassword(currentUser._id, passwords, callback);
     };
 
-    switch (req.method) {
-        case 'GET':
-            getCall();
-            break;
-        case 'POST':
-            postCall();
-            break;
-        default:
-            res.send('Method not supported', 400);
-    }
+    okGo(req, res, {'GET': getCall, 'POST': postCall});
 };
 
 
@@ -263,11 +243,7 @@ exports.home = function(req, res) {
             // if user is not logged-in redirect back to login page //
             res.redirect('/');
         } else {
-            res.render('home', {
-                title: 'Control Panel',
-                // countries: CT,
-                udata: req.session.user
-            });
+            res.render('home', getReply(null, req.session.user.profile));
         }
     };
 
@@ -275,22 +251,13 @@ exports.home = function(req, res) {
         if (req.param('logout') === 'true') {
             res.clearCookie('user');
             res.clearCookie('pass');
-            req.session.destroy(function(e) {
+            req.session.destroy(function() {
                 res.send('ok', 200);
             });
         }
     };
 
-    switch (req.method) {
-        case 'GET':
-            getCall();
-            break;
-        case 'POST':
-            postCall();
-            break;
-        default:
-            res.send('Method not supported', 400);
-    }
+    okGo(req, res, {'GET': getCall, 'POST': postCall});
 };
 
 //----------------------------------------------------------[ Password Reset ]--
@@ -298,84 +265,80 @@ exports.home = function(req, res) {
 exports.lostPassword = function(req, res) {
 
     var getCall = function() {
-        res.render('lost-password', {title: 'Signup', countries: CT});
+        res.render('lost-password', {});
     };
 
     var postCall = function() {
         var email = req.param('email');
-        var reply = {
-            error: null,
-            data: null,
-            message: null
-        };
-
-        AM.getAccountByEmail(email, function(err, obj) {
-            if (obj) {
-                EM.dispatchResetPasswordLink(obj, function(e, m) {
+        AM.seedAccountWithResetKey(email, function(err, account) {
+            if (account) {
+                EM.dispatchResetPasswordLink(account, function(err) {
                     // this callback takes a moment to return //
                     // should add an ajax loader to give user feedback //
-                    if (!e) {
-                        reply.data = {
-                            email: 'Reset link sent. Please check your email.'
-                        };
-                        res.send(reply, 200);
+                    if (err) {
+                        var errMsg = 'Server Error. No reset email sent. ';
+                        errMsg = errMsg + 'Message from email server: ' + err;
+                        res.send(getReply({email: errMsg}), 400);
                     } else {
-                        reply.error = {email: 'Server Error. No reset email sent.'};
-                        res.send(reply, 400);
-
-                        // This is just debug...
-                        for (k in e) {
-                            console.log('error : ', k, e[k]);
-                        }
+                        res.send(getReply(
+                            null,
+                            null,
+                            'Reset link sent. Please check your email.'
+                        ), 200);
                     }
                 });
             } else {
-                reply.error = err;
-                res.send(reply, 400);
+                res.send(getReply(err), 400);
             }
         });
     };
 
-    switch (req.method) {
-        case 'GET':
-            getCall();
-            break;
-        case 'POST':
-            postCall();
-            break;
-        default:
-            res.send('Method not supported', 400);
-    }
+    okGo(req, res, {'GET': getCall, 'POST': postCall});
 };
 
-//    app.get('/reset-password', function(req, res) {
-//        var email = req.query["e"];
-//        var passH = req.query["p"];
-//        AM.validateResetLink(email, passH, function(e) {
-//            if (e != 'ok') {
-//                res.redirect('/');
-//            } else {
-//                // save the user's email in a session instead of sending to the client //
-//                req.session.reset = { email: email, passHash: passH };
-//                res.render('reset', { title: 'Reset Password' });
-//            }
-//        })
-//    });
+exports.resetPassword = function(req, res) {
 
-//    app.post('/reset-password', function(req, res) {
-//        var nPass = req.param('pass');
-//        // retrieve the user's email from the session to lookup their account and reset password //
-//        var email = req.session.reset.email;
-//        // destory the session immediately after retrieving the stored email //
-//        req.session.destroy();
-//        AM.updatePassword(email, nPass, function(e, o) {
-//            if (o) {
-//                res.send('ok', 200);
-//            } else {
-//                res.send('unable to update password', 400);
-//            }
-//        })
-//    });
+    var getCall = function() {
+        var email = req.query["e"];
+        var passH = req.query["p"];
+
+        AM.validateResetLink(email, passH, function(err, account) {
+            if (!account) {
+                console.log('Error:', err);
+                res.redirect('/');
+            } else {
+                // save the user's email in a session instead of
+                // sending to the client //
+                req.session.reset = { email: email, passHash: passH };
+                var setup = getBasicSetup(req);
+                setup.landing = 'resetpw';
+                setup.user = account.credentials.user;
+                res.render('resetpassword', setup);
+            }
+        });
+    };
+
+    var postCall = function() {
+        var nPass = req.param('pass');
+        var email = req.session.reset.email;
+        var passH = req.session.reset.passHash;
+        req.session.destroy();
+
+        AM.resetPassword(email, passH, nPass, function(err, profile) {
+            if (profile) {
+                res.send(getReply(
+                    null,
+                    profile,
+                    'Your password has been reset'
+                ), 200);
+            } else {
+                res.send(getReply('Unable to update password' + err), 400);
+            }
+        });
+    };
+
+    okGo(req, res, {'GET': getCall, 'POST': postCall});
+};
 
 //--------------------------------------------------[ View & Delete Accounts ]--
 

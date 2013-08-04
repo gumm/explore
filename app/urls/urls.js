@@ -19,6 +19,10 @@ exports.urls = function(app) {
     app.get('/lost-password', routes.lostPassword);
     app.post('/lost-password', routes.lostPassword);
 
+    // Reset Password
+    app.get('/reset-password', routes.resetPassword);
+    app.post('/reset-password', routes.resetPassword);
+
     // Home Page
     app.get('/home', routes.home);
     app.post('/home', routes.home);

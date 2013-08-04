@@ -43,30 +43,39 @@ var makeAccount = function(data) {
         credentials: {
             pass: data.pass || null,
             user: data.user || null
-
         }
     };
 };
 
 
-/* login validation methods */
-
+/**
+ * BEWARE: This passes the account with credentials into the callback.
+ * @param user
+ * @param pass
+ * @param callback
+ */
 var autoLogin = function(user, pass, callback) {
-    accounts.findOne({'credentials.user': user}, function(err, res) {
-        if (res && res.credentials.pass === pass) {
-            callback(res);
+    accounts.findOne({'credentials.user': user}, function(err, account) {
+        if (account && account.credentials.pass === pass) {
+            callback(account);
         } else {
             callback(null);
         }
     });
 };
 
+/**
+ * BEWARE: This passes the account with credentials into the callback.
+ * @param user
+ * @param pass
+ * @param callback
+ */
 var manualLogin = function(user, pass, callback) {
     var error = {
         user: null,
         pass: null
     };
-    accounts.findOne({'credentials.user': user}, function(e, account) {
+    accounts.findOne({'credentials.user': user}, function(err, account) {
         if (account === null) {
             error.user = 'User not found';
             callback(error);
@@ -91,37 +100,45 @@ var addNewAccount = function(newAccount, callback) {
         email: null
     };
 
-    newAccount.date = moment().format('MMMM Do YYYY, h:mm:ss a');
-
-    accounts.findOne({'credentials.user': newAccount.credentials.user},
-        function(err, existingAccount) {
-            if (existingAccount) {
-                error.user = 'This username is not available';
-                callback(error);
-            } else {
-                accounts.findOne({email: newAccount.profile.email},
-                    function(err, existingAccount) {
-                        if (existingAccount) {
-                            error.email = 'This email is already registered';
-                            callback(error);
-                        } else {
-                            saltAndHash(newAccount.credentials.pass,
-                                function(hash) {
-                                    newAccount.credentials.pass = hash;
-                                    accounts.insert(newAccount, {safe: true},
-                                        function() {callback(null, newAccount);}
-                                    );
-                                }
-                            );
-                        }
-                    }
-                );
-            }
+    /**
+     * Check if the given email is unique. Errors if it is not, else
+     * create the account.
+     * @param {Object} err An Error object.
+     * @param {Object} account The existing account.
+     */
+    var uniqueEmailCallback = function(err, account) {
+        if (account) {
+            error.email = 'This email is already registered';
+            callback(error);
+        } else {
+            newAccount.date = moment().format('MMMM Do YYYY, h:mm:ss a');
+            convertPwToSaltedHash(
+                newAccount,
+                newAccount.credentials.pass, // This is still in clear text.
+                callback
+            );
         }
-    );
+    };
+
+    /**
+     * Checks if the account with the given username already exists.
+     * @param {Object} err An Error object.
+     * @param {Object} account The existing account.
+     */
+    var uniqueUserCallback = function(err, account) {
+        if (account) {
+            error.user = 'This username is not available';
+            callback(error);
+        } else {
+            checkUniqueEmail(newAccount.profile.email, uniqueEmailCallback);
+        }
+    };
+
+    checkUniqueUsername(newAccount.credentials.user, uniqueUserCallback);
 };
 
 /**
+ * BEWARE: This passes the account with credentials into the callback.
  * This does not include changing user names or passwords here.
  * @param uid
  * @param newData
@@ -153,6 +170,7 @@ var updatePassword = function(uid, passwords, callback) {
     var pass = passwords.currentPass;
     var newPass = passwords.newPass;
     var error = {
+        pass: null,
         currpass: null
     };
 
@@ -167,17 +185,41 @@ var updatePassword = function(uid, passwords, callback) {
                     error.currpass = 'This is not your current password';
                     callback(error);
                 } else {
-                    saltAndHash(newPass, function(hash) {
-                        account.credentials.pass = hash;
-                        accounts.save(account, {safe: true}, function() {
-                            callback(null, account.profile);
-                        });
-                    });
+                    convertPwToSaltedHash(
+                        account,
+                        newPass, // This is still in clear text.
+                        callback
+                    );
                 }
             });
         } else {
             error.currpass = 'Could not find the account to update';
             callback(err);
+        }
+    });
+};
+
+/**
+ * Seeds the account credentials with a new key: 'tpass', and assign a random,
+ * hash as the value. This is used to validate the link sent to the user's
+ * email account when a lost password reset email is sent.
+ * @param email
+ * @param callback
+ */
+var seedAccountWithResetKey = function(email, callback) {
+    getAccountByEmail(email, function(err, account) {
+        if(err) {
+            callback(err, null);
+        } else {
+            // Create a simple random number, and salt and hash it.
+            var rand = Math.floor(Math.random() * 2147483648).toString(36);
+            saltAndHash(rand, function(hash) {
+                // Once we have the hash, use it as a temp password.
+                account.credentials.tpass = hash;
+                accounts.save(account, {safe: true}, function() {
+                    callback(null, account);
+                });
+            });
         }
     });
 };
@@ -217,12 +259,35 @@ var getAccountByUser = function(user, callback) {
 };
 
 var validateResetLink = function(email, passHash, callback) {
-    accounts.find({ $and: [
-        {email: email, pass: passHash}
-    ] }, function(e, o) {
-        callback(o ? 'ok' : null);
+    accounts.findOne({'profile.email': email, 'credentials.tpass': passHash},
+        function(e, account) {
+            if (account) {
+                callback(null, account);
+            } else {
+                callback('Really user not found??', null);
+            }
     });
 };
+
+var resetPassword = function(email, passHash, newPass, callback) {
+    accounts.findOne({'profile.email': email, 'credentials.tpass': passHash},
+        function(e, account) {
+            if (account) {
+                saltAndHash(newPass, function(hash) {
+                    account.credentials = {
+                        pass: hash,
+                        user: account.credentials.user
+                    };
+                    accounts.save(account, {safe: true}, function() {
+                        callback(null, account.profile);
+                    });
+                });
+            } else {
+                callback('Really user not found??', null);
+            }
+    });
+};
+
 
 var getAllRecords = function(callback) {
     var whenFound = function(e, res) {
@@ -250,7 +315,9 @@ module.exports = {
     validateResetLink: validateResetLink,
     getAllRecords: getAllRecords,
     delAllRecords: delAllRecords,
-    makeAccount: makeAccount
+    makeAccount: makeAccount,
+    seedAccountWithResetKey: seedAccountWithResetKey,
+    resetPassword: resetPassword
 };
 
 /* private encryption & validation methods */
@@ -272,6 +339,45 @@ var md5 = function(str) {
 var saltAndHash = function(pass, callback) {
     var salt = generateSalt();
     callback(salt + md5(pass + salt));
+};
+
+/**
+ * For newly created accounts, this converts the given pass field in the
+ * given account to a salted hash of the password.
+ */
+var convertPwToSaltedHash = function(account, newPass, callback) {
+    saltAndHash(newPass,
+        function(hash) {
+            account.credentials.pass = hash;
+            accounts.insert(account, {safe: true},
+                function() {
+                    callback(null, account.profile);
+                }
+            );
+        }
+    );
+};
+
+/**
+ * Checks that the given user name is unique in the accounts collection.
+ * @param {string} username The username to check for uniqueness.
+ * @param {function} callback The callback function, should take 2 parameters:
+ *      error - The error object if something went wrong with the query.
+ *      account - The account - Null if the given username is unique, else the
+ *              account that was found with the given username.
+ */
+var checkUniqueUsername = function(username, callback) {
+    accounts.findOne(
+        {'credentials.user': username},
+        callback
+    );
+};
+
+var checkUniqueEmail = function(email, callback) {
+    accounts.findOne(
+        {'profile.email': email},
+        callback
+    );
 };
 
 var validatePassword = function(plainPass, hashedPass, callback) {

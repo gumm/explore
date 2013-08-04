@@ -2,11 +2,12 @@
 // Please do not edit.
 goog.addDependency('../../../app/app.js', ['app'], ['app.Site', 'bad.Net', 'bad.utils', 'goog.dom', 'goog.net.XhrManager']);
 goog.addDependency('../../../app/base/homeview.js', ['app.base.HomeView'], ['bad.ui.View']);
-goog.addDependency('../../../app/base/loginview.js', ['app.base.LoginView'], ['bad.ui.View']);
+goog.addDependency('../../../app/base/loginview.js', ['app.base.LoginView'], ['app.user.ResetPasswordForm', 'bad.ui.View']);
 goog.addDependency('../../../app/site.js', ['app.Site'], ['app.base.HomeView', 'app.base.LoginView', 'app.user.HomePanel', 'app.user.LoginForm', 'app.user.LostPasswordForm', 'app.user.SignUpForm', 'bad.ui.EventType', 'bad.ui.Layout', 'bad.ui.Panel', 'goog.Uri', 'goog.dom.forms', 'goog.events.EventHandler', 'goog.net.XhrIo']);
 goog.addDependency('../../../app/user/homepanel.js', ['app.user.HomePanel'], ['bad.MqttWsIo', 'bad.ui.Panel', 'goog.ui.Css3MenuButtonRenderer', 'goog.ui.Menu', 'goog.ui.MenuButton', 'goog.ui.MenuItem', 'goog.ui.MenuSeparator']);
 goog.addDependency('../../../app/user/loginform.js', ['app.user.LoginForm'], ['bad.ui.Form', 'goog.ui.Css3ButtonRenderer', 'goog.ui.CustomButton']);
 goog.addDependency('../../../app/user/lostpasswordform.js', ['app.user.LostPasswordForm'], ['bad.ui.Form']);
+goog.addDependency('../../../app/user/resetpasswordform.js', ['app.user.ResetPasswordForm'], ['bad.ui.Form']);
 goog.addDependency('../../../app/user/signupform.js', ['app.user.SignUpForm'], ['bad.ui.Form']);
 goog.addDependency('../../../bad-library/bad/base.js', ['bad'], []);
 goog.addDependency('../../../bad-library/bad/constants/constants.js', ['bad.CssClassMap', 'bad.CssPrefix'], []);

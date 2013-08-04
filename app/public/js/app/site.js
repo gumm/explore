@@ -27,7 +27,7 @@ goog.require('goog.net.XhrIo');
  * @constructor
  * @extends {goog.events.EventHandler}
  */
-app.Site = function(xManWrapper, mqtt) {
+app.Site = function(xManWrapper, mqtt, opt_landing) {
     goog.events.EventHandler.call(this);
 
     /**
@@ -51,6 +51,8 @@ app.Site = function(xManWrapper, mqtt) {
      * @private
      */
     this.user_ = {};
+
+    this.landing = opt_landing ? opt_landing : null;
 };
 goog.inherits(app.Site, goog.events.EventHandler);
 
@@ -136,7 +138,7 @@ app.Site.prototype.initLayout_ = function() {
         function(e) {
             if (e.target.getId() === id) {
                 this.hideAllNests();
-                this.autoLogin();
+                this.land();
             }
         }
     );
@@ -144,6 +146,18 @@ app.Site.prototype.initLayout_ = function() {
     // Create the layout in the DOM
     this.layout_.render();
 };
+
+app.Site.prototype.land = function() {
+
+    switch (this.landing) {
+        case 'resetpw':
+            this.viewLogin(true);
+            break;
+        default:
+            this.autoLogin();
+    }
+};
+
 
 //--------------------------------------------------------------[ Auto Login ]--
 
@@ -187,11 +201,15 @@ app.Site.prototype.onLogin = function(e) {
     this.viewHome();
 };
 
-app.Site.prototype.viewLogin = function() {
+/**
+ *
+ * @param {boolean=} opt_reset
+ */
+app.Site.prototype.viewLogin = function(opt_reset) {
     /**
      * @type {app.base.LoginView}
      */
-    var view = new app.base.LoginView();
+    var view = new app.base.LoginView(opt_reset);
     this.listenOnce(
         view,
         'login-success',

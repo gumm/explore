@@ -1,12 +1,14 @@
 goog.provide('app.base.LoginView');
 
+goog.require('app.user.ResetPasswordForm');
 goog.require('bad.ui.View');
 
 /**
  * @constructor
  * @extends {bad.ui.View}
  */
-app.base.LoginView = function() {
+app.base.LoginView = function(opt_reset) {
+    this.reset = opt_reset;
     bad.ui.View.call(this);
 };
 goog.inherits(app.base.LoginView, bad.ui.View);
@@ -37,11 +39,23 @@ app.base.LoginView.prototype.configurePanels = function() {
     this.lostPwForm.setUri(new goog.Uri('/lost-password'));
     this.lostPwForm.setNestAsTarget(layout.getNest('main', 'center'));
     this.addPanelToView('LOST-PASSWORD-FORM', this.lostPwForm);
+
+    // A reset password form
+    this.resetPasswordForm = new app.user.ResetPasswordForm('account-form');
+    this.resetPasswordForm.setUri(new goog.Uri('/reset-password'));
+    this.resetPasswordForm.setNestAsTarget(
+        this.getLayout().getNest('main', 'center'));
+    this.addPanelToView('RESET-PASS-FORM', this.resetPasswordForm);
 };
 
 app.base.LoginView.prototype.displayPanels = function() {
-    this.introPanel.renderWithTemplate();
-    this.loginPanel.renderWithTemplate();
+
+    if (this.reset) {
+        this.resetPasswordForm.render();
+    } else {
+        this.introPanel.renderWithTemplate();
+        this.loginPanel.renderWithTemplate();
+    }
 };
 
 app.base.LoginView.prototype.onPanelAction = function(e) {
@@ -87,11 +101,15 @@ app.base.LoginView.prototype.onPanelAction = function(e) {
 //-----------------------------------------------------------------[ Sign-Up ]--
 
 app.base.LoginView.prototype.showSignUpButton_ = function() {
-    goog.dom.classes.remove(this.signUp, 'hide');
+    if (this.signUp) {
+        goog.dom.classes.remove(this.signUp, 'hide');
+    }
 };
 
 app.base.LoginView.prototype.hideSignUpButton_ = function() {
-    goog.dom.classes.add(this.signUp, 'hide');
+    if (this.signUp) {
+        goog.dom.classes.add(this.signUp, 'hide');
+    }
 };
 
 //-------------------------------------------------------------[ Log-In Form ]--

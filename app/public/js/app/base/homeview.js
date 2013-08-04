@@ -83,9 +83,9 @@ app.base.HomeView.prototype.exitSignUpForm = function() {
 };
 
 app.base.HomeView.prototype.updateUserDisplay = function(data) {
-    var salutation = data.reply.data.name;
-    if (data.reply.data.surname) {
-        salutation = salutation + ' ' + data.reply.data.surname;
+    var salutation = data.reply['data']['name'];
+    if (data.reply['data']['surname']) {
+        salutation = salutation + ' ' + data.reply['data']['surname'];
     }
     this.homePanel.updateUserButtonCaption(salutation);
     this.exitSignUpForm();

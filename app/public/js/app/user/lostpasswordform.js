@@ -78,7 +78,7 @@ app.user.LostPasswordForm.prototype.onSubmitLostPasswordForm = function(e) {
     this.clearAlerts();
     if (xhr.isSuccess()) {
         var fields = this.getForm().elements;
-        this.displaySuccess(fields['email'], data.message);
+        this.displaySuccess(fields['email'], data['message']);
     } else {
         this.displayErrors(data);
     }

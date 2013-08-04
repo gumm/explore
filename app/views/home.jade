@@ -1,11 +1,11 @@
 // preset form values if we receive a userdata object //
-- account = typeof(udata) != 'undefined' ? udata : { }
+- profile = typeof(data) != 'undefined' ? data : { }
 
 #active_user_container.topfixed
     .signup Welcome
         #user_button
             i.icon-cog
-            | #{account.profile.name} #{account.profile.surname}
+            | #{profile.name} #{profile.surname}
 
 #sysreadout
     .sysreadout.topfixed-left Active Clients:
@@ -19,21 +19,21 @@
 
 .row.expr_wrapper
     .span4
-        h2 Hello #{account.profile.name}
+        h2 Hello #{profile.name}
         p
             | We are waiting for your devices to register to:
-        h4 @reg/#{account._id}
+        // h4 @reg/#{account._id}
         p
             | To register your device needs to publish to the above topic, with a
             | PID (personal ID) of your choosing in the payload. We will then reply
             | with a device specific UID that your device will have to use as a
             | topic prefix for all further publishing. Our reply will be published to:
-        h4 @regok/#{account._id}/PID
+        // h4 @regok/#{account._id}/PID
         p
             | so your device can register to listen to that topic
         p
             | All further comms from your device will have to have the topic prefix
-        h4 #{account._id}/UID
+        // h4 #{account._id}/UID
 
     .span4
         #in_mqtt
@@ -41,4 +41,4 @@
         #in_sys
 
 script
-    console.debug('Hello Bloody hello')
+    console.debug('Here is the user profile: ', !{JSON.stringify(data)})

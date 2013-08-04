@@ -30,7 +30,7 @@ var conf = {
     engine: 'jade',
     production: true,
     compiled: {
-        JS: false,
+        JS: true,
         CSS: false
     }
 };

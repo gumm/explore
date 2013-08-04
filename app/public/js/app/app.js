@@ -9,7 +9,7 @@ goog.require('goog.net.XhrManager');
 /**
  * Init the site
  */
-app.initSite = function(wsServer, wsPort) {
+app.initSite = function(wsServer, wsPort, landing) {
 
     var opt_maxRetries = 0,
         opt_headers = null,
@@ -41,7 +41,7 @@ app.initSite = function(wsServer, wsPort) {
     /**
      * @type {app.Site}
      */
-    var site = new app.Site(xMan, mqtt);
+    var site = new app.Site(xMan, mqtt, landing);
     site.initSite();
     goog.exportSymbol('debugSite', site);
 };
