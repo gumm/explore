@@ -3,20 +3,12 @@
  */
 goog.provide('app.Site');
 
-goog.require('app.base.HomeView');
-goog.require('app.base.LoginView');
-goog.require('app.user.HomePanel');
-goog.require('app.user.LoginForm');
-goog.require('app.user.LostPasswordForm');
-goog.require('app.user.SignUpForm');
+goog.require('app.base.view.Home');
+goog.require('app.user.view.Login');
 goog.require('bad.ui.EventType');
 goog.require('bad.ui.Layout');
-goog.require('bad.ui.Panel');
-
 goog.require('goog.Uri');
-goog.require('goog.dom.forms');
 goog.require('goog.events.EventHandler');
-goog.require('goog.net.XhrIo');
 
 /**
  * Constructor of the main site object. Inherits from EventHandler, so it
@@ -207,9 +199,9 @@ app.Site.prototype.onLogin = function(e) {
  */
 app.Site.prototype.viewLogin = function(opt_reset) {
     /**
-     * @type {app.base.LoginView}
+     * @type {app.user.view.Login}
      */
-    var view = new app.base.LoginView(opt_reset);
+    var view = new app.user.view.Login(opt_reset);
     this.listenOnce(
         view,
         'login-success',
@@ -220,9 +212,9 @@ app.Site.prototype.viewLogin = function(opt_reset) {
 
 app.Site.prototype.viewHome = function() {
     /**
-     * @type {app.base.HomeView}
+     * @type {app.base.view.Home}
      */
-    var view = new app.base.HomeView(this.mqtt);
+    var view = new app.base.view.Home(this.mqtt);
     this.switchView(view);
 };
 

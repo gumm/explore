@@ -31,7 +31,7 @@ input.error {
 }
 .topfixed {
     position: relative;
-    top: 18px;
+    top: 33px;
     width: 260px;
     right: 18px;
     float: right;
@@ -39,13 +39,17 @@ input.error {
 
 .topfixed-left {
     position: relative;
-    top: 18px;
+    /*top: 18px;*/
     width: 160px;
     left: 18px;
     float: left;
 }
+
 #sysreadout {
     color: rgb(133, 133, 133);
+    top: 7px;
+    right: 20px;
+    position: absolute;
 }
 
 .sysreadout .number {

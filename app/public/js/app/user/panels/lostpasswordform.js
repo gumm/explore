@@ -1,4 +1,4 @@
-goog.provide('app.user.LostPasswordForm');
+goog.provide('app.user.panel.LostPassword');
 
 goog.require('bad.ui.Form');
 
@@ -9,12 +9,12 @@ goog.require('bad.ui.Form');
  * @extends {bad.ui.Form}
  * @constructor
  */
-app.user.LostPasswordForm = function(id, opt_domHelper) {
+app.user.panel.LostPassword = function(id, opt_domHelper) {
     bad.ui.Form.call(this, id, opt_domHelper);
 };
-goog.inherits(app.user.LostPasswordForm, bad.ui.Form);
+goog.inherits(app.user.panel.LostPassword, bad.ui.Form);
 
-app.user.LostPasswordForm.prototype.enterDocument = function() {
+app.user.panel.LostPassword.prototype.enterDocument = function() {
 
     this.dom_ = goog.dom.getDomHelper(this.getElement());
     this.initDom();
@@ -37,15 +37,15 @@ app.user.LostPasswordForm.prototype.enterDocument = function() {
 
     // Calling this last makes sure that the final PANEL-READY event really is
     // dispatched right at the end of all of the enterDocument calls.
-    app.user.LostPasswordForm.superClass_.enterDocument.call(this);
+    app.user.panel.LostPassword.superClass_.enterDocument.call(this);
 };
 
-app.user.LostPasswordForm.prototype.initDom = function() {
+app.user.panel.LostPassword.prototype.initDom = function() {
     this.initCancelButton();
     this.initSubmitButton();
 };
 
-app.user.LostPasswordForm.prototype.initCancelButton = function() {
+app.user.panel.LostPassword.prototype.initCancelButton = function() {
     var button = new goog.ui.CustomButton('',
         goog.ui.Css3ButtonRenderer.getInstance(), this.dom_);
     button.setSupportedState(goog.ui.Component.State.FOCUSED, false);
@@ -53,7 +53,7 @@ app.user.LostPasswordForm.prototype.initCancelButton = function() {
     this.cancelButton = button;
 };
 
-app.user.LostPasswordForm.prototype.initSubmitButton = function() {
+app.user.panel.LostPassword.prototype.initSubmitButton = function() {
     var button = new goog.ui.CustomButton('',
         goog.ui.Css3ButtonRenderer.getInstance(), this.dom_);
     button.setSupportedState(goog.ui.Component.State.FOCUSED, false);
@@ -61,7 +61,7 @@ app.user.LostPasswordForm.prototype.initSubmitButton = function() {
     this.submitButton = button;
 };
 
-app.user.LostPasswordForm.prototype.submitLostPasswordForm = function() {
+app.user.panel.LostPassword.prototype.submitLostPasswordForm = function() {
     this.checkValidation();
     if (this.getForm().checkValidity()) {
         this.xMan.post(
@@ -72,7 +72,7 @@ app.user.LostPasswordForm.prototype.submitLostPasswordForm = function() {
     }
 };
 
-app.user.LostPasswordForm.prototype.onSubmitLostPasswordForm = function(e) {
+app.user.panel.LostPassword.prototype.onSubmitLostPasswordForm = function(e) {
     var xhr = e.target;
     var data = xhr.getResponseJson();
     this.clearAlerts();

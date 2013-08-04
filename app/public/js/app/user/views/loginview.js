@@ -1,19 +1,23 @@
-goog.provide('app.base.LoginView');
+goog.provide('app.user.view.Login');
 
-goog.require('app.user.ResetPasswordForm');
+goog.require('app.user.panel.Login');
+goog.require('app.user.panel.LostPassword');
+goog.require('app.user.panel.ResetPassword');
+goog.require('app.user.panel.SignUp');
+goog.require('bad.ui.Panel');
 goog.require('bad.ui.View');
 
 /**
  * @constructor
  * @extends {bad.ui.View}
  */
-app.base.LoginView = function(opt_reset) {
+app.user.view.Login = function(opt_reset) {
     this.reset = opt_reset;
     bad.ui.View.call(this);
 };
-goog.inherits(app.base.LoginView, bad.ui.View);
+goog.inherits(app.user.view.Login, bad.ui.View);
 
-app.base.LoginView.prototype.configurePanels = function() {
+app.user.view.Login.prototype.configurePanels = function() {
     var layout = this.getLayout();
 
     // Intro Panel
@@ -23,33 +27,32 @@ app.base.LoginView.prototype.configurePanels = function() {
     this.addPanelToView('INTRO', this.introPanel);
 
     // Login Form
-    this.loginPanel = new app.user.LoginForm('login-form');
+    this.loginPanel = new app.user.panel.Login('login-form');
     this.loginPanel.setUri(new goog.Uri('/login'));
     this.loginPanel.setNestAsTarget(layout.getNest('main', 'right', 'mid'));
     this.addPanelToView('LOGIN-FORM', this.loginPanel);
 
     // Signup Form
-    this.signUpForm = new app.user.SignUpForm('account-form');
+    this.signUpForm = new app.user.panel.SignUp('account-form');
     this.signUpForm.setUri(new goog.Uri('/signup'));
     this.signUpForm.setNestAsTarget(layout.getNest('main', 'center'));
     this.addPanelToView('SIGNUP-FORM', this.signUpForm);
 
     // Lost Password Form
-    this.lostPwForm = new app.user.LostPasswordForm('get-credentials-form');
+    this.lostPwForm = new app.user.panel.LostPassword('get-credentials-form');
     this.lostPwForm.setUri(new goog.Uri('/lost-password'));
     this.lostPwForm.setNestAsTarget(layout.getNest('main', 'center'));
     this.addPanelToView('LOST-PASSWORD-FORM', this.lostPwForm);
 
     // A reset password form
-    this.resetPasswordForm = new app.user.ResetPasswordForm('account-form');
+    this.resetPasswordForm = new app.user.panel.ResetPassword('account-form');
     this.resetPasswordForm.setUri(new goog.Uri('/reset-password'));
     this.resetPasswordForm.setNestAsTarget(
         this.getLayout().getNest('main', 'center'));
     this.addPanelToView('RESET-PASS-FORM', this.resetPasswordForm);
 };
 
-app.base.LoginView.prototype.displayPanels = function() {
-
+app.user.view.Login.prototype.displayPanels = function() {
     if (this.reset) {
         this.resetPasswordForm.render();
     } else {
@@ -58,7 +61,7 @@ app.base.LoginView.prototype.displayPanels = function() {
     }
 };
 
-app.base.LoginView.prototype.onPanelAction = function(e) {
+app.user.view.Login.prototype.onPanelAction = function(e) {
 
     var panel = e.target;
     var value = e.getValue();
@@ -100,20 +103,20 @@ app.base.LoginView.prototype.onPanelAction = function(e) {
 
 //-----------------------------------------------------------------[ Sign-Up ]--
 
-app.base.LoginView.prototype.showSignUpButton_ = function() {
+app.user.view.Login.prototype.showSignUpButton_ = function() {
     if (this.signUp) {
         goog.dom.classes.remove(this.signUp, 'hide');
     }
 };
 
-app.base.LoginView.prototype.hideSignUpButton_ = function() {
+app.user.view.Login.prototype.hideSignUpButton_ = function() {
     if (this.signUp) {
         goog.dom.classes.add(this.signUp, 'hide');
     }
 };
 
 //-------------------------------------------------------------[ Log-In Form ]--
-app.base.LoginView.prototype.slideLoginIn = function() {
+app.user.view.Login.prototype.slideLoginIn = function() {
     var size = 350;
     var nest = this.getLayout().getNest('main', 'right');
     nest.slideOpen(null, size,
@@ -124,7 +127,7 @@ app.base.LoginView.prototype.slideLoginIn = function() {
 /**
  * @param {Function=} opt_callback
  */
-app.base.LoginView.prototype.slideLoginOut = function(opt_callback) {
+app.user.view.Login.prototype.slideLoginOut = function(opt_callback) {
     var nest = this.getLayout().getNest('main', 'right');
 
     this.hideSignUpButton_();
@@ -134,7 +137,7 @@ app.base.LoginView.prototype.slideLoginOut = function(opt_callback) {
 
 //------------------------------------------------------------[ Sign-Up Form ]--
 
-app.base.LoginView.prototype.enterSignUpForm = function() {
+app.user.view.Login.prototype.enterSignUpForm = function() {
     if (this.signUpForm.isInDocument()) {
         this.introPanel.hide();
         this.signUpForm.show();
@@ -146,7 +149,7 @@ app.base.LoginView.prototype.enterSignUpForm = function() {
     }
 };
 
-app.base.LoginView.prototype.exitSignUpForm = function() {
+app.user.view.Login.prototype.exitSignUpForm = function() {
     this.signUpForm.hide();
     this.introPanel.show();
     this.slideLoginIn();
@@ -154,7 +157,7 @@ app.base.LoginView.prototype.exitSignUpForm = function() {
 
 //------------------------------------------------------[ Lost Password Form ]--
 
-app.base.LoginView.prototype.enterLostPasswordForm = function() {
+app.user.view.Login.prototype.enterLostPasswordForm = function() {
     if (this.lostPwForm.isInDocument()) {
         this.introPanel.hide();
         this.lostPwForm.show();
@@ -166,7 +169,7 @@ app.base.LoginView.prototype.enterLostPasswordForm = function() {
     }
 };
 
-app.base.LoginView.prototype.exitLostPasswordForm = function() {
+app.user.view.Login.prototype.exitLostPasswordForm = function() {
     this.lostPwForm.hide();
     this.introPanel.show();
     this.slideLoginIn();
@@ -174,7 +177,7 @@ app.base.LoginView.prototype.exitLostPasswordForm = function() {
 
 //---------------------------------------------------------------[ Home Page ]--
 
-app.base.LoginView.prototype.fetchHomePage = function(data) {
+app.user.view.Login.prototype.fetchHomePage = function(data) {
     var callback = goog.bind(function() {
         this.dispatchEvent({type: 'login-success', data: data});
     }, this);

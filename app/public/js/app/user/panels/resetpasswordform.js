@@ -1,21 +1,21 @@
-goog.provide('app.user.ResetPasswordForm');
+goog.provide('app.user.panel.ResetPassword');
 
-goog.require('app.user.SignUpForm');
+goog.require('app.user.panel.SignUp');
 
 /**
  * A form for resetting the users password, before login.
  * This is typically called when a user requested a password reset via email.
  * @param {!string} id
  * @param {goog.dom.DomHelper=} opt_domHelper Optional DOM helper.
- * @extends {app.user.SignUpForm}
+ * @extends {app.user.panel.SignUp}
  * @constructor
  */
-app.user.ResetPasswordForm = function(id, opt_domHelper) {
-    app.user.SignUpForm.call(this, id, opt_domHelper);
+app.user.panel.ResetPassword = function(id, opt_domHelper) {
+    app.user.panel.SignUp.call(this, id, opt_domHelper);
 };
-goog.inherits(app.user.ResetPasswordForm, app.user.SignUpForm);
+goog.inherits(app.user.panel.ResetPassword, app.user.panel.SignUp);
 
-app.user.ResetPasswordForm.prototype.initDom = function() {
+app.user.panel.ResetPassword.prototype.initDom = function() {
     var formContainer = goog.dom.removeNode(
         goog.dom.getElement('account-form-container')
     );
@@ -32,7 +32,7 @@ app.user.ResetPasswordForm.prototype.initDom = function() {
  *      users password. It contains the password in clear text.
  * @param {goog.events.EventLike} e Event object.
  */
-app.user.ResetPasswordForm.prototype.onSubmitSignUp = function(queryData, e) {
+app.user.panel.ResetPassword.prototype.onSubmitSignUp = function(queryData, e) {
 
     var xhr = e.target;
     var data = xhr.getResponseJson();
@@ -49,7 +49,7 @@ app.user.ResetPasswordForm.prototype.onSubmitSignUp = function(queryData, e) {
     }
 };
 
-app.user.ResetPasswordForm.prototype.loginCallback = function(e) {
+app.user.panel.ResetPassword.prototype.loginCallback = function(e) {
     var xhr = e.target;
     var data = xhr.getResponseJson();
     this.clearAlerts();

@@ -1,6 +1,7 @@
 goog.provide('app');
 
 goog.require('app.Site');
+goog.require('bad.MqttWsIo');
 goog.require('bad.Net');
 goog.require('bad.utils');
 goog.require('goog.dom');

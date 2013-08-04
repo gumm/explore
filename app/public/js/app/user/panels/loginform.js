@@ -1,4 +1,4 @@
-goog.provide('app.user.LoginForm');
+goog.provide('app.user.panel.Login');
 
 goog.require('bad.ui.Form');
 goog.require('goog.ui.Css3ButtonRenderer');
@@ -11,12 +11,12 @@ goog.require('goog.ui.CustomButton');
  * @extends {bad.ui.Form}
  * @constructor
  */
-app.user.LoginForm = function(id, opt_domHelper) {
+app.user.panel.Login = function(id, opt_domHelper) {
     bad.ui.Form.call(this, id, opt_domHelper);
 };
-goog.inherits(app.user.LoginForm, bad.ui.Form);
+goog.inherits(app.user.panel.Login, bad.ui.Form);
 
-app.user.LoginForm.prototype.enterDocument = function() {
+app.user.panel.Login.prototype.enterDocument = function() {
     this.dom_ = goog.dom.getDomHelper(this.getElement());
     this.initDom();
 
@@ -48,15 +48,15 @@ app.user.LoginForm.prototype.enterDocument = function() {
 
     // Calling this last makes sure that the final PANEL-READY event really is
     // dispatched right at the end of all of the enterDocument calls.
-    app.user.LoginForm.superClass_.enterDocument.call(this);
+    app.user.panel.Login.superClass_.enterDocument.call(this);
 };
 
-app.user.LoginForm.prototype.initDom = function() {
+app.user.panel.Login.prototype.initDom = function() {
     this.initLoginButton();
     this.initSignUpButton();
 };
 
-app.user.LoginForm.prototype.initLoginButton = function() {
+app.user.panel.Login.prototype.initLoginButton = function() {
     var button = new goog.ui.CustomButton('',
         goog.ui.Css3ButtonRenderer.getInstance(), this.dom_);
     button.setSupportedState(goog.ui.Component.State.FOCUSED, false);
@@ -64,7 +64,7 @@ app.user.LoginForm.prototype.initLoginButton = function() {
     this.loginButton = button;
 };
 
-app.user.LoginForm.prototype.initSignUpButton = function() {
+app.user.panel.Login.prototype.initSignUpButton = function() {
     var button = new goog.ui.CustomButton('',
         goog.ui.Css3ButtonRenderer.getInstance(), this.dom_);
     button.setSupportedState(goog.ui.Component.State.FOCUSED, false);
@@ -72,14 +72,14 @@ app.user.LoginForm.prototype.initSignUpButton = function() {
     this.signUpButton = button;
 };
 
-app.user.LoginForm.prototype.submitLoginForm = function() {
+app.user.panel.Login.prototype.submitLoginForm = function() {
     this.checkValidation();
     if (this.getForm().checkValidity()) {
         this.logIn(this.getPostContentFromForm(this.getForm()));
     }
 };
 
-app.user.LoginForm.prototype.logIn = function(credential) {
+app.user.panel.Login.prototype.logIn = function(credential) {
     this.xMan.post(
         this.getUri(),
         credential,
@@ -87,7 +87,7 @@ app.user.LoginForm.prototype.logIn = function(credential) {
     );
 };
 
-app.user.LoginForm.prototype.loginCallback = function(e) {
+app.user.panel.Login.prototype.loginCallback = function(e) {
     var xhr = e.target;
     var data = xhr.getResponseJson();
     this.clearAlerts();

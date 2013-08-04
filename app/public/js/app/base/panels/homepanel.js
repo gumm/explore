@@ -1,4 +1,4 @@
-goog.provide('app.user.HomePanel');
+goog.provide('app.base.panel.Home');
 
 goog.require('bad.MqttWsIo');
 goog.require('bad.ui.Panel');
@@ -15,7 +15,7 @@ goog.require('goog.ui.MenuSeparator');
  * @extends {bad.ui.Panel}
  * @constructor
  */
-app.user.HomePanel = function(mqtt, opt_domHelper) {
+app.base.panel.Home = function(mqtt, opt_domHelper) {
     bad.ui.Panel.call(this, opt_domHelper);
 
     this.mqtt = mqtt;
@@ -26,9 +26,9 @@ app.user.HomePanel = function(mqtt, opt_domHelper) {
      */
     this.userData_ = {};
 };
-goog.inherits(app.user.HomePanel, bad.ui.Panel);
+goog.inherits(app.base.panel.Home, bad.ui.Panel);
 
-app.user.HomePanel.prototype.enterDocument = function() {
+app.base.panel.Home.prototype.enterDocument = function() {
     this.dom_ = goog.dom.getDomHelper(this.getElement());
     this.initDom();
     this.getHandler().listen(
@@ -49,10 +49,10 @@ app.user.HomePanel.prototype.enterDocument = function() {
     console.debug('TOPIC: ', this.getUser());
     this.mqtt.mqttSubscribe('blah');
 
-    app.user.HomePanel.superClass_.enterDocument.call(this);
+    app.base.panel.Home.superClass_.enterDocument.call(this);
 };
 
-app.user.HomePanel.prototype.initDom = function() {
+app.base.panel.Home.prototype.initDom = function() {
     // Pass the sign-up portion of the dom up to the view to be added
     // elsewhere.
     this.dispatchComponentEvent('have-user-container',
@@ -66,7 +66,7 @@ app.user.HomePanel.prototype.initDom = function() {
     this.buildUserButton();
 };
 
-app.user.HomePanel.prototype.buildUserButton = function() {
+app.base.panel.Home.prototype.buildUserButton = function() {
 
     // Item Names & Callbacks
     var menuItems = [
@@ -109,17 +109,17 @@ app.user.HomePanel.prototype.buildUserButton = function() {
     this.userButton = menuButton;
 };
 
-app.user.HomePanel.prototype.updateUserButtonCaption = function(caption) {
+app.base.panel.Home.prototype.updateUserButtonCaption = function(caption) {
     var icon = goog.dom.createDom('i', 'icon-cog');
     this.userButton.setContent([icon, caption]);
 };
 
-app.user.HomePanel.prototype.logOut = function() {
+app.base.panel.Home.prototype.logOut = function() {
     var queryData = goog.uri.utils.buildQueryDataFromMap({'logout': true});
     this.xMan.post(this.getUri(), queryData, goog.bind(this.onLogOut, this));
 };
 
-app.user.HomePanel.prototype.onLogOut = function(e) {
+app.base.panel.Home.prototype.onLogOut = function(e) {
     var xhr = e.target;
     if (xhr.isSuccess()) {
         window.open('/', '_self');

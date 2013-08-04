@@ -1,6 +1,7 @@
-goog.provide('app.user.SignUpForm');
+goog.provide('app.user.panel.SignUp');
 
 goog.require('bad.ui.Form');
+goog.require('goog.ui.CustomButton');
 
 /**
  * The basic login form controller.
@@ -9,12 +10,12 @@ goog.require('bad.ui.Form');
  * @extends {bad.ui.Form}
  * @constructor
  */
-app.user.SignUpForm = function(id, opt_domHelper) {
+app.user.panel.SignUp = function(id, opt_domHelper) {
     bad.ui.Form.call(this, id, opt_domHelper);
 };
-goog.inherits(app.user.SignUpForm, bad.ui.Form);
+goog.inherits(app.user.panel.SignUp, bad.ui.Form);
 
-app.user.SignUpForm.prototype.enterDocument = function() {
+app.user.panel.SignUp.prototype.enterDocument = function() {
 
     this.dom_ = goog.dom.getDomHelper(this.getElement());
     this.initDom();
@@ -35,15 +36,15 @@ app.user.SignUpForm.prototype.enterDocument = function() {
 
     // Calling this last makes sure that the final PANEL-READY event really is
     // dispatched right at the end of all of the enterDocument calls.
-    app.user.SignUpForm.superClass_.enterDocument.call(this);
+    app.user.panel.SignUp.superClass_.enterDocument.call(this);
 };
 
-app.user.SignUpForm.prototype.initDom = function() {
+app.user.panel.SignUp.prototype.initDom = function() {
     this.initCancelButton();
     this.initSubmitButton();
 };
 
-app.user.SignUpForm.prototype.initCancelButton = function() {
+app.user.panel.SignUp.prototype.initCancelButton = function() {
     var button = new goog.ui.CustomButton('',
         goog.ui.Css3ButtonRenderer.getInstance(), this.dom_);
     button.setSupportedState(goog.ui.Component.State.FOCUSED, false);
@@ -51,7 +52,7 @@ app.user.SignUpForm.prototype.initCancelButton = function() {
     this.cancelButton = button;
 };
 
-app.user.SignUpForm.prototype.initSubmitButton = function() {
+app.user.panel.SignUp.prototype.initSubmitButton = function() {
     var button = new goog.ui.CustomButton('',
         goog.ui.Css3ButtonRenderer.getInstance(), this.dom_);
     button.setSupportedState(goog.ui.Component.State.FOCUSED, false);
@@ -59,7 +60,7 @@ app.user.SignUpForm.prototype.initSubmitButton = function() {
     this.submitButton = button;
 };
 
-app.user.SignUpForm.prototype.submitSignUp = function() {
+app.user.panel.SignUp.prototype.submitSignUp = function() {
     var form = this.getForm();
     this.checkPasswordMatch();
     this.checkValidation();
@@ -75,7 +76,7 @@ app.user.SignUpForm.prototype.submitSignUp = function() {
     }
 };
 
-app.user.SignUpForm.prototype.checkPasswordMatch = function() {
+app.user.panel.SignUp.prototype.checkPasswordMatch = function() {
     var password1 = document.getElementById('pass-tf');
     var password2 = document.getElementById('confpass-tf');
     if (password1 && password2) {
@@ -94,7 +95,7 @@ app.user.SignUpForm.prototype.checkPasswordMatch = function() {
  * @param {string} queryData
  * @param {goog.events.EventLike} e Event object.
  */
-app.user.SignUpForm.prototype.onSubmitSignUp = function(queryData, e) {
+app.user.panel.SignUp.prototype.onSubmitSignUp = function(queryData, e) {
     var xhr = e.target;
     var data = xhr.getResponseJson();
     this.clearAlerts();
