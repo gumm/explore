@@ -57,6 +57,9 @@ app.base.view.Home.prototype.onPanelAction = function(e) {
         case 'remove-account':
             this.confirmRemoveAccount();
             break;
+        case 'organizations':
+            this.editOrg();
+            break;
         default:
             console.log('View does not understand action:', value);
     }
@@ -84,6 +87,9 @@ app.base.view.Home.prototype.enterSignUpForm = function(value) {
     this.editForm.setNestAsTarget(layout.getNest('main', 'center'));
     this.addPanelToView('EDIT_PROFILE', this.editForm);
     this.editForm.renderWithTemplate();
+    if(this.confirmForm) {
+        this.confirmForm.dispose();
+    }
     this.homePanel.hide();
 };
 
@@ -124,4 +130,19 @@ app.base.view.Home.prototype.removeConfirmation = function() {
         this.confirmForm.dispose();
     }
     this.editForm.show();
+};
+
+app.base.view.Home.prototype.editOrg = function() {
+    var layout = this.getLayout();
+    var user = this.getUser();
+
+    this.editOrgForm = new app.user.panel.DeleteAccount('confaccdel-form');
+    this.editOrgForm.setUri(new goog.Uri('/account/delete'));
+    this.editOrgForm.setUser(user);
+    this.editOrgForm.setNestAsTarget(layout.getNest('main', 'center'));
+    this.addPanelToView('EDIT-ORG', this.editOrgForm);
+    this.editOrgForm.renderWithTemplate();
+
+    this.editForm.hide();
+    this.homePanel.hide();
 };

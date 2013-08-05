@@ -71,7 +71,7 @@ app.base.panel.Home.prototype.buildUserButton = function() {
     // Item Names & Callbacks
     var menuItems = [
         {
-            name: bad.utils.getIconString('Edit Your Profile', 'icon-user'),
+            name: bad.utils.getIconString('Edit our Profile', 'icon-user'),
             action: goog.bind(
                 this.dispatchComponentEvent, this, 'edit-account')
         },
@@ -79,6 +79,11 @@ app.base.panel.Home.prototype.buildUserButton = function() {
             name: bad.utils.getIconString('Account Settings', 'icon-key'),
             action: goog.bind(
                 this.dispatchComponentEvent, this, 'edit-password')
+        },
+        {
+            name: bad.utils.getIconString('Organizations', 'icon-group'),
+            action: goog.bind(
+                this.dispatchComponentEvent, this, 'organizations')
         },
         {/*Seperator*/},
         {
