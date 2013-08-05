@@ -17,7 +17,7 @@ goog.inherits(app.user.panel.ResetPassword, app.user.panel.SignUp);
 
 app.user.panel.ResetPassword.prototype.initDom = function() {
     var formContainer = goog.dom.removeNode(
-        goog.dom.getElement('account-form-container')
+        goog.dom.getElement('pwreset')
     );
     var panelWrapper = goog.dom.getElementByClass(
         'pan-wrapper', this.getTarget());

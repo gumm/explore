@@ -76,7 +76,7 @@ app.base.panel.Home.prototype.buildUserButton = function() {
                 this.dispatchComponentEvent, this, 'edit-account')
         },
         {
-            name: bad.utils.getIconString('Change Your Password', 'icon-key'),
+            name: bad.utils.getIconString('Account Settings', 'icon-key'),
             action: goog.bind(
                 this.dispatchComponentEvent, this, 'edit-password')
         },

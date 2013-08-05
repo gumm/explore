@@ -2,8 +2,9 @@
 // Please do not edit.
 goog.addDependency('../../../app/app.js', ['app'], ['app.Site', 'bad.MqttWsIo', 'bad.Net', 'bad.utils', 'goog.dom', 'goog.net.XhrManager']);
 goog.addDependency('../../../app/base/panels/homepanel.js', ['app.base.panel.Home'], ['bad.MqttWsIo', 'bad.ui.Panel', 'goog.ui.Css3MenuButtonRenderer', 'goog.ui.Menu', 'goog.ui.MenuButton', 'goog.ui.MenuItem', 'goog.ui.MenuSeparator']);
-goog.addDependency('../../../app/base/views/homeview.js', ['app.base.view.Home'], ['app.base.panel.Home', 'app.user.panel.SignUp', 'bad.ui.View']);
+goog.addDependency('../../../app/base/views/homeview.js', ['app.base.view.Home'], ['app.base.panel.Home', 'app.user.panel.DeleteAccount', 'app.user.panel.SignUp', 'bad.ui.View']);
 goog.addDependency('../../../app/site.js', ['app.Site'], ['app.base.view.Home', 'app.user.view.Login', 'bad.ui.EventType', 'bad.ui.Layout', 'goog.Uri', 'goog.events.EventHandler']);
+goog.addDependency('../../../app/user/panels/deleteaccountform.js', ['app.user.panel.DeleteAccount'], ['bad.ui.Form', 'goog.ui.CustomButton']);
 goog.addDependency('../../../app/user/panels/loginform.js', ['app.user.panel.Login'], ['bad.ui.Form', 'goog.ui.Css3ButtonRenderer', 'goog.ui.CustomButton']);
 goog.addDependency('../../../app/user/panels/lostpasswordform.js', ['app.user.panel.LostPassword'], ['bad.ui.Form']);
 goog.addDependency('../../../app/user/panels/resetpasswordform.js', ['app.user.panel.ResetPassword'], ['app.user.panel.SignUp']);

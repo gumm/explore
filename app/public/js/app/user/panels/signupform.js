@@ -34,6 +34,17 @@ app.user.panel.SignUp.prototype.enterDocument = function() {
         this.submitSignUp
     );
 
+    if (this.removeAccountButton) {
+        this.getHandler().listen(
+            this.removeAccountButton,
+            goog.ui.Component.EventType.ACTION,
+            function() {
+                console.debug('Remove account - click-click');
+                this.dispatchComponentEvent('remove-account');
+            }, undefined, this
+        );
+    }
+
     // Calling this last makes sure that the final PANEL-READY event really is
     // dispatched right at the end of all of the enterDocument calls.
     app.user.panel.SignUp.superClass_.enterDocument.call(this);
@@ -42,6 +53,7 @@ app.user.panel.SignUp.prototype.enterDocument = function() {
 app.user.panel.SignUp.prototype.initDom = function() {
     this.initCancelButton();
     this.initSubmitButton();
+    this.initRemoveAccountButton();
 };
 
 app.user.panel.SignUp.prototype.initCancelButton = function() {
@@ -58,6 +70,17 @@ app.user.panel.SignUp.prototype.initSubmitButton = function() {
     button.setSupportedState(goog.ui.Component.State.FOCUSED, false);
     button.decorate(goog.dom.getElement('account-submit'));
     this.submitButton = button;
+};
+
+app.user.panel.SignUp.prototype.initRemoveAccountButton = function() {
+    var el = goog.dom.getElement('remove-account');
+    if (el) {
+        var button = new goog.ui.CustomButton('',
+        goog.ui.Css3ButtonRenderer.getInstance(), this.dom_);
+        button.setSupportedState(goog.ui.Component.State.FOCUSED, false);
+        button.decorate(goog.dom.getElement('remove-account'));
+        this.removeAccountButton = button;
+    }
 };
 
 app.user.panel.SignUp.prototype.submitSignUp = function() {

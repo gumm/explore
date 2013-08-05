@@ -2,6 +2,26 @@ var CT = require('../modules/country-list');
 var AM = require('../modules/account-manager');
 var EM = require('../modules/email-dispatcher');
 
+/**
+ * A generic reply object.
+ * @param {?(Object|string)=} opt_err
+ * @param {?(Object|string)=} opt_data
+ * @param {?string=} opt_message
+ * @returns {{error: (*|null), data: (*|null), message: (*|null)}}
+ */
+var getReply = function(opt_err, opt_data, opt_message) {
+    return {
+        error: opt_err || null,
+        data: opt_data || null,
+        message: opt_message || null
+    };
+};
+
+var notSupported = function(res) {
+    res.send('Method not supported', 400);
+};
+
+
 var okGo = function(req, res, obj) {
     if(obj[req.method]) {
         obj[req.method]();
@@ -28,25 +48,6 @@ var getBasicSetup = function(req) {
     };
 };
 
-/**
- * A generic reply object.
- * @param {?(Object|string)=} opt_err
- * @param {?(Object|string)=} opt_data
- * @param {?string=} opt_message
- * @returns {{error: (*|null), data: (*|null), message: (*|null)}}
- */
-var getReply = function(opt_err, opt_data, opt_message) {
-    return {
-        error: opt_err || null,
-        data: opt_data || null,
-        message: opt_message || null
-    };
-};
-
-var notSupported = function(res) {
-    res.send('Method not supported', 400);
-};
-
 exports.index = function(req, res) {
     res.render('index', getBasicSetup(req));
 };
@@ -54,7 +55,7 @@ exports.index = function(req, res) {
 //------------------------------------------------------------------[ Log In ]--
 
 exports.autoLogin = function(req, res) {
-    var errString = 'No Auto Login Possible';
+    var noAuto = 'No Auto Login Possible';
 
     /**
      * BEWARE: The account passed in here contains the full account.
@@ -66,7 +67,7 @@ exports.autoLogin = function(req, res) {
             req.session.user = account;
             res.send(getReply(null, account.profile));
         } else {
-            res.send(getReply(errString), 200);
+            res.send(getReply(noAuto), 200);
         }
     };
 
@@ -85,7 +86,7 @@ exports.autoLogin = function(req, res) {
                     req.session.user.credentials.pass,
                     callback);
         } else {
-            res.send(getReply(errString), 200);
+            res.send(getReply(noAuto), 200);
         }
     };
 
@@ -341,6 +342,52 @@ exports.resetPassword = function(req, res) {
 };
 
 //--------------------------------------------------[ View & Delete Accounts ]--
+
+exports.deleteAccount = function(req, res) {
+
+    var confPhrase = 'joe is a dork';
+
+    var getCall = function() {
+        res.render('accountdelete', {confPhrase: confPhrase});
+    };
+
+
+    var onDeleteCallback = function(e) {
+        if (!e) {
+            res.clearCookie('user', {path: '/'});
+            res.clearCookie('pass', {path: '/'});
+            req.session.destroy(function() {
+                res.send('Success: Account deleted', 200);
+            });
+        } else {
+            res.send('Account not found', 400);
+        }
+    };
+
+    /**
+     * BEWARE: The account passed in here contains the full account.
+     * Only pass the profile component to the user.
+     * @param {Object} err The Error object if any.
+     * @param {Object} account The full account object from mongo.
+     */
+    var onGetAccountCallback = function(err, account) {
+        if (!account) {
+            res.send(getReply(err), 400);
+        } else {
+            console.log('Here is the account:', account);
+            AM.deleteAccount(account._id, onDeleteCallback);
+        }
+    };
+
+    var postCall = function() {
+        var user = req.param('user');
+        var pass = req.param('pass');
+        AM.manualLogin(user, pass, onGetAccountCallback);
+    };
+
+    okGo(req, res, {'GET': getCall, 'POST': postCall});
+};
+
 
 exports.accounts = function(req, res) {
     AM.getAllRecords(function(e, accounts) {

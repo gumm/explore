@@ -7,6 +7,9 @@ input.error {
     color: rgb(185, 74, 72);
 }
 
+.input-full-width {
+    width: calc(100% - 15px);
+}
 
 .control-group .alert {
     margin-top:10px;
@@ -132,9 +135,9 @@ span i[class^="icon-"], span i[class*=" icon-"] {
     margin-bottom: 0;
 }
 
-#account-form-container {
+.container-440-center {
   width: 440px;
-  margin: 100px auto;
+  margin: 30px auto 0 auto;
 }
 
 #account-form .control-label {
@@ -168,13 +171,7 @@ span i[class^="icon-"], span i[class*=" icon-"] {
 .form-horizontal .controls {
   margin-left: 120px;
 }
-#lost-password-container {
-    width: 400px;
-    margin: 30px auto;
-}
-#get-credentials-form {
 
-}
 #get-credentials-form > input {
     width: calc(100% - 14px);
 }
@@ -188,7 +185,7 @@ span i[class^="icon-"], span i[class*=" icon-"] {
   margin-top: 7px;
 }
 
-#account-form .form-actions {
+.container-440-center .form-actions {
   padding: 17px 0 0 262px;
 }
 

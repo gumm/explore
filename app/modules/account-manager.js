@@ -122,6 +122,7 @@ var addNewAccount = function(newAccount, callback) {
 
     /**
      * Checks if the account with the given username already exists.
+     * Errors if id does, else go check if the email is unique.
      * @param {Object} err An Error object.
      * @param {Object} account The existing account.
      */
@@ -227,7 +228,7 @@ var seedAccountWithResetKey = function(email, callback) {
 /* account lookup methods */
 
 var deleteAccount = function(id, callback) {
-    accounts.remove({_id: getObjectId(id)}, callback);
+    accounts.remove({_id: id}, callback);
 };
 
 var getAccountByEmail = function(email, callback) {

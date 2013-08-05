@@ -1,0 +1,42 @@
+#confaccdel.container-440-center
+    h3 Delete Account
+    form()#confaccdel-form.well
+        hr
+        fieldset
+            #user-cg
+                label.control-label(for='user-tf') Enter your username
+                .controls
+                    input#uname-tf.input-full-width(
+                    type='text',
+                    name='user',
+                    value='',
+                    placeholder='Your login name',
+                    required)
+
+            #confphrase-cg
+                label.control-label(for='confphrase-tf') Type the following phrase:&nbsp;
+                    em.text-info #{confPhrase}
+                .controls
+                    input#confphrase-tf.input-full-width(
+                    type='text',
+                    name='confphrase',
+                    pattern="#{confPhrase}"
+                    value='',
+                    placeholder='We will be sad to see you go',
+                    required)
+
+            #pass-cg
+                label.control-label(for='pass-tf') Confirm your password
+                .controls
+                    input#pass-tf.input-full-width(
+                    type='password',
+                    name='pass',
+                    value='',
+                    placeholder='Your login password',
+                    required)
+
+            .form-actions(style="padding-left: 182px")
+                #remove-account-cancel Cancel
+                #remove-account-confirm(style="margin-left: 10px").g-button-red
+                    i.icon-user
+                    | Remove Account

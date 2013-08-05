@@ -1,6 +1,7 @@
 goog.provide('app.base.view.Home');
 
 goog.require('app.base.panel.Home');
+goog.require('app.user.panel.DeleteAccount');
 goog.require('app.user.panel.SignUp');
 goog.require('bad.ui.View');
 
@@ -23,12 +24,6 @@ app.base.view.Home.prototype.configurePanels = function() {
     this.homePanel.setUser(user);
     this.homePanel.setNestAsTarget(layout.getNest('main', 'center'));
     this.addPanelToView('HOME', this.homePanel);
-
-    this.editForm = new app.user.panel.SignUp('account-form');
-    this.editForm.setUri(new goog.Uri('/profile/edit'));
-    this.editForm.setUser(user);
-    this.editForm.setNestAsTarget(layout.getNest('main', 'center'));
-    this.addPanelToView('EDIT_PROFILE', this.editForm);
 };
 
 app.base.view.Home.prototype.displayPanels = function() {
@@ -48,13 +43,19 @@ app.base.view.Home.prototype.onPanelAction = function(e) {
             break;
         case 'edit-account':
         case 'edit-password':
-            this.enterSignUpForm();
+            this.enterSignUpForm(value);
             break;
         case 'account-cancel':
             this.exitSignUpForm();
             break;
         case 'signup-success':
             this.updateUserDisplay(data);
+            break;
+        case 'confirm-cancel':
+            this.removeConfirmation();
+            break;
+        case 'remove-account':
+            this.confirmRemoveAccount();
             break;
         default:
             console.log('View does not understand action:', value);
@@ -63,7 +64,25 @@ app.base.view.Home.prototype.onPanelAction = function(e) {
 
 //------------------------------------------------------------[ Sign-Up Form ]--
 
-app.base.view.Home.prototype.enterSignUpForm = function() {
+/**
+ * The sign-up form is used for sign-up, editing accounts, and passwords.
+ * It is destroyed on exit, and is thus recreated here each time it is called.
+ * @param {string} value The event value describes the required form.
+ */
+app.base.view.Home.prototype.enterSignUpForm = function(value) {
+
+    var layout = this.getLayout();
+    var user = this.getUser();
+    var urlString = '/profile/edit';
+    if(value === 'edit-password') {
+        urlString = '/password/edit';
+    }
+
+    this.editForm = new app.user.panel.SignUp('account-form');
+    this.editForm.setUri(new goog.Uri(urlString));
+    this.editForm.setUser(user);
+    this.editForm.setNestAsTarget(layout.getNest('main', 'center'));
+    this.addPanelToView('EDIT_PROFILE', this.editForm);
     this.editForm.renderWithTemplate();
     this.homePanel.hide();
 };
@@ -82,4 +101,27 @@ app.base.view.Home.prototype.updateUserDisplay = function(data) {
     }
     this.homePanel.updateUserButtonCaption(salutation);
     this.exitSignUpForm();
+};
+
+app.base.view.Home.prototype.confirmRemoveAccount = function() {
+
+    var layout = this.getLayout();
+    var user = this.getUser();
+
+    this.confirmForm = new app.user.panel.DeleteAccount('confaccdel-form');
+    this.confirmForm.setUri(new goog.Uri('/account/delete'));
+    this.confirmForm.setUser(user);
+    this.confirmForm.setNestAsTarget(layout.getNest('main', 'center'));
+    this.addPanelToView('CONFIRM-REMOVAL', this.confirmForm);
+    this.confirmForm.renderWithTemplate();
+
+    this.editForm.hide();
+    this.homePanel.hide();
+};
+
+app.base.view.Home.prototype.removeConfirmation = function() {
+    if (this.confirmForm) {
+        this.confirmForm.dispose();
+    }
+    this.editForm.show();
 };

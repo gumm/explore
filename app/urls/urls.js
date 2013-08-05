@@ -35,6 +35,10 @@ exports.urls = function(app) {
     app.get('/password/edit', routes.editPassword);
     app.post('/password/edit', routes.editPassword);
 
+    // Delete account
+    app.get('/account/delete', routes.deleteAccount);
+    app.post('/account/delete', routes.deleteAccount);
+
     // Print all accounts
     app.get('/accounts', routes.accounts);
 
