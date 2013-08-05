@@ -19,46 +19,22 @@ app.user.panel.LostPassword.prototype.enterDocument = function() {
     this.dom_ = goog.dom.getDomHelper(this.getElement());
     this.initDom();
 
-    this.getHandler().
-        listen(
-            this.cancelButton,
-            goog.ui.Component.EventType.ACTION,
-            function() {
-                this.clearAlerts();
-                //noinspection JSPotentiallyInvalidUsageOfThis
-                this.dispatchComponentEvent('cancel');
-            },undefined, this
-        ).listen(
-            this.submitButton,
-            goog.ui.Component.EventType.ACTION,
-            this.submitLostPasswordForm
-        );
-
-
     // Calling this last makes sure that the final PANEL-READY event really is
     // dispatched right at the end of all of the enterDocument calls.
     app.user.panel.LostPassword.superClass_.enterDocument.call(this);
 };
 
 app.user.panel.LostPassword.prototype.initDom = function() {
-    this.initCancelButton();
-    this.initSubmitButton();
-};
+    bad.utils.makeButton('cancel',
+        goog.bind(function() {
+            this.clearAlerts();
+            this.dispatchComponentEvent('cancel');
+        }, this)
+    );
 
-app.user.panel.LostPassword.prototype.initCancelButton = function() {
-    var button = new goog.ui.CustomButton('',
-        goog.ui.Css3ButtonRenderer.getInstance(), this.dom_);
-    button.setSupportedState(goog.ui.Component.State.FOCUSED, false);
-    button.decorate(goog.dom.getElement('cancel'));
-    this.cancelButton = button;
-};
-
-app.user.panel.LostPassword.prototype.initSubmitButton = function() {
-    var button = new goog.ui.CustomButton('',
-        goog.ui.Css3ButtonRenderer.getInstance(), this.dom_);
-    button.setSupportedState(goog.ui.Component.State.FOCUSED, false);
-    button.decorate(goog.dom.getElement('submit'));
-    this.submitButton = button;
+    bad.utils.makeButton('submit',
+        goog.bind(this.submitLostPasswordForm, this)
+    );
 };
 
 app.user.panel.LostPassword.prototype.submitLostPasswordForm = function() {

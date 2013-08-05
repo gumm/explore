@@ -23,8 +23,11 @@ app.user.panel.ResetPassword.prototype.initDom = function() {
         'pan-wrapper', this.getTarget());
     goog.dom.append(/** @type (!Node) */ (panelWrapper), formContainer);
 
-    this.initCancelButton();
-    this.initSubmitButton();
+    app.user.panel.ResetPassword.superClass_.initDom.call(this);
+};
+
+app.user.panel.ResetPassword.prototype.onCancel = function () {
+    window.open('/', '_self');
 };
 
 /**

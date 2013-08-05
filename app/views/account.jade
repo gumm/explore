@@ -135,7 +135,10 @@ if (formtype === 'editpassword')
     #removeAccount.container-440-center
         h3 Remove this account
         form()#remove-account-form.form-horizontal.well
-            p#sub1.text-warning This will destroy everything. There is no going back after this.
+            p#sub1
+                strong This will destroy everything. There is no going back after this.
+            p Consider contacting us to get a copy of your data before doing this.
+                | After your account has been removed we will not be able to recover your data.
             hr
             fieldset
                 .form-actions(style="padding-left: 255px")

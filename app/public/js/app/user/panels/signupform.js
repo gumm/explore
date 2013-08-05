@@ -20,68 +20,34 @@ app.user.panel.SignUp.prototype.enterDocument = function() {
     this.dom_ = goog.dom.getDomHelper(this.getElement());
     this.initDom();
 
-    this.getHandler().listen(
-        this.cancelButton,
-        goog.ui.Component.EventType.ACTION,
-        function() {
-            this.clearAlerts();
-            //noinspection JSPotentiallyInvalidUsageOfThis
-            this.dispatchComponentEvent('account-cancel');
-        }, undefined, this
-    ).listen(
-        this.submitButton,
-        goog.ui.Component.EventType.ACTION,
-        this.submitSignUp
-    );
-
-    if (this.removeAccountButton) {
-        this.getHandler().listen(
-            this.removeAccountButton,
-            goog.ui.Component.EventType.ACTION,
-            function() {
-                console.debug('Remove account - click-click');
-                this.dispatchComponentEvent('remove-account');
-            }, undefined, this
-        );
-    }
-
     // Calling this last makes sure that the final PANEL-READY event really is
     // dispatched right at the end of all of the enterDocument calls.
     app.user.panel.SignUp.superClass_.enterDocument.call(this);
 };
 
 app.user.panel.SignUp.prototype.initDom = function() {
-    this.initCancelButton();
-    this.initSubmitButton();
-    this.initRemoveAccountButton();
-};
+    bad.utils.makeButton('account-cancel',
+        goog.bind(this.onCancel, this)
+    );
 
-app.user.panel.SignUp.prototype.initCancelButton = function() {
-    var button = new goog.ui.CustomButton('',
-        goog.ui.Css3ButtonRenderer.getInstance(), this.dom_);
-    button.setSupportedState(goog.ui.Component.State.FOCUSED, false);
-    button.decorate(goog.dom.getElement('account-cancel'));
-    this.cancelButton = button;
-};
+    bad.utils.makeButton('account-submit',
+        goog.bind(this.submitSignUp, this)
+    );
 
-app.user.panel.SignUp.prototype.initSubmitButton = function() {
-    var button = new goog.ui.CustomButton('',
-        goog.ui.Css3ButtonRenderer.getInstance(), this.dom_);
-    button.setSupportedState(goog.ui.Component.State.FOCUSED, false);
-    button.decorate(goog.dom.getElement('account-submit'));
-    this.submitButton = button;
-};
-
-app.user.panel.SignUp.prototype.initRemoveAccountButton = function() {
     var el = goog.dom.getElement('remove-account');
     if (el) {
-        var button = new goog.ui.CustomButton('',
-        goog.ui.Css3ButtonRenderer.getInstance(), this.dom_);
-        button.setSupportedState(goog.ui.Component.State.FOCUSED, false);
-        button.decorate(goog.dom.getElement('remove-account'));
-        this.removeAccountButton = button;
+        bad.utils.makeButton('remove-account',
+            goog.bind(this.dispatchComponentEvent, this, 'remove-account')
+        );
     }
 };
+
+app.user.panel.SignUp.prototype.onCancel = function () {
+    this.clearAlerts();
+    this.dispatchComponentEvent('account-cancel');
+//    window.open('/', '_self');
+};
+
 
 app.user.panel.SignUp.prototype.submitSignUp = function() {
     var form = this.getForm();

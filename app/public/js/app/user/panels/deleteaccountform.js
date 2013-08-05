@@ -12,8 +12,6 @@ goog.require('goog.ui.CustomButton');
  */
 app.user.panel.DeleteAccount = function(id, opt_domHelper) {
     bad.ui.Form.call(this, id, opt_domHelper);
-
-    console.debug('Did this even init????')
 };
 goog.inherits(app.user.panel.DeleteAccount, bad.ui.Form);
 
@@ -22,47 +20,20 @@ app.user.panel.DeleteAccount.prototype.enterDocument = function() {
     this.dom_ = goog.dom.getDomHelper(this.getElement());
     this.initDom();
 
-    this.getHandler().listen(
-        this.cancelButton,
-        goog.ui.Component.EventType.ACTION,
-        function() {
-            this.clearAlerts();
-            //noinspection JSPotentiallyInvalidUsageOfThis
-            this.dispatchComponentEvent('confirm-cancel');
-        }, undefined, this
-    ).listen(
-        this.removeAccountButton,
-        goog.ui.Component.EventType.ACTION,
-        function() {
-            //noinspection JSPotentiallyInvalidUsageOfThis
-            this.submitConfirmation();
-        }, undefined, this
-    );
-
     // Calling this last makes sure that the final PANEL-READY event really is
     // dispatched right at the end of all of the enterDocument calls.
     app.user.panel.DeleteAccount.superClass_.enterDocument.call(this);
 };
 
 app.user.panel.DeleteAccount.prototype.initDom = function() {
-    this.initCancelButton();
-    this.initRemoveAccountButton();
-};
+    bad.utils.makeButton(
+        'remove-account-cancel',
+        goog.bind(this.dispatchComponentEvent, this, 'confirm-cancel'));
 
-app.user.panel.DeleteAccount.prototype.initCancelButton = function() {
-    var button = new goog.ui.CustomButton('',
-        goog.ui.Css3ButtonRenderer.getInstance(), this.dom_);
-    button.setSupportedState(goog.ui.Component.State.FOCUSED, false);
-    button.decorate(goog.dom.getElement('remove-account-cancel'));
-    this.cancelButton = button;
-};
-
-app.user.panel.DeleteAccount.prototype.initRemoveAccountButton = function() {
-    var button = new goog.ui.CustomButton('',
-        goog.ui.Css3ButtonRenderer.getInstance(), this.dom_);
-    button.setSupportedState(goog.ui.Component.State.FOCUSED, false);
-    button.decorate(goog.dom.getElement('remove-account-confirm'));
-    this.removeAccountButton = button;
+    bad.utils.makeButton(
+        'remove-account-confirm',
+        goog.bind(this.submitConfirmation, this)
+    );
 };
 
 app.user.panel.DeleteAccount.prototype.submitConfirmation = function() {

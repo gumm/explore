@@ -27,23 +27,12 @@ app.user.panel.Login.prototype.enterDocument = function() {
     );
 
     this.getHandler().listen(
-        this.signUpButton,
-        goog.ui.Component.EventType.ACTION,
-        function() {
-            //noinspection JSPotentiallyInvalidUsageOfThis
-            this.dispatchComponentEvent('sign-up');
-        }, undefined, this
-    ).listen(
         goog.dom.getElement('forgot-password'),
         goog.events.EventType.CLICK,
         function() {
             //noinspection JSPotentiallyInvalidUsageOfThis
             this.dispatchComponentEvent('forgot-password');
         }, undefined, this
-    ).listen(
-        this.loginButton,
-        goog.ui.Component.EventType.ACTION,
-        this.submitLoginForm
     );
 
     // Calling this last makes sure that the final PANEL-READY event really is
@@ -52,24 +41,14 @@ app.user.panel.Login.prototype.enterDocument = function() {
 };
 
 app.user.panel.Login.prototype.initDom = function() {
-    this.initLoginButton();
-    this.initSignUpButton();
-};
+    bad.utils.makeButton('create-account',
+        goog.bind(this.dispatchComponentEvent, this, 'sign-up')
+    );
 
-app.user.panel.Login.prototype.initLoginButton = function() {
-    var button = new goog.ui.CustomButton('',
-        goog.ui.Css3ButtonRenderer.getInstance(), this.dom_);
-    button.setSupportedState(goog.ui.Component.State.FOCUSED, false);
-    button.decorate(goog.dom.getElement('btn-login'));
-    this.loginButton = button;
-};
+    bad.utils.makeButton('btn-login',
+        goog.bind(this.submitLoginForm, this)
+    );
 
-app.user.panel.Login.prototype.initSignUpButton = function() {
-    var button = new goog.ui.CustomButton('',
-        goog.ui.Css3ButtonRenderer.getInstance(), this.dom_);
-    button.setSupportedState(goog.ui.Component.State.FOCUSED, false);
-    button.decorate(goog.dom.getElement('create-account'));
-    this.signUpButton = button;
 };
 
 app.user.panel.Login.prototype.submitLoginForm = function() {
