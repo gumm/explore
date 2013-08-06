@@ -5,7 +5,7 @@ goog.require('app.user.panel.SignUp');
 /**
  * A form for resetting the users password, before login.
  * This is typically called when a user requested a password reset via email.
- * @param {!string} id
+ * @param {!string} id The form element id.
  * @param {goog.dom.DomHelper=} opt_domHelper Optional DOM helper.
  * @extends {app.user.panel.SignUp}
  * @constructor
@@ -26,7 +26,7 @@ app.user.panel.ResetPassword.prototype.initDom = function() {
     app.user.panel.ResetPassword.superClass_.initDom.call(this);
 };
 
-app.user.panel.ResetPassword.prototype.onCancel = function () {
+app.user.panel.ResetPassword.prototype.onCancel = function() {
     window.open('/', '_self');
 };
 
@@ -52,12 +52,16 @@ app.user.panel.ResetPassword.prototype.onSubmitSignUp = function(queryData, e) {
     }
 };
 
+/**
+ * @param {goog.events.EventLike} e Event object.
+ */
 app.user.panel.ResetPassword.prototype.loginCallback = function(e) {
     var xhr = e.target;
     var data = xhr.getResponseJson();
     this.clearAlerts();
     if (xhr.isSuccess()) {
-        this.dispatchComponentEvent('login-success', data.data);
+        this.dispatchComponentEvent(
+            app.user.EventType.LOGIN_SUCCESS, data.data);
     } else {
         this.displayErrors(data);
     }

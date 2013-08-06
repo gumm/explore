@@ -7,9 +7,14 @@ exports.urls = function(app) {
     // Intro pages
     app.get('/intro', routes.intro);
 
+    // Persistent elements
+    app.get('/header', routes.header);
+    app.post('/logout', routes.header);
+
     // Login
     app.get('/login', routes.login);
     app.post('/login', routes.login);
+    app.get('/login/header', routes.loginHeader);
 
     // Account Creation
     app.get('/signup', routes.signUp);
@@ -25,7 +30,6 @@ exports.urls = function(app) {
 
     // Home Page
     app.get('/home', routes.home);
-    app.post('/home', routes.home);
 
     // Account Editing
     app.get('/profile/edit', routes.editProfile);

@@ -5,7 +5,7 @@ goog.require('goog.ui.CustomButton');
 
 /**
  * The basic login form controller.
- * @param {!string} id
+ * @param {!string} id The form element id.
  * @param {goog.dom.DomHelper=} opt_domHelper Optional DOM helper.
  * @extends {bad.ui.Form}
  * @constructor
@@ -37,17 +37,16 @@ app.user.panel.SignUp.prototype.initDom = function() {
     var el = goog.dom.getElement('remove-account');
     if (el) {
         bad.utils.makeButton('remove-account',
-            goog.bind(this.dispatchComponentEvent, this, 'remove-account')
+            goog.bind(this.dispatchComponentEvent, this,
+                app.user.EventType.ACCOUNT_REMOVE)
         );
     }
 };
 
-app.user.panel.SignUp.prototype.onCancel = function () {
+app.user.panel.SignUp.prototype.onCancel = function() {
     this.clearAlerts();
-    this.dispatchComponentEvent('account-cancel');
-//    window.open('/', '_self');
+    this.dispatchComponentEvent(app.user.EventType.SIGNUP_CANCEL);
 };
-
 
 app.user.panel.SignUp.prototype.submitSignUp = function() {
     var form = this.getForm();
@@ -65,6 +64,10 @@ app.user.panel.SignUp.prototype.submitSignUp = function() {
     }
 };
 
+/**
+ * Internally check that the passwords match.
+ * @return {!boolean}
+ */
 app.user.panel.SignUp.prototype.checkPasswordMatch = function() {
     var password1 = document.getElementById('pass-tf');
     var password2 = document.getElementById('confpass-tf');
@@ -89,7 +92,7 @@ app.user.panel.SignUp.prototype.onSubmitSignUp = function(queryData, e) {
     var data = xhr.getResponseJson();
     this.clearAlerts();
     if (xhr.isSuccess()) {
-        this.dispatchComponentEvent('signup-success',
+        this.dispatchComponentEvent(app.user.EventType.SIGNUP_SUCCESS,
             {query: queryData, reply: data}
         );
     } else {

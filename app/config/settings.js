@@ -4,7 +4,6 @@ var urls = require('../urls/urls').urls;
 var root = path.resolve(__dirname, '../../');
 var appPath = path.resolve(__dirname, '../');
 
-
 /**
  * Site specific configuration.
  * @type {Object}

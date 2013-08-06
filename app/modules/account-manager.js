@@ -186,11 +186,12 @@ var updatePassword = function(uid, passwords, callback) {
                     error.currpass = 'This is not your current password';
                     callback(error);
                 } else {
-                    convertPwToSaltedHash(
-                        account,
-                        newPass, // This is still in clear text.
-                        callback
-                    );
+                    saltAndHash(newPass, function(hash) {
+                        account.credentials.pass = hash;
+                        accounts.save(account, {safe: true}, function() {
+                            callback(null, account.profile);
+                        });
+                    });
                 }
             });
         } else {
@@ -347,16 +348,17 @@ var saltAndHash = function(pass, callback) {
  * given account to a salted hash of the password.
  */
 var convertPwToSaltedHash = function(account, newPass, callback) {
-    saltAndHash(newPass,
-        function(hash) {
-            account.credentials.pass = hash;
-            accounts.insert(account, {safe: true},
-                function() {
-                    callback(null, account.profile);
-                }
-            );
-        }
-    );
+
+    var shCallback = function(hash) {
+        account.credentials.pass = hash;
+        accounts.insert(account, {safe: true},
+            function() {
+                callback(null, account.profile);
+            }
+        );
+    };
+
+    saltAndHash(newPass, shCallback);
 };
 
 /**

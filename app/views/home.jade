@@ -1,22 +1,6 @@
 // preset form values if we receive a userdata object //
 - profile = typeof(data) != 'undefined' ? data : { }
 
-#active_user_container.topfixed
-    .signup Welcome
-        #user_button
-            i.icon-cog
-            | #{profile.name} #{profile.surname}
-
-#sysreadout
-    .sysreadout.topfixed-left Active Clients:
-        #active_clients.number
-
-    .sysreadout.topfixed-left Bytes Sent:
-        #bytes_sent.number
-
-    .sysreadout.topfixed-left Bytes Received:
-        #bytes_received.number
-
 .row.expr_wrapper
     .span4
         h2 Hello #{profile.name}
@@ -34,11 +18,3 @@
         p
             | All further comms from your device will have to have the topic prefix
         // h4 #{account._id}/UID
-
-    .span4
-        #in_mqtt
-    .span4
-        #in_sys
-
-script
-    console.debug('Here is the user profile: ', !{JSON.stringify(data)})

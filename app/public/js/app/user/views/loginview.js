@@ -1,5 +1,6 @@
 goog.provide('app.user.view.Login');
 
+goog.require('app.user.EventType');
 goog.require('app.user.panel.Login');
 goog.require('app.user.panel.LostPassword');
 goog.require('app.user.panel.ResetPassword');
@@ -8,6 +9,8 @@ goog.require('bad.ui.Panel');
 goog.require('bad.ui.View');
 
 /**
+ * @param {boolean=} opt_reset True if this view should present the
+ *      reset password form, and not the usual login forms.
  * @constructor
  * @extends {bad.ui.View}
  */
@@ -20,47 +23,80 @@ goog.inherits(app.user.view.Login, bad.ui.View);
 app.user.view.Login.prototype.configurePanels = function() {
     var layout = this.getLayout();
 
-    // Intro Panel
+    /**
+     * Header Panel
+     * @type {bad.ui.Panel}
+     */
+    this.headerPanel = new bad.ui.Panel();
+    this.headerPanel.setUri(new goog.Uri('/login/header'));
+    this.headerPanel.setNestAsTarget(layout.getNest('header'));
+    this.headerPanel.setBeforeReadyCallback(goog.bind(function() {
+        bad.utils.makeButton('create-account',
+            goog.bind(this.enterSignUpForm, this)
+        );
+    }, this));
+    this.addPanelToView(bad.utils.makeId(), this.headerPanel);
+
+    /**
+     * Intro Panel
+     * @type {bad.ui.Panel}
+     */
     this.introPanel = new bad.ui.Panel();
     this.introPanel.setUri(new goog.Uri('/intro'));
     this.introPanel.setNestAsTarget(layout.getNest('main', 'center'));
-    this.addPanelToView('INTRO', this.introPanel);
+    this.addPanelToView(bad.utils.makeId(), this.introPanel);
 
-    // Login Form
+    /**
+     * Login Form
+     * @type {app.user.panel.Login}
+     */
     this.loginPanel = new app.user.panel.Login('login-form');
     this.loginPanel.setUri(new goog.Uri('/login'));
     this.loginPanel.setNestAsTarget(layout.getNest('main', 'right', 'mid'));
-    this.addPanelToView('LOGIN-FORM', this.loginPanel);
+    this.addPanelToView(bad.utils.makeId(), this.loginPanel);
 
-    // Signup Form
+    /**
+     * Signup Form
+     * @type {app.user.panel.SignUp}
+     */
     this.signUpForm = new app.user.panel.SignUp('account-form');
     this.signUpForm.setUri(new goog.Uri('/signup'));
     this.signUpForm.setNestAsTarget(layout.getNest('main', 'center'));
-    this.addPanelToView('SIGNUP-FORM', this.signUpForm);
+    this.addPanelToView(bad.utils.makeId(), this.signUpForm);
 
-    // Lost Password Form
+    /**
+     * Lost Password Form
+     * @type {app.user.panel.LostPassword}
+     */
     this.lostPwForm = new app.user.panel.LostPassword('get-credentials-form');
     this.lostPwForm.setUri(new goog.Uri('/lost-password'));
     this.lostPwForm.setNestAsTarget(layout.getNest('main', 'center'));
-    this.addPanelToView('LOST-PASSWORD-FORM', this.lostPwForm);
+    this.addPanelToView(bad.utils.makeId(), this.lostPwForm);
 
-    // A reset password form
+    /**
+     * A reset password form
+     * @type {app.user.panel.ResetPassword}
+     */
     this.resetPasswordForm = new app.user.panel.ResetPassword('account-form');
     this.resetPasswordForm.setUri(new goog.Uri('/reset-password'));
     this.resetPasswordForm.setNestAsTarget(
         this.getLayout().getNest('main', 'center'));
-    this.addPanelToView('RESET-PASS-FORM', this.resetPasswordForm);
+    this.addPanelToView(bad.utils.makeId(), this.resetPasswordForm);
 };
 
 app.user.view.Login.prototype.displayPanels = function() {
     if (this.reset) {
         this.resetPasswordForm.render();
     } else {
+        this.headerPanel.renderWithTemplate();
         this.introPanel.renderWithTemplate();
         this.loginPanel.renderWithTemplate();
     }
 };
 
+/**
+ * @param {goog.events.EventLike} e Event object.
+ */
 app.user.view.Login.prototype.onPanelAction = function(e) {
 
     var panel = e.target;
@@ -73,54 +109,33 @@ app.user.view.Login.prototype.onPanelAction = function(e) {
                 this.slideLoginIn();
             }
             break;
-        case 'sign-up':
-            this.enterSignUpForm();
-            break;
-        case 'forgot-password':
+        case app.user.EventType.FORGOT_PW:
             this.enterLostPasswordForm();
             break;
-        case 'login-success':
+        case app.user.EventType.LOGIN_SUCCESS:
             this.fetchHomePage(data);
             break;
-        case 'account-cancel':
+        case app.user.EventType.SIGNUP_CANCEL:
             this.exitSignUpForm();
             break;
-        case 'signup-success':
+        case app.user.EventType.SIGNUP_SUCCESS:
             this.loginPanel.logIn(data.query);
             break;
-        case 'cancel':
+        case app.user.EventType.FORGOT_PW_CANCEL:
             this.exitLostPasswordForm();
             break;
-        case 'have-sign-up':
-            this.signUp = data;
-            goog.dom.appendChild(
-                this.getLayout().getNestElement('header'), this.signUp);
-            break;
         default:
-            console.log('View does not understand action:', value);
-    }
-};
-
-//-----------------------------------------------------------------[ Sign-Up ]--
-
-app.user.view.Login.prototype.showSignUpButton_ = function() {
-    if (this.signUp) {
-        goog.dom.classes.remove(this.signUp, 'hide');
-    }
-};
-
-app.user.view.Login.prototype.hideSignUpButton_ = function() {
-    if (this.signUp) {
-        goog.dom.classes.add(this.signUp, 'hide');
+            console.log('app.user.view.Login: No match for ', value);
     }
 };
 
 //-------------------------------------------------------------[ Log-In Form ]--
+
 app.user.view.Login.prototype.slideLoginIn = function() {
     var size = 350;
     var nest = this.getLayout().getNest('main', 'right');
     nest.slideOpen(null, size,
-        goog.bind(this.showSignUpButton_, this)
+        goog.bind(this.headerPanel.show, this.headerPanel)
     );
 };
 
@@ -130,7 +145,9 @@ app.user.view.Login.prototype.slideLoginIn = function() {
 app.user.view.Login.prototype.slideLoginOut = function(opt_callback) {
     var nest = this.getLayout().getNest('main', 'right');
 
-    this.hideSignUpButton_();
+    if (this.headerPanel.isInDocument()) {
+        this.headerPanel.hide();
+    }
     var callback = goog.bind(nest.hide, nest, opt_callback);
     nest.slideClosed(callback);
 };
@@ -177,9 +194,12 @@ app.user.view.Login.prototype.exitLostPasswordForm = function() {
 
 //---------------------------------------------------------------[ Home Page ]--
 
+/**
+ * @param {Object} data The logged in users profile data.
+ */
 app.user.view.Login.prototype.fetchHomePage = function(data) {
     var callback = goog.bind(function() {
-        this.dispatchEvent({type: 'login-success', data: data});
+        this.appDo(app.doMap.USER_LOGGED_IN, data);
     }, this);
     this.slideLoginOut(callback);
 };

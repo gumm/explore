@@ -40,9 +40,7 @@ var bootstrap = {
                 this.readyState === 'complete')) {
                 done = true;
                 script.onload = script.onreadystatechange = null;
-                if (callback) {
-                    callback();
-                }
+                callback && callback();
             }
         };
         head.insertBefore(script, head.firstChild);

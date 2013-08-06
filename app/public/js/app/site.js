@@ -2,13 +2,29 @@
  * @fileoverview The top level app. From here the views are controlled.
  */
 goog.provide('app.Site');
+goog.provide('app.doMap');
 
 goog.require('app.base.view.Home');
+goog.require('app.base.view.Persistent');
+goog.require('app.user.view.EditUser');
 goog.require('app.user.view.Login');
 goog.require('bad.ui.EventType');
 goog.require('bad.ui.Layout');
 goog.require('goog.Uri');
 goog.require('goog.events.EventHandler');
+
+/**
+ * @enum {!string}
+ */
+app.doMap = {
+    UPDATE_USER: bad.utils.privateRandom(),
+    VIEW_EDIT_USER: bad.utils.privateRandom(),
+    USER_LOGGED_IN: bad.utils.privateRandom(),
+    VIEW_LOGIN: bad.utils.privateRandom(),
+    RESET_PASSWORD: 'resetpw',
+    AUTO: bad.utils.privateRandom(),
+    VIEW_HOME: bad.utils.privateRandom()
+};
 
 /**
  * Constructor of the main site object. Inherits from EventHandler, so it
@@ -44,7 +60,7 @@ app.Site = function(xManWrapper, mqtt, opt_landing) {
      */
     this.user_ = {};
 
-    this.landing = opt_landing ? opt_landing : null;
+    this.landing = opt_landing ? opt_landing : app.doMap.AUTO;
 };
 goog.inherits(app.Site, goog.events.EventHandler);
 
@@ -53,6 +69,21 @@ goog.inherits(app.Site, goog.events.EventHandler);
  */
 app.Site.prototype.initSite = function() {
     this.initLayout_();
+};
+
+app.Site.prototype.rpc = function(method, opt_param) {
+
+    switch (method) {
+        case app.doMap.UPDATE_USER: this.updateUser_(opt_param); break;
+        case app.doMap.VIEW_EDIT_USER: this.viewEditUser(opt_param); break;
+        case app.doMap.USER_LOGGED_IN: this.userSignedIn(opt_param); break;
+        case app.doMap.VIEW_LOGIN: this.viewLogin(); break;
+        case app.doMap.RESET_PASSWORD: this.viewLogin(true); break;
+        case app.doMap.AUTO: this.autoLogin(); break;
+        case app.doMap.VIEW_HOME: this.viewHome(); break;
+        default:
+            console.log('Switch fall through for: ', method, opt_param);
+    }
 };
 
 /**
@@ -88,7 +119,10 @@ app.Site.prototype.initLayout_ = function() {
     this.layout_.setHeightToViewport(true);
     this.layout_.setMargin(topMargin, rightMargin, bottomMargin, leftMargin);
 
-    // Create main horizontal layout.
+    /**
+     * Create main horizontal layout.
+     * @type {bad.ui.Layout}
+     */
     var mainHorizontalLayout = this.layout_.setInnerLayout(
         innerCellsHorizontal,
         mainCells[1],
@@ -98,7 +132,10 @@ app.Site.prototype.initLayout_ = function() {
     mainHorizontalLayout.setInitialSize(innerCellsHorizontal[0], 220);
     mainHorizontalLayout.setInitialSize(innerCellsHorizontal[2], 220);
 
-    // Up-Down Layout in the left.
+    /**
+     * Up-Down Layout in the left.
+     * @type {bad.ui.Layout}
+     */
     var leftVerticalLayout = mainHorizontalLayout.setInnerLayout(
         innerCellsVertical,
         innerCellsHorizontal[0],
@@ -107,7 +144,10 @@ app.Site.prototype.initLayout_ = function() {
     leftVerticalLayout.setInitialSize(innerCellsVertical[0], 50);
     leftVerticalLayout.setInitialSize(innerCellsVertical[2], 50);
 
-    // Up-Down Layout in the right.
+    /**
+     * Up-Down Layout in the right.
+     * @type {bad.ui.Layout}
+     */
     var rightVerticalLayout = mainHorizontalLayout.setInnerLayout(
         innerCellsVertical,
         innerCellsHorizontal[2],
@@ -130,7 +170,7 @@ app.Site.prototype.initLayout_ = function() {
         function(e) {
             if (e.target.getId() === id) {
                 this.hideAllNests();
-                this.land();
+                this.rpc(this.landing);
             }
         }
     );
@@ -139,17 +179,28 @@ app.Site.prototype.initLayout_ = function() {
     this.layout_.render();
 };
 
-app.Site.prototype.land = function() {
+//------------------------------------------------------------------[ Header ]--
 
-    switch (this.landing) {
-        case 'resetpw':
-            this.viewLogin(true);
-            break;
-        default:
-            this.autoLogin();
-    }
+/**
+ * Some stuff should stay in the header as long as the user is signed in.
+ * It should only appear on sign-in, and be destroyed on sign out.
+ * This uses a special view with its own panel components to dive this.
+ */
+app.Site.prototype.initHeader = function() {
+
+    /**
+     * @type {app.base.view.Persistent}
+     * @private
+     */
+    this.persistentView_ = new app.base.view.Persistent(this.mqtt);
+    this.persistentView_.setLayout(this.layout_);
+    this.persistentView_.setXMan(this.xMan_);
+    this.persistentView_.setUser(this.user_);
+    this.persistentView_.render();
+    this.listen(
+        this.persistentView_, bad.ui.EventType.AP_DO, this.onApDo);
+
 };
-
 
 //--------------------------------------------------------------[ Auto Login ]--
 
@@ -158,6 +209,9 @@ app.Site.prototype.autoLogin = function() {
     this.xMan_.get(new goog.Uri('/auto_login'), callback);
 };
 
+/**
+ * {goog.events.EventLike} e Event object.
+ */
 app.Site.prototype.onAutoLoginReply = function(e) {
     var xhr = e.target;
     if (xhr.isSuccess()) {
@@ -165,14 +219,35 @@ app.Site.prototype.onAutoLoginReply = function(e) {
         if (data.error) {
             this.viewLogin();
         } else {
-            this.onLogin({data: data});
+            this.userSignedIn(data['data']);
         }
     } else {
         this.viewLogin();
     }
 };
 
-//-------------------------------------------------------------------[ Views ]--
+/**
+ * @param {Object} userData User profile data.
+ */
+app.Site.prototype.userSignedIn = function(userData) {
+    this.user_ = userData;
+    this.initHeader();
+    this.viewHome();
+};
+
+/**
+ * @param {Object} userData User profile data.
+ * @private
+ */
+app.Site.prototype.updateUser_ = function(userData) {
+    this.user_ = userData;
+    this.persistentView_.setUser(this.user_);
+    if (this.activeView_) {
+        this.activeView_.setUser(this.user_);
+    }
+};
+
+//---------------------------------------------------------[ Views Utilities ]--
 
 /**
  * @param {bad.ui.View} view
@@ -186,41 +261,61 @@ app.Site.prototype.switchView = function(view) {
     this.activeView_.setXMan(this.xMan_);
     this.activeView_.setUser(this.user_);
     this.activeView_.render();
+    this.listen(
+        this.activeView_, bad.ui.EventType.AP_DO, this.onApDo);
 };
 
-app.Site.prototype.onLogin = function(e) {
-    this.user_ = e.data;
-    this.viewHome();
+/**
+ * @param {goog.events.EventLike} e Event object.
+ */
+app.Site.prototype.onApDo = function(e) {
+    var method = e.data.method;
+    var param = e.data.param;
+    this.rpc(method, param);
 };
+
+//-------------------------------------------------------------------[ Views ]--
 
 /**
  *
  * @param {boolean=} opt_reset
  */
 app.Site.prototype.viewLogin = function(opt_reset) {
+
     /**
      * @type {app.user.view.Login}
      */
     var view = new app.user.view.Login(opt_reset);
-    this.listenOnce(
-        view,
-        'login-success',
-        this.onLogin
-    );
     this.switchView(view);
 };
 
 app.Site.prototype.viewHome = function() {
+
     /**
      * @type {app.base.view.Home}
      */
-    var view = new app.base.view.Home(this.mqtt);
+    var view = new app.base.view.Home();
+    this.switchView(view);
+};
+
+/**
+ * @param {string} target A target action determining the edit forms url.
+ */
+app.Site.prototype.viewEditUser = function(target) {
+
+    /**
+     * @type {app.user.view.EditUser}
+     */
+    var view = new app.user.view.EditUser(target);
     this.switchView(view);
 };
 
 //-----------------------------------------------------[ Utility Stuff Below ]--
 
 app.Site.prototype.hideAllNests = function() {
+    /**
+     * @type {Array}
+     */
     var nests = [
         this.layout_.getNest('main', 'left'),
         this.layout_.getNest('main', 'left', 'top'),

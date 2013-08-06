@@ -5,7 +5,7 @@ goog.require('goog.ui.CustomButton');
 
 /**
  * A delete account confirmation form.
- * @param {!string} id
+ * @param {!string} id The form element id.
  * @param {goog.dom.DomHelper=} opt_domHelper Optional DOM helper.
  * @extends {bad.ui.Form}
  * @constructor
@@ -28,12 +28,16 @@ app.user.panel.DeleteAccount.prototype.enterDocument = function() {
 app.user.panel.DeleteAccount.prototype.initDom = function() {
     bad.utils.makeButton(
         'remove-account-cancel',
-        goog.bind(this.dispatchComponentEvent, this, 'confirm-cancel'));
+        goog.bind(this.cancel, this));
 
     bad.utils.makeButton(
         'remove-account-confirm',
         goog.bind(this.submitConfirmation, this)
     );
+};
+
+app.user.panel.DeleteAccount.prototype.cancel = function() {
+    this.dispatchComponentEvent(app.user.EventType.ACCOUNT_REMOVE_CANCELED);
 };
 
 app.user.panel.DeleteAccount.prototype.submitConfirmation = function() {

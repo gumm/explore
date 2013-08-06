@@ -4,7 +4,7 @@ goog.require('bad.ui.Form');
 
 /**
  * The basic login form controller.
- * @param {!string} id
+ * @param {!string} id The form element id.
  * @param {goog.dom.DomHelper=} opt_domHelper Optional DOM helper.
  * @extends {bad.ui.Form}
  * @constructor
@@ -15,7 +15,6 @@ app.user.panel.LostPassword = function(id, opt_domHelper) {
 goog.inherits(app.user.panel.LostPassword, bad.ui.Form);
 
 app.user.panel.LostPassword.prototype.enterDocument = function() {
-
     this.dom_ = goog.dom.getDomHelper(this.getElement());
     this.initDom();
 
@@ -28,7 +27,7 @@ app.user.panel.LostPassword.prototype.initDom = function() {
     bad.utils.makeButton('cancel',
         goog.bind(function() {
             this.clearAlerts();
-            this.dispatchComponentEvent('cancel');
+            this.dispatchComponentEvent(app.user.EventType.FORGOT_PW_CANCEL);
         }, this)
     );
 
@@ -48,6 +47,9 @@ app.user.panel.LostPassword.prototype.submitLostPasswordForm = function() {
     }
 };
 
+/**
+ * @param {goog.events.EventLike} e Event object.
+ */
 app.user.panel.LostPassword.prototype.onSubmitLostPasswordForm = function(e) {
     var xhr = e.target;
     var data = xhr.getResponseJson();
@@ -55,6 +57,8 @@ app.user.panel.LostPassword.prototype.onSubmitLostPasswordForm = function(e) {
     if (xhr.isSuccess()) {
         var fields = this.getForm().elements;
         this.displaySuccess(fields['email'], data['message']);
+        // TODO: We need a spinner here, and then display the success
+        // as a new page...
     } else {
         this.displayErrors(data);
     }

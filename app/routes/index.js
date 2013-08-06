@@ -122,9 +122,38 @@ exports.login = function(req, res) {
     okGo(req, res, {'GET': getCall, 'POST': postCall});
 };
 
+exports.header = function(req, res) {
+
+    var getCall = function() {
+        if (!req.session.user) {
+            // if user is not logged-in redirect back to login page //
+            res.redirect('/');
+        } else {
+            res.render('header', getReply(null, req.session.user.profile));
+        }
+    };
+
+    var postCall = function() {
+        if (req.param('logout') === 'true') {
+            res.clearCookie('user');
+            res.clearCookie('pass');
+            req.session.destroy(function() {
+                res.send('ok', 200);
+            });
+        }
+    };
+
+    okGo(req, res, {'GET': getCall, 'POST': postCall});
+};
+
 exports.intro = function(req, res) {
     var app = req.app;
     res.render('intro', {title: app.get('title')});
+};
+
+exports.loginHeader = function(req, res) {
+    var app = req.app;
+    res.render('loginheader', {title: app.get('title')});
 };
 
 //------------------------------------------------------------[ New Accounts ]--
@@ -248,17 +277,7 @@ exports.home = function(req, res) {
         }
     };
 
-    var postCall = function() {
-        if (req.param('logout') === 'true') {
-            res.clearCookie('user');
-            res.clearCookie('pass');
-            req.session.destroy(function() {
-                res.send('ok', 200);
-            });
-        }
-    };
-
-    okGo(req, res, {'GET': getCall, 'POST': postCall});
+    okGo(req, res, {'GET': getCall});
 };
 
 //----------------------------------------------------------[ Password Reset ]--
