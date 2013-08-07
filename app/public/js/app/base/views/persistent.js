@@ -38,13 +38,8 @@ app.base.view.Persistent.prototype.onPanelAction = function(e) {
     var data = e.getData();
 
     switch (value) {
-        case app.base.EventType.EDIT_ACCOUNT:
-        case app.base.EventType.EDIT_PW:
-            this.appDo(app.doMap.VIEW_EDIT_USER, value);
-            break;
-        case app.base.EventType.EDIT_ORG:
-            console.debug('SO HERE WE ARE: A day later and a $ poorer, and ' +
-                'still no org func.');
+        case app.base.EventType.EDIT_PROFILE:
+            this.appDo(app.doMap.VIEW_EDIT_USER);
             break;
         default:
             console.log('app.base.view.Persistent No case for: ', value, data);

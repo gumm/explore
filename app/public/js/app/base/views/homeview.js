@@ -17,7 +17,7 @@ app.base.view.Home.prototype.configurePanels = function() {
     var user = this.getUser();
 
     this.homePanel = new app.base.panel.Home();
-    this.homePanel.setUri(new goog.Uri('/home'));
+    this.homePanel.setUri(new goog.Uri(exp.urlMap.HOME));
     this.homePanel.setUser(user);
     this.homePanel.setNestAsTarget(layout.getNest('main', 'center'));
     this.addPanelToView(bad.utils.makeId(), this.homePanel);

@@ -1,4 +1,5 @@
-module.exports = [
+goog.provide('exp.countryList');
+exp.countryList = [
     {short: '  ', name: 'Please select a country'},
     {short: 'AF', name: 'Afghanistan'},
     {short: 'AL', name: 'Albania'},

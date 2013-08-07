@@ -6,6 +6,7 @@ BUILD_PARM=$3
 
 # Relative to the workspace
 BIN_PATH=${WORKSPACE}/bin
+NODE_ROOT=${WORKSPACE}/app
 BUILD_PATH=${BIN_PATH}/build
 PUBLIC_PATH=${WORKSPACE}/app/public
 JS_PATH=${PUBLIC_PATH}/js
@@ -65,6 +66,16 @@ deps) echo  "Build Closure Dependencies"
    ${BUILD_PATH}/build-deps.sh \
         ${WORKSPACE} \
         ${JS_PATH} \
+        ${GOOG_BIN_PATH} \
+        ${PROJECT_NAME}
+   ;;
+
+# Build the deps file needed for un-compiled work.
+nodedeps) echo  "Build Node Dependencies"
+   ${BUILD_PATH}/build-node-deps.sh \
+        ${WORKSPACE} \
+        ${JS_PATH} \
+        ${NODE_ROOT} \
         ${GOOG_BIN_PATH} \
         ${PROJECT_NAME}
    ;;

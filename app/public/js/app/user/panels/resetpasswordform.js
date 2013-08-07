@@ -27,7 +27,7 @@ app.user.panel.ResetPassword.prototype.initDom = function() {
 };
 
 app.user.panel.ResetPassword.prototype.onCancel = function() {
-    window.open('/', '_self');
+    window.open(exp.urlMap.INDEX, '_self');
 };
 
 /**
@@ -43,7 +43,7 @@ app.user.panel.ResetPassword.prototype.onSubmitSignUp = function(queryData, e) {
 
     if (xhr.isSuccess()) {
         this.xMan.post(
-            new goog.Uri('/login'),
+            new goog.Uri(exp.urlMap.LOGIN),
             queryData,
             goog.bind(this.loginCallback, this)
         );

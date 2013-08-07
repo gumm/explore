@@ -28,7 +28,7 @@ app.user.view.Login.prototype.configurePanels = function() {
      * @type {bad.ui.Panel}
      */
     this.headerPanel = new bad.ui.Panel();
-    this.headerPanel.setUri(new goog.Uri('/login/header'));
+    this.headerPanel.setUri(new goog.Uri(exp.urlMap.LOGIN_HEADER));
     this.headerPanel.setNestAsTarget(layout.getNest('header'));
     this.headerPanel.setBeforeReadyCallback(goog.bind(function() {
         bad.utils.makeButton('create-account',
@@ -42,7 +42,7 @@ app.user.view.Login.prototype.configurePanels = function() {
      * @type {bad.ui.Panel}
      */
     this.introPanel = new bad.ui.Panel();
-    this.introPanel.setUri(new goog.Uri('/intro'));
+    this.introPanel.setUri(new goog.Uri(exp.urlMap.INTRO));
     this.introPanel.setNestAsTarget(layout.getNest('main', 'center'));
     this.addPanelToView(bad.utils.makeId(), this.introPanel);
 
@@ -51,7 +51,7 @@ app.user.view.Login.prototype.configurePanels = function() {
      * @type {app.user.panel.Login}
      */
     this.loginPanel = new app.user.panel.Login('login-form');
-    this.loginPanel.setUri(new goog.Uri('/login'));
+    this.loginPanel.setUri(new goog.Uri(exp.urlMap.LOGIN));
     this.loginPanel.setNestAsTarget(layout.getNest('main', 'right', 'mid'));
     this.addPanelToView(bad.utils.makeId(), this.loginPanel);
 
@@ -60,7 +60,7 @@ app.user.view.Login.prototype.configurePanels = function() {
      * @type {app.user.panel.SignUp}
      */
     this.signUpForm = new app.user.panel.SignUp('account-form');
-    this.signUpForm.setUri(new goog.Uri('/signup'));
+    this.signUpForm.setUri(new goog.Uri(exp.urlMap.SIGNUP));
     this.signUpForm.setNestAsTarget(layout.getNest('main', 'center'));
     this.addPanelToView(bad.utils.makeId(), this.signUpForm);
 
@@ -69,7 +69,7 @@ app.user.view.Login.prototype.configurePanels = function() {
      * @type {app.user.panel.LostPassword}
      */
     this.lostPwForm = new app.user.panel.LostPassword('get-credentials-form');
-    this.lostPwForm.setUri(new goog.Uri('/lost-password'));
+    this.lostPwForm.setUri(new goog.Uri(exp.urlMap.PW.LOST));
     this.lostPwForm.setNestAsTarget(layout.getNest('main', 'center'));
     this.addPanelToView(bad.utils.makeId(), this.lostPwForm);
 
@@ -78,7 +78,7 @@ app.user.view.Login.prototype.configurePanels = function() {
      * @type {app.user.panel.ResetPassword}
      */
     this.resetPasswordForm = new app.user.panel.ResetPassword('account-form');
-    this.resetPasswordForm.setUri(new goog.Uri('/reset-password'));
+    this.resetPasswordForm.setUri(new goog.Uri(exp.urlMap.PW.RESET));
     this.resetPasswordForm.setNestAsTarget(
         this.getLayout().getNest('main', 'center'));
     this.addPanelToView(bad.utils.makeId(), this.resetPasswordForm);

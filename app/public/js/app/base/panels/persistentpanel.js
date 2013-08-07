@@ -56,22 +56,10 @@ app.base.panel.Persistent.prototype.buildUserButton = function() {
     // Item Names & Callbacks
     var menuItems = [
         {
-            name: bad.utils.getIconString('Edit our Profile', 'icon-user'),
+            name: bad.utils.getIconString('Edit your Profile', 'icon-user'),
             action: goog.bind(
                 this.dispatchComponentEvent, this,
-                app.base.EventType.EDIT_ACCOUNT)
-        },
-        {
-            name: bad.utils.getIconString('Account Settings', 'icon-key'),
-            action: goog.bind(
-                this.dispatchComponentEvent, this,
-                app.base.EventType.EDIT_PW)
-        },
-        {
-            name: bad.utils.getIconString('Organizations', 'icon-group'),
-            action: goog.bind(
-                this.dispatchComponentEvent, this,
-                app.base.EventType.EDIT_ORG)
+                app.base.EventType.EDIT_PROFILE)
         },
         {/*Seperator*/},
         {
@@ -120,7 +108,7 @@ app.base.panel.Persistent.prototype.setUser = function(user) {
 };
 
 app.base.panel.Persistent.prototype.logOut = function() {
-    var uri = new goog.Uri('/logout');
+    var uri = new goog.Uri(exp.urlMap.LOGOUT);
     var queryData = goog.uri.utils.buildQueryDataFromMap({'logout': true});
     this.xMan.post(uri, queryData, goog.bind(this.onLogOut, this));
 };
@@ -131,7 +119,7 @@ app.base.panel.Persistent.prototype.logOut = function() {
 app.base.panel.Persistent.prototype.onLogOut = function(e) {
     var xhr = e.target;
     if (xhr.isSuccess()) {
-        window.open('/', '_self');
+        window.open(exp.urlMap.INDEX, '_self');
     } else {
         console.debug('Log Out was not successful. Try again...', e, xhr);
     }

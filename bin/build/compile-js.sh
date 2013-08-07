@@ -43,6 +43,7 @@ ${GOOG_BIN_PATH}/closurebuilder.py \
     --root=${JS_PATH}/closure-library/ \
     --root=${JS_PATH}/bad-library/ \
     --root=${JS_PATH}/app/ \
+    --root=${JS_PATH}/contracts/ \
     --namespace="app" \
     --output_mode=compiled \
     --compiler_jar=${JS_COMPILER_PATH}/compiler.jar \

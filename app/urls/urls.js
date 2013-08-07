@@ -1,51 +1,22 @@
-var routes = require('../routes');
+//var routes = require('../routes');
 
-exports.urls = function(app) {
-    app.get('/', routes.index);
-    app.get('/auto_login', routes.autoLogin);
+goog.provide('exp.urls');
 
-    // Intro pages
-    app.get('/intro', routes.intro);
+goog.require('exp.routes');
+goog.require('exp.userUrls');
+goog.require('exp.urlMap');
 
-    // Persistent elements
-    app.get('/header', routes.header);
-    app.post('/logout', routes.header);
+exp.urls = function(app) {
 
-    // Login
-    app.get('/login', routes.login);
-    app.post('/login', routes.login);
-    app.get('/login/header', routes.loginHeader);
-
-    // Account Creation
-    app.get('/signup', routes.signUp);
-    app.post('/signup', routes.signUp);
-
-    // Password Management
-    app.get('/lost-password', routes.lostPassword);
-    app.post('/lost-password', routes.lostPassword);
-
-    // Reset Password
-    app.get('/reset-password', routes.resetPassword);
-    app.post('/reset-password', routes.resetPassword);
+    // Index Page.
+    app.get(exp.urlMap.INDEX, exp.routes.index);
 
     // Home Page
-    app.get('/home', routes.home);
+    app.get(exp.urlMap.HOME, exp.routes.home);
 
-    // Account Editing
-    app.get('/profile/edit', routes.editProfile);
-    app.post('/profile/edit', routes.editProfile);
-
-    // Password Editing
-    app.get('/password/edit', routes.editPassword);
-    app.post('/password/edit', routes.editPassword);
-
-    // Delete account
-    app.get('/account/delete', routes.deleteAccount);
-    app.post('/account/delete', routes.deleteAccount);
-
-    // Print all accounts
-    app.get('/accounts', routes.accounts);
+    // Init all the user related urls.
+    exp.userUrls(app);
 
     // Catch all else
-    app.get('*', routes.four_oh_four);
+    app.get('*', exp.routes.four_oh_four);
 };

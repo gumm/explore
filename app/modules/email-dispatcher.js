@@ -1,24 +1,30 @@
-var ES = require('./email-settings');
-var EM = {};
+goog.provide('exp.EmailDispatcher');
 
-EM.server = require('emailjs/email').server.connect({
-    host: ES.host,
-    user: ES.user,
-    password: ES.password,
-    ssl: true
-});
+goog.require('exp.emailSettings');
 
-exports.dispatchResetPasswordLink = function(account, callback) {
-    EM.server.send({
-        from: ES.sender,
+/**
+ * @constructor
+ */
+exp.EmailDispatcher = function() {
+     this.server_ = require('emailjs/email').server.connect({
+        host: exp.emailSettings.HOST,
+        user: exp.emailSettings.USER,
+        password: exp.emailSettings.PW,
+        ssl: true
+    });
+};
+
+exp.EmailDispatcher.prototype.dispatchResetPasswordLink = function(account, callback) {
+    this.server_.send({
+        from: exp.emailSettings.SENDER,
         to: account.profile.email,
         subject: 'Password Reset',
         text: 'something went wrong... :(',
-        attachment: EM.composeEmail(account)
+        attachment: this.composeEmail_(account)
     }, callback);
 };
 
-EM.composeEmail = function(account) {
+exp.EmailDispatcher.prototype.composeEmail_ = function(account) {
     var target = 'http://localhost:3000/';
     var link = target + 'reset-password?e=' + account.profile.email +
         '&p=' + account.credentials.tpass;

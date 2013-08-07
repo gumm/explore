@@ -1,7 +1,8 @@
-module.exports = {
+goog.provide('exp.emailSettings');
 
-    host: 'smtp.gmail.com',
-    user: 'janhendrik.badenhorst@gmail.com',
-    password: 'seispqzksvsyofyp',
-    sender: 'Explore <janhendrik.badenhorst@gmail.com>'
+exp.emailSettings = {
+    HOST: 'smtp.gmail.com',
+    USER: 'janhendrik.badenhorst@gmail.com',
+    PW: 'seispqzksvsyofyp',
+    SENDER: 'Explore <janhendrik.badenhorst@gmail.com>'
 };

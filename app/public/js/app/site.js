@@ -12,6 +12,8 @@ goog.require('bad.ui.EventType');
 goog.require('bad.ui.Layout');
 goog.require('goog.Uri');
 goog.require('goog.events.EventHandler');
+goog.require('goog.events.EventHandler');
+goog.require('exp.urlMap');
 
 /**
  * @enum {!string}
@@ -206,7 +208,7 @@ app.Site.prototype.initHeader = function() {
 
 app.Site.prototype.autoLogin = function() {
     var callback = goog.bind(this.onAutoLoginReply, this);
-    this.xMan_.get(new goog.Uri('/auto_login'), callback);
+    this.xMan_.get(new goog.Uri(exp.urlMap.AUTO_LOGIN), callback);
 };
 
 /**

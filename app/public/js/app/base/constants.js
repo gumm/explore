@@ -5,7 +5,5 @@ goog.provide('app.base.EventType');
  * @enum {string}
  */
 app.base.EventType = {
-    EDIT_ACCOUNT: bad.utils.privateRandom(),
-    EDIT_PW: bad.utils.privateRandom(),
-    EDIT_ORG: bad.utils.privateRandom()
+    EDIT_PROFILE: bad.utils.privateRandom()
 };

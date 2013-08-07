@@ -1,6 +1,10 @@
+goog.provide('exp.settings');
+
+goog.require('exp.urls');
+
 var pjson = require('../../package.json');
 var path = require('path');
-var urls = require('../urls/urls').urls;
+//var urls = require('../urls/urls').urls;
 var root = path.resolve(__dirname, '../../');
 var appPath = path.resolve(__dirname, '../');
 
@@ -8,7 +12,7 @@ var appPath = path.resolve(__dirname, '../');
  * Site specific configuration.
  * @type {Object}
  */
-var conf = {
+exp.settings.conf = {
     path: {
         ROOT: root,
         VIEWS: path.join(appPath, 'views'),
@@ -29,7 +33,7 @@ var conf = {
     engine: 'jade',
     production: true,
     compiled: {
-        JS: true,
+        JS: false,
         CSS: false
     }
 };
@@ -37,9 +41,11 @@ var conf = {
 /**
  * Seed the conf with a root directory
  * @param {boolean} dev True if this is dev run
+ * @returns {Object}
  */
-var init = function(dev) {
+exp.settings.init = function(dev) {
     // Switch between production and development
+    var conf = exp.settings.conf;
     if (dev) {
         conf.production = false;
         conf.mqttServer = '54.229.30.67';
@@ -55,6 +61,7 @@ var init = function(dev) {
         conf.wsPort = 80;
         conf.port = 80;
     }
+    return conf;
 };
 
 /**
@@ -63,10 +70,10 @@ var init = function(dev) {
  * @param express
  * @param {boolean} dev True if this is a dev run
  */
-exports.configure = function(app, express, dev) {
+exp.settings.configure = function(app, express, dev) {
 
     // Set some stuff up
-    init(dev);
+    var conf = exp.settings.init(dev);
 
     // all environments
     app.set('port', conf.port)
@@ -119,5 +126,7 @@ exports.configure = function(app, express, dev) {
     }
 
     // Set up the app urls.
-    urls(app);
+    exp.urls(app);
+
+    return app;
 };

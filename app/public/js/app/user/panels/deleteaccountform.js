@@ -63,7 +63,7 @@ app.user.panel.DeleteAccount.prototype.onConfirmation = function(queryData, e) {
     var xhr = e.target;
     this.clearAlerts();
     if (xhr.isSuccess()) {
-         window.open('/', '_self');
+         window.open(exp.urlMap.INDEX, '_self');
     } else {
         var data = xhr.getResponseJson();
         this.displayErrors(data);

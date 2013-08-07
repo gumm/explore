@@ -1,10 +1,14 @@
 /**
  * Module dependencies.
  */
+require('./app/public/js/closure-library/closure/goog/bootstrap/nodejs');
+require('./deps.js');
+
+goog.require('exp.settings');
 
 var express = require('express');
 var http = require('http');
-var settings = require('./app/config/settings');
+//var settings = require('./app/config/settings');
 var ExploreWebSocket = require('./app/src/websocket');
 
 var dev = false;
@@ -20,8 +24,7 @@ process.argv.forEach(function(val, index) {
 /**
  * App Setup
  */
-var app = express();
-settings.configure(app, express, dev);
+var app = exp.settings.configure(express(), express, dev);
 
 
 /**
