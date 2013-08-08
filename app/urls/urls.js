@@ -4,6 +4,7 @@ goog.provide('exp.urls');
 
 goog.require('exp.routes');
 goog.require('exp.userUrls');
+goog.require('exp.orgsUrls');
 goog.require('exp.urlMap');
 
 exp.urls = function(app) {
@@ -16,6 +17,7 @@ exp.urls = function(app) {
 
     // Init all the user related urls.
     exp.userUrls(app);
+    exp.orgsUrls(app);
 
     // Catch all else
     app.get('*', exp.routes.four_oh_four);

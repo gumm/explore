@@ -25,7 +25,7 @@ app.user.panel.Login.prototype.enterDocument = function() {
         goog.events.EventType.CLICK,
         function() {
             //noinspection JSPotentiallyInvalidUsageOfThis
-            this.dispatchComponentEvent(app.user.EventType.FORGOT_PW);
+            this.dispatchActionEvent(app.user.EventType.FORGOT_PW);
         }, undefined, this
     );
 
@@ -67,7 +67,7 @@ app.user.panel.Login.prototype.loginCallback = function(e) {
     this.clearAlerts();
     if (xhr.isSuccess()) {
         var userProfile = data['data'];
-        this.dispatchComponentEvent(
+        this.dispatchActionEvent(
             app.user.EventType.LOGIN_SUCCESS, userProfile);
     } else {
         this.displayErrors(data);

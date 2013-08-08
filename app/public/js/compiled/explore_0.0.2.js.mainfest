@@ -57,14 +57,13 @@
 /home/gumm/Workspace/explore/app/public/js/closure-library/closure/goog/structs/map.js
 /home/gumm/Workspace/explore/app/public/js/closure-library/closure/goog/structs/structs.js
 /home/gumm/Workspace/explore/app/public/js/closure-library/closure/goog/uri/uri.js
-/home/gumm/Workspace/explore/app/public/js/closure-library/closure/goog/style/bidi.js
-/home/gumm/Workspace/explore/app/public/js/closure-library/closure/goog/fx/dragger.js
 /home/gumm/Workspace/explore/app/public/js/bad-library/bad/ui/uieventtype.js
 /home/gumm/Workspace/explore/app/public/js/bad-library/bad/ui/component.js
 /home/gumm/Workspace/explore/app/public/js/bad-library/bad/ui/panel.js
 /home/gumm/Workspace/explore/app/public/js/app/base/panels/homepanel.js
 /home/gumm/Workspace/explore/app/public/js/bad-library/bad/ui/view.js
 /home/gumm/Workspace/explore/app/public/js/app/base/views/homeview.js
+/home/gumm/Workspace/explore/app/public/js/closure-library/closure/goog/style/bidi.js
 /home/gumm/Workspace/explore/app/public/js/closure-library/closure/goog/positioning/positioning.js
 /home/gumm/Workspace/explore/app/public/js/closure-library/closure/goog/timer/timer.js
 /home/gumm/Workspace/explore/app/public/js/closure-library/closure/goog/useragent/product.js
@@ -103,6 +102,7 @@
 /home/gumm/Workspace/explore/app/public/js/closure-library/closure/goog/dom/forms.js
 /home/gumm/Workspace/explore/app/public/js/bad-library/bad/ui/form.js
 /home/gumm/Workspace/explore/app/public/js/app/user/panels/deleteaccountform.js
+/home/gumm/Workspace/explore/app/public/js/app/user/panels/navpanel.js
 /home/gumm/Workspace/explore/app/public/js/app/user/constants.js
 /home/gumm/Workspace/explore/app/public/js/app/user/panels/signupform.js
 /home/gumm/Workspace/explore/app/public/js/app/user/views/edituser.js
@@ -110,6 +110,7 @@
 /home/gumm/Workspace/explore/app/public/js/app/user/panels/resetpasswordform.js
 /home/gumm/Workspace/explore/app/public/js/app/user/panels/loginform.js
 /home/gumm/Workspace/explore/app/public/js/app/user/views/loginview.js
+/home/gumm/Workspace/explore/app/public/js/closure-library/closure/goog/fx/dragger.js
 /home/gumm/Workspace/explore/app/public/js/closure-library/closure/goog/async/delay.js
 /home/gumm/Workspace/explore/app/public/js/closure-library/closure/goog/functions/functions.js
 /home/gumm/Workspace/explore/app/public/js/closure-library/closure/goog/async/animationdelay.js

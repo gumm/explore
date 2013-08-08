@@ -1,22 +1,23 @@
 goog.provide('app.user.panel.NavPanel');
 
 goog.require('bad.ui.Form');
+goog.require('bad.ui.MenuFlatRenderer');
+goog.require('bad.ui.MenuItemRenderer');
+goog.require('goog.style');
 goog.require('goog.ui.CustomButton');
 
 /**
  * A delete account confirmation form.
- * @param {!string} id The form element id.
  * @param {goog.dom.DomHelper=} opt_domHelper Optional DOM helper.
  * @extends {bad.ui.Panel}
  * @constructor
  */
-app.user.panel.NavPanel = function(id, opt_domHelper) {
-    bad.ui.Panel.call(this, id, opt_domHelper);
+app.user.panel.NavPanel = function(opt_domHelper) {
+    bad.ui.Panel.call(this, opt_domHelper);
 };
 goog.inherits(app.user.panel.NavPanel, bad.ui.Panel);
 
 app.user.panel.NavPanel.prototype.enterDocument = function() {
-
     this.dom_ = goog.dom.getDomHelper(this.getElement());
     this.initDom();
 
@@ -31,52 +32,35 @@ app.user.panel.NavPanel.prototype.initDom = function() {
 
 app.user.panel.NavPanel.prototype.buildNavMenu = function() {
 
-    // Item Names & Callbacks
     var menuItems = [
-        {
-            name: bad.utils.getIconString('Edit your Profile', 'icon-user'),
-            action: goog.bind(
-                this.dispatchComponentEvent, this,
-                app.user.EventType.EDIT_ACCOUNT)
-        },
-        {
-            name: bad.utils.getIconString('Account Settings', 'icon-key'),
-            action: goog.bind(
-                this.dispatchComponentEvent, this,
-                app.user.EventType.EDIT_PW)
-        },
-        {
-            name: bad.utils.getIconString('Organizations', 'icon-group'),
-            action: goog.bind(
-                this.dispatchComponentEvent, this,
-                app.base.EventType.EDIT_ORG)
-        }
+        ['Edit your Profile', 'icon-user', goog.bind(this.dispatchActionEvent,
+            this, app.user.EventType.EDIT_ACCOUNT)],
+        ['Security Settings', 'icon-key', goog.bind(this.dispatchActionEvent,
+            this, app.user.EventType.EDIT_PW)],
+        ['Organizations', 'icon-group', goog.bind(this.dispatchActionEvent,
+            this, app.user.EventType.EDIT_ORG)],
+        ['Emails', 'icon-group', goog.nullFunction],
+        ['Notification Center', 'icon-flag', goog.nullFunction],
+        ['Billing', 'icon-credit-card', goog.nullFunction],
+        ['Payment History', 'icon-calendar', goog.nullFunction],
+        ['SSH Keys', 'icon-lock', goog.nullFunction]
     ];
 
-    // Menu
-    var menu = new goog.ui.Menu(this.dom_);
-    goog.array.forEach(menuItems, function(obj) {
-        var item;
-        if (obj.name) {
-            item = new goog.ui.MenuItem(
-                obj.name, {callback: obj.action}, this.dom_);
-        } else {
-            item = new goog.ui.MenuSeparator(this.dom_);
-        }
-        menu.addChild(item, true);
-    }, this);
+    var renderer = bad.ui.MenuFlatRenderer.getInstance();
+    var itemRenderer = bad.ui.MenuItemRenderer.getInstance();
+    var stickySelect = true; // This keeps the last selected item highlighted.
+    var menu = bad.utils.makeMenu(
+        menuItems, this.dom_, this.getHandler(), this, renderer,
+        itemRenderer, stickySelect);
 
-    var el = this.dom_.createDom('div', {
-        style: 'margin:20px;right:100px;position: absolute;width:120px'
-    });
-    this.dom_.appendChild(this.element_, el);
-    menu.render(el);
-
-    this.getHandler().listen(
-        menu,
-        goog.ui.Component.EventType.ACTION,
-        function(e) {
-            e.target.getModel().callback();
-        }
-    );
+    menu.render(this.getElement());
+    var menuElement = menu.getElement();
+    goog.dom.classes.add(menuElement, 'well');
+    var style = {
+        position: 'absolute',
+        right: 0,
+        top: 0,
+        margin: '80px 0 20px 0'
+    };
+    goog.style.setStyle(menuElement, style);
 };

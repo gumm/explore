@@ -1,0 +1,22 @@
+//
+   Created with PyCharm.
+   User: gumm
+   Date: 2013/08/08
+   Time: 12:28 PM
+   To change this template use File | Settings | File Templates.
+- orgs = typeof(olist) != 'undefined' ? olist : []
+
+if (orgs.length > 0)
+    h1 Here are your orgs --- Yippee!
+        =orgs
+else
+    #noOrgMembership.container-440-center
+        h3 Organizations
+        #noOrgForm.form-horizontal.well
+            p#sub1
+                strong You are not a member of any organization yet.
+            fieldset
+                .form-actions(style="padding-left: 230px")
+                    #create-org.g-button-submit
+                        i.icon-group
+                        | Create new organization

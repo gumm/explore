@@ -55,7 +55,8 @@ app.user.view.EditUser.prototype.onPanelAction = function(e) {
             this.appDo(app.doMap.VIEW_HOME);
             break;
         case app.user.EventType.ACCOUNT_REMOVE_CANCELED:
-            this.removeConfirmation();
+            this.slideNavOut();
+            this.appDo(app.doMap.VIEW_HOME);
             break;
         case app.user.EventType.ACCOUNT_REMOVE:
             this.confirmRemoveAccount();
@@ -67,8 +68,7 @@ app.user.view.EditUser.prototype.onPanelAction = function(e) {
             this.enterSignUpForm(value);
             break;
         case app.user.EventType.EDIT_ORG:
-            console.debug('SO HERE WE ARE: A day later and a $ poorer, and ' +
-                'still no org func.');
+            this.enterOrganizationForm();
             break;
         default:
             console.log('app.user.view.EditUser No action for: ', value);
@@ -91,15 +91,35 @@ app.user.view.EditUser.prototype.enterSignUpForm = function(value) {
         urlString = exp.urlMap.PW.EDIT;
     }
 
-    this.editForm = new app.user.panel.SignUp('account-form');
-    this.editForm.setUri(new goog.Uri(urlString));
-    this.editForm.setUser(user);
-    this.editForm.setNestAsTarget(layout.getNest('main', 'center'));
-    this.addPanelToView('editform', this.editForm);
-    this.editForm.renderWithTemplate();
-    if (this.confirmForm) {
-        this.confirmForm.dispose();
-    }
+    var form = new app.user.panel.SignUp('account-form');
+    form.setUri(new goog.Uri(urlString));
+    form.setUser(user);
+    form.setNestAsTarget(layout.getNest('main', 'center'));
+    this.addPanelToView('replace', form);
+    form.renderWithTemplate();
+};
+
+/**
+* The sign-up form is used for sign-up, editing accounts, and passwords.
+* It is destroyed on exit, and is thus recreated here each time it is called.
+* @param {string} value The event value describes the required form.
+*/
+app.user.view.EditUser.prototype.enterOrganizationForm = function() {
+
+    var layout = this.getLayout();
+    var user = this.getUser();
+
+    var panel = new bad.ui.Panel();
+    panel.setUri(new goog.Uri(exp.urlMap.ORGS.READ));
+    panel.setUser(user);
+    panel.setNestAsTarget(layout.getNest('main', 'center'));
+    panel.setBeforeReadyCallback(goog.bind(function() {
+        bad.utils.makeButton('create-org',
+            goog.bind(this.enterSignUpForm, this)
+        );
+    }, this));
+    this.addPanelToView('replace', panel);
+    panel.renderWithTemplate();
 };
 
 app.user.view.EditUser.prototype.confirmRemoveAccount = function() {
@@ -107,24 +127,16 @@ app.user.view.EditUser.prototype.confirmRemoveAccount = function() {
     var layout = this.getLayout();
     var user = this.getUser();
 
-    this.confirmForm = new app.user.panel.DeleteAccount('confaccdel-form');
-    this.confirmForm.setUri(new goog.Uri(exp.urlMap.ACCOUNTS.DELETE));
-    this.confirmForm.setUser(user);
-    this.confirmForm.setNestAsTarget(layout.getNest('main', 'center'));
-    this.addPanelToView(bad.utils.makeId(), this.confirmForm);
-    this.confirmForm.renderWithTemplate();
-    this.editForm.hide();
-};
-
-app.user.view.EditUser.prototype.removeConfirmation = function() {
-    if (this.confirmForm) {
-        this.confirmForm.dispose();
-    }
-    this.editForm.show();
+    var form = new app.user.panel.DeleteAccount('confaccdel-form');
+    form.setUri(new goog.Uri(exp.urlMap.ACCOUNTS.DELETE));
+    form.setUser(user);
+    form.setNestAsTarget(layout.getNest('main', 'center'));
+    this.addPanelToView('replace', form);
+    form.renderWithTemplate();
 };
 
 app.user.view.EditUser.prototype.slideNavIn = function() {
-    var size = 350;
+    var size = 270;
     var slider = this.getLayout().getNest('main', 'left');
     slider.slideOpen(null, size,
         goog.bind(function() {

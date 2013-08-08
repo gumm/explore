@@ -27,7 +27,7 @@ app.user.panel.LostPassword.prototype.initDom = function() {
     bad.utils.makeButton('cancel',
         goog.bind(function() {
             this.clearAlerts();
-            this.dispatchComponentEvent(app.user.EventType.FORGOT_PW_CANCEL);
+            this.dispatchActionEvent(app.user.EventType.FORGOT_PW_CANCEL);
         }, this)
     );
 

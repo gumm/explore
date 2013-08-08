@@ -37,7 +37,7 @@ app.user.panel.SignUp.prototype.initDom = function() {
     var el = goog.dom.getElement('remove-account');
     if (el) {
         bad.utils.makeButton('remove-account',
-            goog.bind(this.dispatchComponentEvent, this,
+            goog.bind(this.dispatchActionEvent, this,
                 app.user.EventType.ACCOUNT_REMOVE)
         );
     }
@@ -45,7 +45,7 @@ app.user.panel.SignUp.prototype.initDom = function() {
 
 app.user.panel.SignUp.prototype.onCancel = function() {
     this.clearAlerts();
-    this.dispatchComponentEvent(app.user.EventType.SIGNUP_CANCEL);
+    this.dispatchActionEvent(app.user.EventType.SIGNUP_CANCEL);
 };
 
 app.user.panel.SignUp.prototype.submitSignUp = function() {
@@ -92,7 +92,7 @@ app.user.panel.SignUp.prototype.onSubmitSignUp = function(queryData, e) {
     var data = xhr.getResponseJson();
     this.clearAlerts();
     if (xhr.isSuccess()) {
-        this.dispatchComponentEvent(app.user.EventType.SIGNUP_SUCCESS,
+        this.dispatchActionEvent(app.user.EventType.SIGNUP_SUCCESS,
             {query: queryData, reply: data}
         );
     } else {

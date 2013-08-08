@@ -104,7 +104,7 @@ app.user.view.Login.prototype.onPanelAction = function(e) {
     var data = e.getData();
 
     switch (value) {
-        case bad.ui.EventType.PANEL_READY:
+        case bad.ui.EventType.READY:
             if (panel === this.loginPanel) {
                 this.slideLoginIn();
             }

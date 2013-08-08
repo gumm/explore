@@ -23,5 +23,11 @@ exp.urlMap = {
     ACCOUNTS: {
         DELETE: '/accs/delete',
         LIST: '/accs/list'
+    },
+    ORGS: {
+        CREATE: '/organization/create',
+        READ: '/organization/',
+        UPDATE: '/organization/edit',
+        DELETE: '/organization/remove'
     }
 };

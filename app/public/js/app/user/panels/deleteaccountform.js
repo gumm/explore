@@ -37,7 +37,7 @@ app.user.panel.DeleteAccount.prototype.initDom = function() {
 };
 
 app.user.panel.DeleteAccount.prototype.cancel = function() {
-    this.dispatchComponentEvent(app.user.EventType.ACCOUNT_REMOVE_CANCELED);
+    this.dispatchActionEvent(app.user.EventType.ACCOUNT_REMOVE_CANCELED);
 };
 
 app.user.panel.DeleteAccount.prototype.submitConfirmation = function() {

@@ -163,6 +163,9 @@ span i[class^="icon-"], span i[class*=" icon-"] {
 .well {
   margin-left: 0;
   border: 1px solid #ccc;
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
+  border-radius: 2px;
 }
 
 .form-horizontal .control-label {

@@ -200,7 +200,7 @@ app.Site.prototype.initHeader = function() {
     this.persistentView_.setUser(this.user_);
     this.persistentView_.render();
     this.listen(
-        this.persistentView_, bad.ui.EventType.AP_DO, this.onApDo);
+        this.persistentView_, bad.ui.EventType.APP_DO, this.onApDo);
 
 };
 
@@ -264,7 +264,7 @@ app.Site.prototype.switchView = function(view) {
     this.activeView_.setUser(this.user_);
     this.activeView_.render();
     this.listen(
-        this.activeView_, bad.ui.EventType.AP_DO, this.onApDo);
+        this.activeView_, bad.ui.EventType.APP_DO, this.onApDo);
 };
 
 /**

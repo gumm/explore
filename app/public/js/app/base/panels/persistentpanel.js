@@ -1,6 +1,8 @@
 goog.provide('app.base.panel.Persistent');
 
 goog.require('bad.MqttWsIo');
+goog.require('bad.ui.MenuFloatRenderer');
+goog.require('bad.ui.MenuItemRenderer');
 goog.require('bad.ui.Panel');
 goog.require('goog.ui.Css3MenuButtonRenderer');
 goog.require('goog.ui.Menu');
@@ -32,13 +34,6 @@ app.base.panel.Persistent.prototype.enterDocument = function() {
 
 app.base.panel.Persistent.prototype.initDom = function() {
     this.buildUserButton();
-    this.getHandler().listen(
-        this.userButton,
-        goog.ui.Component.EventType.ACTION,
-        function(e) {
-            e.target.getModel().callback();
-        }
-    );
 };
 
 app.base.panel.Persistent.prototype.initMqtt = function() {
@@ -53,33 +48,17 @@ app.base.panel.Persistent.prototype.initMqtt = function() {
 
 app.base.panel.Persistent.prototype.buildUserButton = function() {
 
-    // Item Names & Callbacks
     var menuItems = [
-        {
-            name: bad.utils.getIconString('Edit your Profile', 'icon-user'),
-            action: goog.bind(
-                this.dispatchComponentEvent, this,
-                app.base.EventType.EDIT_PROFILE)
-        },
-        {/*Seperator*/},
-        {
-            name: bad.utils.getIconString('Sign Out', 'icon-signout'),
-            action: goog.bind(this.logOut, this)
-        }
+        ['Profile', 'icon-user', goog.bind(this.dispatchActionEvent,
+            this, app.base.EventType.EDIT_PROFILE)],
+        [/* menu separator */],
+        ['Sign Out', 'icon-signout', goog.bind(this.logOut, this)]
     ];
 
-    // Menu
-    var menu = new goog.ui.Menu(this.dom_);
-    goog.array.forEach(menuItems, function(obj) {
-        var item;
-        if (obj.name) {
-            item = new goog.ui.MenuItem(
-                obj.name, {callback: obj.action}, this.dom_);
-        } else {
-            item = new goog.ui.MenuSeparator(this.dom_);
-        }
-        menu.addChild(item, true);
-    }, this);
+    var renderer = bad.ui.MenuFloatRenderer.getInstance();
+    var itemRenderer = bad.ui.MenuItemRenderer.getInstance();
+    var menu = bad.utils.makeMenu(
+        menuItems, this.dom_, this.getHandler(), this, renderer, itemRenderer);
 
     // Menu Button
     var menuButton = new goog.ui.MenuButton('', menu,

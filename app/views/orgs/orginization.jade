@@ -1,13 +1,13 @@
 // preset form values if we receive a userdata object //
-- account = typeof(udata) != 'undefined' ? udata : { }
+- orginization = typeof(data) != 'undefined' ? data : { }
 
 // store the userId on the client side in a hidden input field //
-input(type='hidden', value= account._id)#accountId
+input(type='hidden', value= orginization._id)#accountId
 
 #account-form-container.container-440-center
-    h3 #{title}
+    h3= title
     form()#account-form.form-horizontal.well
-        p#sub1.subheading #{subhead}
+        p#sub1.subheading= subhead
         hr
         fieldset
             if (formtype === 'signup' || formtype === 'edit')
@@ -139,6 +139,7 @@ if (formtype === 'editpassword')
                 strong This will destroy everything. There is no going back after this.
             p Consider contacting us to get a copy of your data before doing this.
                 | After your account has been removed we will not be able to recover your data.
+            hr
             fieldset
                 .form-actions(style="padding-left: 255px")
                     #remove-account.g-button-red

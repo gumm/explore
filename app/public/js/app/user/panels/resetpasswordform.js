@@ -60,7 +60,7 @@ app.user.panel.ResetPassword.prototype.loginCallback = function(e) {
     var data = xhr.getResponseJson();
     this.clearAlerts();
     if (xhr.isSuccess()) {
-        this.dispatchComponentEvent(
+        this.dispatchActionEvent(
             app.user.EventType.LOGIN_SUCCESS, data.data);
     } else {
         this.displayErrors(data);
