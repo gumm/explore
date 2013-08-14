@@ -1,0 +1,123 @@
+- org = typeof(orgObj) != 'undefined' ? orgObj : {}
+
+form()#org-form.form-horizontal.well
+    input(type='hidden', name='plan',)#planType
+    h4= subhead
+    fieldset
+        #name-cg.control-group
+            label.control-label(for='orgName-tf') Orginzation Name
+            .controls
+                input#orgName-tf.input-full-width(
+                type='text',
+                name='orgName',
+                value=org.profile.orgName,
+                placeholder="Your organization's name",
+                required)
+        if (formtype === 'edit')
+            .control-group
+                label.control-label(for='orgUrl-tf') URL
+                .controls
+                    input#org-url-tf.input-full-width(
+                    type='text',
+                    name='orgUrl',
+                    value=org.profile.orgUrl,
+                    placeholder="Organization's website")
+            fieldset
+                h4 Physical Address Details
+                    .control-group
+                        label.control-label(for='locStreet-tf') Street
+                        .controls
+                            input#locStreet-tf.input-full-width(
+                            type='text',
+                            name='street',
+                            value=org.profile.location.street,
+                            placeholder="Street name and number")
+
+
+        #billing-email-cg.control-group
+            label.control-label(for='billing-email-tf') Billing Email
+            .controls
+                input#billing-email-tf.input-full-width(
+                type='email',
+                name='billingEmail',
+                value=org.billing.billingEmail,
+                placeholder='Receipts will be sent here',
+                required)
+
+    fieldset
+        h4 Choose the organization's plan
+        table.table.table-striped
+            thead
+                tr
+                    th Plan
+                    th Cost
+                    th Size
+            tbody
+                tr
+                    td Gold
+                    td R10/sim
+                    td Up to 500 SIMs
+                    td
+                        #gold Choose
+                tr
+                    td Silver
+                    td R12/sim
+                    td Up to 250 SIMs
+                    td
+                        #silver Choose
+                tr
+                    td Bronze
+                    td R15/sim
+                    td Up to 50 SIMs
+                    td
+                        #bronze Choose
+                tr
+                    td Open
+                    td Free
+                    td A single SIM
+                    td
+                        #free Choose
+
+    fieldset#ccard
+        //- The fields here are set to required by JS.
+        //- When a user selects a plan that requires a CC, these fields
+        // - come into play. Otherwise not.
+        h4 Credit Card details
+
+        .control-group
+            label.control-label(for='ccardtype-tf') Card Type
+            .controls
+                select#ccardtype-tf(
+                name='cCardType')
+                    each val, index in cCards
+                        option(value=index,
+                            selected=index == org.billing.card.type
+                        )=val
+        .control-group
+            label.control-label(for='ccardnumber-tf') Card Number
+            .controls
+                input#ccardnumber-tf.input-full-width(
+                type='text',
+                name='number')
+        .control-group
+            label.control-label(for='ccardexpdate-tf') Expiration (MM/YYYY)
+            .controls
+                input#ccardexpdate-tf.input-full-width(
+                type='text',
+                name='expDate',
+                placeholder='MM/YYYY',
+                pattern="[0-9]{2}/[0-9]{4}")
+        .control-group
+            label.control-label(for='ccardcvv-tf') CVV
+            .controls
+                input#ccardcvv-tf.input-mini(
+                type='text',
+                name='cvv',
+                placeholder='3 digits',
+                pattern="[0-9]{3,4}")
+
+    fieldset
+        .form-actions(style="padding-left: #{button_span}px")
+            #create-org.g-button-submit
+                i.icon-group
+                | #{button_legend}

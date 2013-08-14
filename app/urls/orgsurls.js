@@ -10,12 +10,12 @@ exp.orgsUrls = function(app) {
     app.get(exp.urlMap.ORGS.CREATE, route.create);
     app.post(exp.urlMap.ORGS.CREATE, route.create);
 
-    app.get(exp.urlMap.ORGS.READ, route.list);
-    app.get(exp.urlMap.ORGS.READ + ':id', route.getById);
+    app.get(exp.urlMap.ORGS.READ, route.read);
+    app.get(exp.urlMap.ORGS.READ + '/:id', route.read);
 
-    app.get(exp.urlMap.ORGS.UPDATE + ':id', route.edit);
-    app.put(exp.urlMap.ORGS.UPDATE + ':id', route.edit);
+    app.get(exp.urlMap.ORGS.UPDATE + '/:id', route.update);
+    app.put(exp.urlMap.ORGS.UPDATE + '/:id', route.update);
 
-    app.get(exp.urlMap.ORGS.DELETE + ':id', route.delete);
-    app.del(exp.urlMap.ORGS.DELETE + ':id', route.delete);
+    app.get(exp.urlMap.ORGS.DELETE + '/:id', route.delete);
+    app.del(exp.urlMap.ORGS.DELETE + '/:id', route.delete);
 };

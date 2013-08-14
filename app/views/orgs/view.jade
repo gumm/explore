@@ -1,0 +1,53 @@
+- org = typeof(orgObj) != 'undefined' ? orgObj : {}
+
+.container-440-center
+    h2.icon-building
+        span(style="margin-left: 20px") #{org.profile.orgName}
+
+    if org.profile.orgUrl
+        dl.dl-horizontal
+            dt Homepage
+            dd
+                a=org.profile.orgUrl
+
+    h4 Physical Address
+    dl.dl-horizontal
+        dt Street
+        dd= org.profile.location.street
+
+        dt Suburb
+        dd= org.profile.location.suburb
+
+        dt Code
+        dd= org.profile.location.locationCode
+
+        dt City
+        dd= org.profile.location.city
+
+        dt Country
+        dd= org.profile.location.country
+
+    h4 Postal Address
+    dl.dl-horizontal
+        dt PoBox Number
+        dd= org.profile.postal.boxNum || 'Not known'
+
+        dt Suburb
+        dd= org.profile.postal.suburb
+
+        dt Postal Code
+        dd= org.profile.postal.postalCode
+
+        dt City
+        dd= org.profile.postal.city
+
+        dt Country
+        dd= org.profile.postal.country
+
+    h4 Members
+    dl.dl-horizontal
+        dt No. of Owners
+        dd= org.owners.length || 'None'
+
+        dt No. of Members
+        dd= org.members.length || 'None'

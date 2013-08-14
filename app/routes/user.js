@@ -85,7 +85,8 @@ exp.routes.user.header = function(req, res) {
     var getCall = function() {
         if (!req.session.user) {
             // if user is not logged-in redirect back to login page //
-            res.redirect('/');
+            res.render('header', {});
+//            res.redirect('/');
         } else {
             res.render('header',
                 helper.makeReplyWith(null, req.session.user.profile));
@@ -108,11 +109,6 @@ exp.routes.user.header = function(req, res) {
 exp.routes.user.intro = function(req, res) {
     var app = req.app;
     res.render('intro', {title: app.get('title')});
-};
-
-exp.routes.user.loginHeader = function(req, res) {
-    var app = req.app;
-    res.render('loginheader', {title: app.get('title')});
 };
 
 //------------------------------------------------------------[ New Accounts ]--
@@ -145,6 +141,16 @@ exp.routes.user.signUp = function(req, res) {
     };
 
     helper.okGo(req, res, {'GET': getCall, 'POST': postCall});
+};
+
+//-----------------------------------------------------------[ Read Accounts ]--
+
+exp.routes.user.readProfile = function(req, res) {
+    var getCall = function() {
+        var user = req.session.user;
+        res.render('user/view', {udata: user.profile});
+    };
+    helper.okGo(req, res, {'GET': getCall});
 };
 
 //-----------------------------------------------------------[ Edit Accounts ]--

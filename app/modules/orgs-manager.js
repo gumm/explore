@@ -3,17 +3,21 @@ var BSON = require('mongodb').BSONPure;
 var moment = require('moment');
 var ORGS = require('./db-manager').orgs;
 
-var makeOrgSchema = function(data) {
+var makeOrg = function(data) {
     return {
         profile: {
-            name: data.name || null,
-            url: data.url || null,
+            orgName: data.orgName || null,
+            orgUrl: data.orgUrl || null,
             location: {
                 street: data.street || null,
                 suburb: data.suburb || null,
                 locationCode: data.locationCode || null,
                 city: data.locationCity || null,
-                country: data.locationCountry || null
+                country: data.locationCountry || null,
+                coordinates: {
+                    longitude: data.longitude || null,
+                    latitude: data.latitude || null
+                }
             },
             postal: {
                 boxNum: data.boxNum || null,
@@ -22,57 +26,81 @@ var makeOrgSchema = function(data) {
                 city: data.postalCity || null,
                 country: data.postalCountry || null
             },
-            contact: data.contactId || null
+            media: {
+                logo: null,
+                css: null
+            }
         },
-        media: {
-            logo: null,
-            css: null
+        billing: {
+            billingEmail: data.billingEmail || null,
+            card: {
+                type: data.type || null,
+                number: data.number || null,
+                expDate: data.expDate || null,
+                cvv: data.cvv || null
+            }
         },
-        members: [data.contactId] || []
+        members: [],
+        owners: [data.userId]
     };
 };
 
-/* record insertion, update & deletion methods */
+var checkUniqueOrgName = function(orgName, callback) {
+    ORGS.findOne(
+        {'profile.orgName': orgName},
+        callback
+    );
+};
 
-var createOrg = function(newOrg, callback) {
+/**
+ * TODO: There is a lot that needs to happen here to secure the credit card.
+ * One idea is to encrypt it with the pub-key of a 3rd party software app
+ * that has read access to a separate db. Then pass it of the a broker from
+ * where it is picked up and stored in that separate db. The 3rd party
+ * app is internal to the org, and does not have a web interface.
+ * Jobs on the broker is for writing into the db only.
+ * @param newOrg
+ * @param callback
+ */
+var addNewOrg = function(newOrg, callback) {
 
-    var createOrganization = function(newOrg) {
-        newOrg.date = moment().format('MMMM Do YYYY, h:mm:ss a');
-        ORGS.insert(newOrg, {safe: true}, function() {
-            callback(null, newOrg.profile);
-        });
+    var error = {
+        orgName: null
     };
-    createOrganization(newOrg);
+
+    var uniqueOrgNameCallback = function(err, org) {
+        if (org) {
+            error.orgName = 'This name is not available';
+            callback(error);
+        } else {
+            newOrg.date = moment().format('MMMM Do YYYY, h:mm:ss a');
+            ORGS.insert(newOrg, {safe: true}, function() {
+                callback(null, newOrg);
+            });
+        }
+    };
+    checkUniqueOrgName(newOrg.profile.orgName, uniqueOrgNameCallback);
 };
 
 var getOrgsByUserId = function(userId, callback) {
-
-    var whenFound = function(e, res) {
-        if (e) {
-            callback(e);
-        } else {
-            callback(null, res);
-        }
-    };
-    ORGS.find({'members': userId}).toArray(whenFound);
-
-
-
-
-//    ORGS.find({'members': userId}, function(e, orgs) {
-//        if (orgs) {
-//            console.log('Here is the list of orgs:', orgs);
-//            callback(null, orgs);
-//        } else {
-//            var error = 'User not a member of any orgs';
-//            console.error(error);
-//            callback(error, null);
-//        }
-//    });
+    ORGS.find({'owners': userId}).toArray(callback);
 };
 
+var getOrgBId = function(id, callback) {
+    ORGS.findOne({_id: BSON.ObjectID(id)}, function(err, org) {
+        if(err) {
+            console.log('ERROR', err);
+            callback(err);
+        } else {
+            callback(null, org);
+        }
+    });
+};
 
 module.exports = {
-    createOrg: createOrg,
-    getOrgsByUserId: getOrgsByUserId
+    makeOrg: makeOrg,
+    addNewOrg: addNewOrg,
+    getOrgsByUserId: getOrgsByUserId,
+    getOrgBId: getOrgBId
 };
+

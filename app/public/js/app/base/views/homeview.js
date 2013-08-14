@@ -34,6 +34,7 @@ app.base.view.Home.prototype.onPanelAction = function(e) {
 
     var value = e.getValue();
     var data = e.getData();
+    e.stopPropagation();
 
     switch (value) {
         default:

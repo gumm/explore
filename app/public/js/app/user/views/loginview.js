@@ -28,7 +28,7 @@ app.user.view.Login.prototype.configurePanels = function() {
      * @type {bad.ui.Panel}
      */
     this.headerPanel = new bad.ui.Panel();
-    this.headerPanel.setUri(new goog.Uri(exp.urlMap.LOGIN_HEADER));
+    this.headerPanel.setUri(new goog.Uri(exp.urlMap.HEADER));
     this.headerPanel.setNestAsTarget(layout.getNest('header'));
     this.headerPanel.setBeforeReadyCallback(goog.bind(function() {
         bad.utils.makeButton('create-account',
@@ -95,13 +95,14 @@ app.user.view.Login.prototype.displayPanels = function() {
 };
 
 /**
- * @param {goog.events.EventLike} e Event object.
+ * @param {bad.ActionEvent} e Event object.
  */
 app.user.view.Login.prototype.onPanelAction = function(e) {
 
     var panel = e.target;
     var value = e.getValue();
     var data = e.getData();
+    e.stopPropagation();
 
     switch (value) {
         case bad.ui.EventType.READY:

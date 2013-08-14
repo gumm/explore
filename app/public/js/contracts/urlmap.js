@@ -1,7 +1,5 @@
 goog.provide('exp.urlMap');
 
-goog.require('bad.utils');
-
 exp.urlMap = {
     INDEX: '/',
     AUTO_LOGIN: '/auto_login',
@@ -12,7 +10,9 @@ exp.urlMap = {
     LOGIN_HEADER: '/login/header',
     SIGNUP: '/signup',
     HOME: '/home',
+
     PROFILE: {
+        READ: '/profile',
         EDIT: '/profile/edit'
     },
     PW: {
@@ -26,8 +26,8 @@ exp.urlMap = {
     },
     ORGS: {
         CREATE: '/organization/create',
-        READ: '/organization/',
-        UPDATE: '/organization/edit',
-        DELETE: '/organization/remove'
+        READ: '/organization',
+        UPDATE: '/organization/update',
+        DELETE: '/organization/delete'
     }
 };

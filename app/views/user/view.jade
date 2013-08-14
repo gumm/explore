@@ -1,0 +1,38 @@
+- account = typeof(udata) != 'undefined' ? udata : { }
+
+//- name: 'Joe',
+    surname: 'Soap',
+    email: 'joe.soap@gmail.com',
+    url: null,
+    location: { city: 'Cape Town', country: 'South Africa' },
+    contact: { phone: '+27123456789', cell: '082123456' } }
+
+.container-440-center
+    h2.icon-user
+        span(style="margin-left: 20px") #{account.name} #{account.surname}
+
+    if account.url
+        dl.dl-horizontal
+            dt Homepage
+            dd
+                a(href=account.url)= account.url
+
+    h4 Physical Address
+    dl.dl-horizontal
+        dt City
+        dd= account.location.city
+
+        dt Country
+        dd= account.location.country
+
+    h4 Contact Details
+    dl.dl-horizontal
+        dt Email
+        dd
+            a(href='mailto:' + account.email)= account.email
+
+        dt Landline
+        dd= account.contact.phone || 'Not known'
+
+        dt Mobile
+        dd= account.contact.cell || 'Not known'

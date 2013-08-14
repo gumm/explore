@@ -7,14 +7,17 @@
  */
 
 var WebSocketServer = require('ws').Server;
-var Bridge = require('./bridge');
+
+goog.require('exp.Bridge');
+
+goog.provide('exp.WebSocket');
 
 /**
  * @param server
  * @param app
  * @constructor
  */
-var ExploreWebSocket = function(server, app) {
+exp.WebSocket = function(server, app) {
     /**
      * Socket Server Setup
      * @type {WebSocketServer}
@@ -23,14 +26,14 @@ var ExploreWebSocket = function(server, app) {
     this.init(app);
 };
 
-ExploreWebSocket.prototype.init = function(app) {
+exp.WebSocket.prototype.init = function(app) {
 
     console.log('Web Socket server is up...');
 
     //----------------------------------------------------------[ Web Socket ]--
     this.wss.on('connection', function (ws) {
-        ws.bridge = new Bridge(ws, app);
-        var client = ws.bridge.client;
+        ws.bridge = new exp.Bridge(ws, app);
+        var client = ws.bridge.getClient();
 
         ws.on('open', function () {
             console.log('Web socket opened');
@@ -83,9 +86,3 @@ ExploreWebSocket.prototype.init = function(app) {
         });
     });
 };
-
-
-/**
- * Expose `Bridge`.
- */
-module.exports = ExploreWebSocket;

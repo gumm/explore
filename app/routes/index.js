@@ -12,7 +12,6 @@ exp.routes.index = function(req, res) {
 exp.routes.home = function(req, res) {
     var getCall = function() {
         if (!req.session.user) {
-            // if user is not logged-in redirect back to login page //
             res.redirect('/');
         } else {
             res.render('home', helper.makeReplyWith(null, req.session.user.profile));

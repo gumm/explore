@@ -1,4 +1,14 @@
 /*---------------------------------------------------------------[ Explore ]--*/
+
+.clickable {
+    cursor: pointer;
+}
+
+#logo_container {
+    margin: 10px;
+    float: left;
+}
+
 input.error {
     border-color: rgb(233, 50, 45);
     -webkit-box-shadow: 0 0 6px rgb(248, 185, 183);
@@ -57,33 +67,32 @@ input.error {
 
 .sysreadout .number {
     display: inline-block;
-font-size: 12px;
-font-weight: bold;
-opacity: 1;
-color: rgb(255, 255, 255);
+    font-size: 12px;
+    font-weight: bold;
+    opacity: 1;
+    color: rgb(255, 255, 255);
 }
 
 .sysreadout .number {
     -webkit-border-radius: 3px;
-border-radius: 3px;
--webkit-transition: background-color .218s,border-color .218s,box-shadow .218s;
-transition: background-color .218s,border-color .218s,box-shadow .218s;
--webkit-user-select: none;
-cursor: pointer;
-height: 15px;
-line-height: 15px;
-margin-left: 8px;
-outline: none;
-width: auto;
-background-image: none;
--webkit-appearance: none;
--webkit-box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
-box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
-background-color: rgb(93, 126, 221);
-border: none;
-padding: 1px 5px 1px 5px;
+    border-radius: 3px;
+    -webkit-transition: background-color .218s,border-color .218s,box-shadow .218s;
+    transition: background-color .218s,border-color .218s,box-shadow .218s;
+    -webkit-user-select: none;
+    cursor: pointer;
+    height: 15px;
+    line-height: 15px;
+    margin-left: 8px;
+    outline: none;
+    width: auto;
+    background-image: none;
+    -webkit-appearance: none;
+    -webkit-box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
+    background-color: rgb(93, 126, 221);
+    border: none;
+    padding: 1px 5px 1px 5px;
 }
-
 
 .expr_wrapper {
     padding: 30px;
@@ -140,6 +149,11 @@ span i[class^="icon-"], span i[class*=" icon-"] {
   margin: 30px auto 0 auto;
 }
 
+.container-900-center {
+  width: 900px;
+  margin: 30px auto 0 auto;
+}
+
 #account-form .control-label {
     width: 100px;
 }
@@ -188,6 +202,7 @@ span i[class^="icon-"], span i[class*=" icon-"] {
   margin-top: 7px;
 }
 
+.container-900-center .form-actions,
 .container-440-center .form-actions {
   padding: 17px 0 0 262px;
 }
@@ -208,4 +223,16 @@ label {
 .pan-wrapper {
     height: 100%;
     overflow: auto;
+}
+
+.org_progress > .active {
+    font-weight: bold;
+}
+
+.menu-nav {
+    width: 230px;
+    position: absolute;
+    right: 0;
+    top: 0;
+    margin: 80px 0 20px 0;
 }

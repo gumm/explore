@@ -8,6 +8,7 @@ var path = require('path');
 var root = path.resolve(__dirname, '../../');
 var appPath = path.resolve(__dirname, '../');
 
+
 /**
  * Site specific configuration.
  * @type {Object}

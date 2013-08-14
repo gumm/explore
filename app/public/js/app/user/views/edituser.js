@@ -1,5 +1,6 @@
 goog.provide('app.user.view.EditUser');
 
+goog.require('app.org.panel.List');
 goog.require('app.user.EventType');
 goog.require('app.user.panel.DeleteAccount');
 goog.require('app.user.panel.NavPanel');
@@ -8,12 +9,9 @@ goog.require('bad.ui.View');
 
 /**
  * @extends {bad.ui.View}
- * @param {string} target A target action determining the edit forms url.
  * @constructor
  */
-app.user.view.EditUser = function(target) {
-    this.targetAction_ = target;
-
+app.user.view.EditUser = function() {
     bad.ui.View.call(this);
 };
 goog.inherits(app.user.view.EditUser, bad.ui.View);
@@ -22,7 +20,6 @@ app.user.view.EditUser.prototype.configurePanels = function() {
     var layout = this.getLayout();
 
     /**
-     * Header Panel
      * @type {bad.ui.Panel}
      */
     this.navPanel = new app.user.panel.NavPanel();
@@ -33,30 +30,28 @@ app.user.view.EditUser.prototype.configurePanels = function() {
 };
 
 app.user.view.EditUser.prototype.displayPanels = function() {
-    this.enterSignUpForm(this.targetAction_);
+    this.enterLandingView();
 };
 
 /**
- * @param {goog.events.EventLike} e Event object.
+ * @param {bad.ActionEvent} e Event object.
  */
 app.user.view.EditUser.prototype.onPanelAction = function(e) {
 
     var value = e.getValue();
     var data = e.getData();
+    e.stopPropagation();
 
     switch (value) {
         case app.user.EventType.SIGNUP_CANCEL:
-            this.slideNavOut();
-            this.appDo(app.doMap.VIEW_HOME);
+            this.switchView(goog.bind(this.appDo, this, app.doMap.VIEW_HOME));
             break;
         case app.user.EventType.SIGNUP_SUCCESS:
-            this.slideNavOut();
             this.appDo(app.doMap.UPDATE_USER, data.reply['data']);
-            this.appDo(app.doMap.VIEW_HOME);
+            this.switchView(goog.bind(this.appDo, this, app.doMap.VIEW_HOME));
             break;
         case app.user.EventType.ACCOUNT_REMOVE_CANCELED:
-            this.slideNavOut();
-            this.appDo(app.doMap.VIEW_HOME);
+            this.switchView(goog.bind(this.appDo, this, app.doMap.VIEW_HOME));
             break;
         case app.user.EventType.ACCOUNT_REMOVE:
             this.confirmRemoveAccount();
@@ -67,8 +62,14 @@ app.user.view.EditUser.prototype.onPanelAction = function(e) {
         case app.user.EventType.EDIT_PW:
             this.enterSignUpForm(value);
             break;
+        case app.user.EventType.VIEW_ORG:
+            this.enterOrgsList();
+            break;
+        case app.doMap.VIEW_ORG_CREATE:
+            this.switchView(goog.bind(this.appDo, this, value));
+            break;
         case app.user.EventType.EDIT_ORG:
-            this.enterOrganizationForm();
+            this.switchView(goog.bind(this.appDo, this, app.doMap.VIEW_ORG, data.id));
             break;
         default:
             console.log('app.user.view.EditUser No action for: ', value);
@@ -104,20 +105,28 @@ app.user.view.EditUser.prototype.enterSignUpForm = function(value) {
 * It is destroyed on exit, and is thus recreated here each time it is called.
 * @param {string} value The event value describes the required form.
 */
-app.user.view.EditUser.prototype.enterOrganizationForm = function() {
+app.user.view.EditUser.prototype.enterOrgsList = function() {
+
+    var layout = this.getLayout();
+    var user = this.getUser();
+
+    var panel = new app.org.panel.List();
+    panel.setUri(new goog.Uri(exp.urlMap.ORGS.READ));
+    panel.setUser(user);
+    panel.setNestAsTarget(layout.getNest('main', 'center'));
+    this.addPanelToView('replace', panel);
+    panel.renderWithTemplate();
+};
+
+app.user.view.EditUser.prototype.enterLandingView = function() {
 
     var layout = this.getLayout();
     var user = this.getUser();
 
     var panel = new bad.ui.Panel();
-    panel.setUri(new goog.Uri(exp.urlMap.ORGS.READ));
+    panel.setUri(new goog.Uri(exp.urlMap.PROFILE.READ));
     panel.setUser(user);
     panel.setNestAsTarget(layout.getNest('main', 'center'));
-    panel.setBeforeReadyCallback(goog.bind(function() {
-        bad.utils.makeButton('create-org',
-            goog.bind(this.enterSignUpForm, this)
-        );
-    }, this));
     this.addPanelToView('replace', panel);
     panel.renderWithTemplate();
 };
@@ -145,8 +154,11 @@ app.user.view.EditUser.prototype.slideNavIn = function() {
     );
 };
 
-app.user.view.EditUser.prototype.slideNavOut = function() {
+app.user.view.EditUser.prototype.switchView = function(fn) {
     var nest = this.getLayout().getNest('main', 'left');
-    var callback = goog.bind(nest.hide, nest);
+    var callback = goog.bind(function(){
+        nest.hide();
+        fn();
+    }, this);
     nest.slideClosed(callback);
 };

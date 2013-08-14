@@ -20,7 +20,6 @@ exp.userUrls = function(app) {
     // Login
     app.get(exp.urlMap.LOGIN, route.login);
     app.post(exp.urlMap.LOGIN, route.login);
-    app.get(exp.urlMap.LOGIN_HEADER, route.loginHeader);
 
     // Account Creation
     app.get(exp.urlMap.SIGNUP, route.signUp);
@@ -38,11 +37,12 @@ exp.userUrls = function(app) {
     app.get(exp.urlMap.PW.EDIT, route.editPassword);
     app.post(exp.urlMap.PW.EDIT, route.editPassword);
 
+    // Account Profile
+    app.get(exp.urlMap.PROFILE.READ, route.readProfile);
 
     // Account Editing
     app.get(exp.urlMap.PROFILE.EDIT, route.editProfile);
     app.post(exp.urlMap.PROFILE.EDIT, route.editProfile);
-
 
     // Delete account
     app.get(exp.urlMap.ACCOUNTS.DELETE, route.deleteAccount);

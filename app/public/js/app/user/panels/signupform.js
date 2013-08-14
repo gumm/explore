@@ -49,10 +49,10 @@ app.user.panel.SignUp.prototype.onCancel = function() {
 };
 
 app.user.panel.SignUp.prototype.submitSignUp = function() {
-    var form = this.getForm();
     this.checkPasswordMatch();
     this.checkValidation();
 
+    var form = this.getForm();
     if (form.checkValidity()) {
         var content = goog.dom.forms.getFormDataMap(form).toObject();
         var queryData = goog.uri.utils.buildQueryDataFromMap(content);

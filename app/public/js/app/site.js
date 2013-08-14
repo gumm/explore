@@ -8,6 +8,7 @@ goog.require('app.base.view.Home');
 goog.require('app.base.view.Persistent');
 goog.require('app.user.view.EditUser');
 goog.require('app.user.view.Login');
+goog.require('app.org.view.Org');
 goog.require('bad.ui.EventType');
 goog.require('bad.ui.Layout');
 goog.require('goog.Uri');
@@ -25,7 +26,9 @@ app.doMap = {
     VIEW_LOGIN: bad.utils.privateRandom(),
     RESET_PASSWORD: 'resetpw',
     AUTO: bad.utils.privateRandom(),
-    VIEW_HOME: bad.utils.privateRandom()
+    VIEW_HOME: bad.utils.privateRandom(),
+    VIEW_ORG_CREATE: bad.utils.privateRandom(),
+    VIEW_ORG: bad.utils.privateRandom()
 };
 
 /**
@@ -77,12 +80,14 @@ app.Site.prototype.rpc = function(method, opt_param) {
 
     switch (method) {
         case app.doMap.UPDATE_USER: this.updateUser_(opt_param); break;
-        case app.doMap.VIEW_EDIT_USER: this.viewEditUser(opt_param); break;
+        case app.doMap.VIEW_EDIT_USER: this.viewEditUser(); break;
         case app.doMap.USER_LOGGED_IN: this.userSignedIn(opt_param); break;
         case app.doMap.VIEW_LOGIN: this.viewLogin(); break;
         case app.doMap.RESET_PASSWORD: this.viewLogin(true); break;
         case app.doMap.AUTO: this.autoLogin(); break;
         case app.doMap.VIEW_HOME: this.viewHome(); break;
+        case app.doMap.VIEW_ORG_CREATE: this.viewOrgCreate(); break;
+        case app.doMap.VIEW_ORG: this.viewOrg(opt_param); break;
         default:
             console.log('Switch fall through for: ', method, opt_param);
     }
@@ -300,17 +305,25 @@ app.Site.prototype.viewHome = function() {
     this.switchView(view);
 };
 
-/**
- * @param {string} target A target action determining the edit forms url.
- */
-app.Site.prototype.viewEditUser = function(target) {
+app.Site.prototype.viewEditUser = function() {
 
     /**
      * @type {app.user.view.EditUser}
      */
-    var view = new app.user.view.EditUser(target);
+    var view = new app.user.view.EditUser();
     this.switchView(view);
 };
+
+app.Site.prototype.viewOrgCreate = function() {
+    var view = new app.org.view.Org();
+    this.switchView(view);
+};
+
+app.Site.prototype.viewOrg = function(orgId) {
+    var view = new app.org.view.Org(orgId);
+    this.switchView(view);
+};
+
 
 //-----------------------------------------------------[ Utility Stuff Below ]--
 
