@@ -6,6 +6,7 @@ goog.provide('exp.routes.orgs');
 goog.require('exp.cCardMap');
 goog.require('exp.EmailDispatcher');
 goog.require('exp.routesHelper');
+goog.require('goog.object');
 
 var helper = exp.routesHelper;
 
@@ -22,13 +23,14 @@ exp.routes.orgs.create = function(req, res) {
     var postCall = function() {
         var user = req.session.user;
         var newOrg = OM.makeOrg({
-            plan: req.param('plan'),
             orgName: req.param('orgName'),
-            billingEmail: req.param('billingEmail'),
-            type: req.param('cCardType'),
-            number: req.param('number'),
-            expDate: req.param('expDate'),
-            cvv: req.param('expdate'),
+            billPlan: req.param('billPlan'),
+            billEmail: req.param('billEmail'),
+            crdName: req.param('crdName'),
+            crdType: req.param('crdType'),
+            crdNumber: req.param('crdNumber'),
+            crdExpDate: req.param('crdExpDate'),
+            crdCvv: req.param('crdCvv'),
             userId: user._id
         });
         var callback = function(error, profile) {
@@ -94,29 +96,10 @@ exp.routes.orgs.readOne_ = function(req, res, id) {
 exp.routes.orgs.update = function(req, res) {
 
     var id = req.params.id;
-    console.log('HERE IS THE ORG ID:', id, req.params);
+    var subset = req.params.subset;
+    console.log('ID:', id);
+    console.log('SUBSET:', subset);
 
-//    /**
-//     * @param {Object} err The Error object if any.
-//     * @param {Object} account The full account object from mongo.
-//     */
-//    var callback = function(err, account) {
-//        if (err) {
-//            res.send(
-//                helper.makeReplyWith('Error updating account: ' + err),
-//                400);
-//        } else if(account) {
-//            req.session.user = account;
-//            res.send(
-//                helper.makeReplyWith(null, account.profile, 'Account updated'),
-//                200);
-//        } else {
-//            res.send(
-//                helper.makeReplyWith('Could not find account'),
-//                400);
-//        }
-//    };
-//
     var getCallback = function(err, org) {
         if (err) {
             res.send(
@@ -124,7 +107,7 @@ exp.routes.orgs.update = function(req, res) {
                 400);
         } else if (org) {
             console.log('HERE IS THE ORG TO EDIT:', org);
-            res.render('orgs/edit', {
+            res.render('orgs/edit/' + subset, {
                 countries: exp.countryList,
                 orgObj: org,
                 cCards: exp.cCardMap});
@@ -139,28 +122,87 @@ exp.routes.orgs.update = function(req, res) {
     };
 
 
+    /**
+     * profile: {
+            orgName: data.orgName || null,
+            orgUrl: data.orgUrl || null
+        },
+        loc: {
+            locStreet: data.locStreet || null,
+            locSuburb: data.locSuburb || null,
+            locCode: data.locCode || null,
+            locCity: data.locCity || null,
+            locCountry: data.locCountry || null,
+            locCords: {
+                cordLong: data.cordLong || null,
+                cordLat: data.cordLat || null
+            }
+        },
+        box: {
+            boxNum: data.boxNum || null,
+            boxSuburb: data.boxSuburb || null,
+            boxCode: data.boxCode || null,
+            boxCity: data.boxCity || null,
+            boxCountry: data.boxCountry || null
+        },
+        media: {
+            logo: null,
+            css: null
+        },
+        bill: {
+            billPlan: data.billPlan || null,
+            billEmail: data.billEmail || null
+        },
+        card: {
+            crdName: data.crdName || null,
+            crdType: data.crdType || null,
+            crdNumber: data.crdNumber || null,
+            crdExpDate: data.crdExpDate || null,
+            crdCvv: data.crdCvv || null
+        },
+        members: [],
+        owners: [data.userId]
+    };
+     */
 
-//
-//    var postCall = function() {
-//        var currentUser = req.session.user;
-//
-//        // This is from the form.
-//        var newData = AM.makeAccount({
-//            name: req.param('name'),
-//            surname: req.param('surname'),
-//            email: req.param('email'),
-//            url: req.param('url'),
-//            user: req.param('user'),
-//            pass: req.param('pass'),
-//            city: req.param('city'),
-//            country: req.param('country'),
-//            phone: req.param('phone'),
-//            cell: req.param('cell')
-//        });
-//        AM.updateProfile(currentUser._id, newData, callback);
-//    };
-//
-    helper.okGo(req, res, {'GET': getCall});
+    /**
+     * @param {Object} err The Error object if any.
+     * @param {Object} org The full org object from mongo.
+     */
+    var postCallback = function(err, org) {
+        if (err) {
+            res.send(
+                helper.makeReplyWith('Error updating org: ' + err),
+                400);
+        } else if(org) {
+            res.send(
+                helper.makeReplyWith(null, org, 'Org updated'),
+                200);
+        } else {
+            res.send(
+                helper.makeReplyWith('Could not find org'),
+                400);
+        }
+    };
+
+    var postCall = function() {
+        var newOrg = OM.makeOrg({
+            orgUrl: req.param('orgUrl'),
+            locStreet: req.param('locStreet'),
+            locSuburb: req.param('locSuburb'),
+            locCode: req.param('locCode'),
+            locCity: req.param('locCity'),
+            locCountry: req.param('locCountry'),
+            boxNum: req.param('boxNum'),
+            boxSuburb: req.param('boxSuburb'),
+            boxCode: req.param('boxCode'),
+            boxCity: req.param('boxCity'),
+            boxCountry: req.param('boxCountry')
+        });
+        OM.updateProfile(id, newOrg, subset, postCallback);
+    };
+
+    helper.okGo(req, res, {'GET': getCall, 'POST': postCall});
 };
 
 exp.routes.orgs.delete = function(req, res) {

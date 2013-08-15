@@ -951,7 +951,7 @@ goog.addDependency('../../../../../../app/public/js/contracts/country-list.js', 
 goog.addDependency('../../../../../../app/public/js/contracts/urlmap.js', ['exp.urlMap'], []);
 goog.addDependency('../../../../../../app/routes/helper.js', ['exp.routesHelper'], []);
 goog.addDependency('../../../../../../app/routes/index.js', ['exp.routes'], ['exp.routesHelper']);
-goog.addDependency('../../../../../../app/routes/orgs.js', ['exp.routes.orgs'], ['exp.EmailDispatcher', 'exp.cCardMap', 'exp.routesHelper']);
+goog.addDependency('../../../../../../app/routes/orgs.js', ['exp.routes.orgs'], ['exp.EmailDispatcher', 'exp.cCardMap', 'exp.routesHelper', 'goog.object']);
 goog.addDependency('../../../../../../app/routes/user.js', ['exp.routes.user'], ['exp.EmailDispatcher', 'exp.countryList', 'exp.routesHelper']);
 goog.addDependency('../../../../../../app/src/bridge.js', ['exp.Bridge'], []);
 goog.addDependency('../../../../../../app/src/websocket.js', ['exp.WebSocket'], ['exp.Bridge']);

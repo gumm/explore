@@ -14,10 +14,13 @@ var fs = require('fs');
 
 var hskey = fs.readFileSync('./certs/explore-key.pem');
 var hscert = fs.readFileSync('./certs/explore-cert.pem');
+var interMediateCA = fs.readFileSync('./certs/trail-secure-server-intermediat-ca.pem');
+var rootCA = fs.readFileSync('./certs/Thawte-Test-CA-Root-certificate.pem');
 
 var options = {
     key: hskey,
-    cert: hscert
+    cert: hscert,
+    ca: rootCA
 };
 
 //// This line is from the Node.js HTTPS documentation.
@@ -59,5 +62,3 @@ var secureServer = https.createServer(options, app).listen(8888, function() {
 * @type {WebSocketServer}
 */
 app.wss = new exp.WebSocket(server, app);
-
-

@@ -40,7 +40,7 @@ app.org.panel.NavPanel.prototype.initDom = function() {
 app.org.panel.NavPanel.prototype.buildNavMenu = function() {
 
     var menuItems = [
-        ['Organization Profile', 'icon-building',
+        ['Edit Organization Profile', 'icon-building',
             goog.bind(this.dispatchActionEvent, this,
                 app.org.EventType.UPDATE_PROFILE)],
         ['Security Settings', 'icon-key', goog.bind(this.dispatchActionEvent,

@@ -24,11 +24,19 @@ app.org.panel.SignUp.prototype.enterDocument = function() {
 };
 
 app.org.panel.SignUp.prototype.initDom = function() {
-        bad.utils.makeButton('create-org',
-            goog.bind(this.submitSignUp, this)
-        );
+    bad.utils.makeButton('orgFormCancel',
+        goog.bind(this.onCancel, this)
+    );
+
+    bad.utils.makeButton('orgFormSubmit',
+        goog.bind(this.submitSignUp, this)
+    );
+
+
+
+    if (this.dom_.getElement('bill')) {
         this.gold = bad.utils.makeToggleButton('gold',
-            goog.bind(this.choosePlan_, this, 3)
+        goog.bind(this.choosePlan_, this, 3)
         );
         this.silver = bad.utils.makeToggleButton('silver',
             goog.bind(this.choosePlan_, this, 2)
@@ -42,11 +50,12 @@ app.org.panel.SignUp.prototype.initDom = function() {
          goog.dom.classes.add(this.free.getElement(),
              'goog-css3-button-checked');
 
-        this.ccardEl = goog.dom.getElement('ccard');
+        this.ccardEl = goog.dom.getElement('card');
         goog.style.setElementShown(this.ccardEl, false);
 
-        this.planType = goog.dom.getElement('planType');
+        this.planType = goog.dom.getElement('billPlan');
         goog.dom.forms.setValue(this.planType, 0);
+    }
 };
 
 app.org.panel.SignUp.prototype.choosePlan_ = function(plan) {
@@ -94,18 +103,28 @@ app.org.panel.SignUp.prototype.submitSignUp = function() {
  * @return {!boolean}
  */
 app.org.panel.SignUp.prototype.checkCreditCardNumberValidity = function() {
-    var cardType = document.getElementById('ccardtype-tf');
-    var cardNumber = document.getElementById('ccardnumber-tf');
-    if (cardType && cardNumber) {
-        var number = cardNumber.value;
-        var type = cardType.value;
-        var isValid = bad.utils.creditCardValidator(number, type);
-        if (!isValid) {
-            cardNumber.setCustomValidity('This is not a valid card number');
+    var billPlan = document.getElementById('billPlan');
+    var cardType = document.getElementById('crdType');
+    var cardNumber = document.getElementById('crdNumber');
+
+    if (billPlan && billPlan.value > 0) {
+        if (cardType && cardType.value === 'none') {
+            cardType.setCustomValidity('Please select a card type');
             return false;
         } else {
-            cardNumber.setCustomValidity('');
-            return true;
+            cardType.setCustomValidity('');
+            if (cardType && cardNumber) {
+                var number = cardNumber.value;
+                var type = cardType.value;
+                var isValid = bad.utils.creditCardValidator(number, type);
+                if (!isValid) {
+                    cardNumber.setCustomValidity('This is not a valid card number');
+                    return false;
+                } else {
+                    cardNumber.setCustomValidity('');
+                    return true;
+                }
+            }
         }
     }
     return true;
@@ -120,26 +139,33 @@ app.org.panel.SignUp.prototype.onSubmitSignUp = function(queryData, e) {
     var data = xhr.getResponseJson();
     this.clearAlerts();
     if (xhr.isSuccess()) {
+        console.debug('We have success...');
+        console.debug('Herald: ', app.org.EventType.UPDATE_SUCCESS);
         var orgId = data['data']['_id'];
-        this.dispatchActionEvent(app.user.EventType.EDIT_ORG, {id:orgId});
+        this.dispatchActionEvent(app.org.EventType.UPDATE_SUCCESS, {id:orgId});
     } else {
         this.displayErrors(data);
     }
 };
 
 app.org.panel.SignUp.prototype.makeCCardFieldsRequired = function(bool) {
-    var cCardFieldIds = ['ccardnumber-tf', 'ccardexpdate-tf', 'ccardcvv-tf'];
+    var fields = ['crdName', 'crdType', 'crdNumber', 'crdExpDate', 'crdCvv'];
     if(bool) {
-        goog.array.forEach(cCardFieldIds, function(id) {
-            var field = goog.dom.getElement(id);
+        goog.array.forEach(fields, function(id) {
+            var field = this.dom_.getElement(id);
             field.setAttribute('required', 'required');
-        });
+        }, this);
     } else {
-       goog.array.forEach(cCardFieldIds, function(id) {
-            var field = goog.dom.getElement(id);
+       goog.array.forEach(fields, function(id) {
+            var field = this.dom_.getElement(id);
             field.removeAttribute('required');
-        });
+        }, this);
     }
+};
+
+app.org.panel.SignUp.prototype.onCancel = function() {
+    this.clearAlerts();
+    this.dispatchActionEvent(app.org.EventType.CANCEL);
 };
 
 

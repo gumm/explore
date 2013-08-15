@@ -1,123 +1,218 @@
 - org = typeof(orgObj) != 'undefined' ? orgObj : {}
 
-form()#org-form.form-horizontal.well
-    input(type='hidden', name='plan',)#planType
-    h4= subhead
-    fieldset
-        #name-cg.control-group
-            label.control-label(for='orgName-tf') Orginzation Name
-            .controls
-                input#orgName-tf.input-full-width(
-                type='text',
-                name='orgName',
-                value=org.profile.orgName,
-                placeholder="Your organization's name",
-                required)
-        if (formtype === 'edit')
+form()#orgForm.form-horizontal.well
+    if (formtype === 'create' || formtype === 'profile')
+        fieldset
+            h4 Profile
+            if (formtype === 'create')
+                .control-group
+                    label.control-label(for='orgName') Org Name
+                    .controls
+                        input#orgName.input-full-width(
+                        type='text',
+                        name='orgName',
+                        value=org.profile.orgName,
+                        placeholder="Your organization's name",
+                        required)
+
+            if (formtype === 'profile')
+                .control-group
+                    label.control-label(for='orgUrl') URL
+                    .controls
+                        input#orgUrl.input-full-width(
+                        type='url',
+                        name='orgUrl',
+                        value=org.profile.orgUrl,
+                        placeholder="Organization's website")
+
+    if (formtype === 'profile')
+        fieldset
+            h4 Physical address
             .control-group
-                label.control-label(for='orgUrl-tf') URL
+                label.control-label(for='locStreet') Street
                 .controls
-                    input#org-url-tf.input-full-width(
+                    input#locStreet.input-full-width(
                     type='text',
-                    name='orgUrl',
-                    value=org.profile.orgUrl,
-                    placeholder="Organization's website")
-            fieldset
-                h4 Physical Address Details
-                    .control-group
-                        label.control-label(for='locStreet-tf') Street
-                        .controls
-                            input#locStreet-tf.input-full-width(
-                            type='text',
-                            name='street',
-                            value=org.profile.location.street,
-                            placeholder="Street name and number")
+                    name='locStreet',
+                    value=org.loc.locStreet,
+                    placeholder="Street name and number")
+            .control-group
+                label.control-label(for='locSuburb') Suburb
+                .controls
+                    input#locSuburb.input-full-width(
+                    type='text',
+                    name='locSuburb',
+                    value=org.loc.locSuburb,
+                    placeholder="Suburb")
+            .control-group
+                label.control-label(for='locCode') Code
+                .controls
+                    input#locCode.input-full-width(
+                    type='text',
+                    name='locCode',
+                    value=org.loc.locCode,
+                    placeholder="Postal Code")
+            .control-group
+                label.control-label(for='locCity') City
+                .controls
+                    input#locCity.input-full-width(
+                    type='text',
+                    name='locCity',
+                    value=org.loc.locCity,
+                    placeholder="Street name and number")
+            .control-group
+                label.control-label(for='locCountry') Country
+                .controls
+                    select#locCountry(
+                    name='locCountry')
+                        each item in countries
+                            option(selected=item.name == org.loc.locCountry)=item.name
 
+        fieldset
+            h4 Postal address
+            .control-group
+                label.control-label(for='boxNum') PoBox Number
+                .controls
+                    input#boxNum.input-full-width(
+                    type='text',
+                    name='boxNum',
+                    value=org.box.boxNum,
+                    placeholder="Postbox number")
+            .control-group
+                label.control-label(for='boxSuburb') Suburb
+                .controls
+                    input#boxSuburb.input-full-width(
+                    type='text',
+                    name='boxSuburb',
+                    value=org.box.boxSuburb,
+                    placeholder="Street name and number")
+            .control-group
+                label.control-label(for='boxCode') Code
+                .controls
+                    input#boxCode.input-full-width(
+                    type='text',
+                    name='boxCode',
+                    value=org.box.boxCode,
+                    placeholder="Postal code")
+            .control-group
+                label.control-label(for='boxCity') City
+                .controls
+                    input#boxCity.input-full-width(
+                    type='text',
+                    name='boxCity',
+                    value=org.box.boxCity,
+                    placeholder="City")
+            .control-group
+                label.control-label(for='boxCountry') Country
+                .controls
+                    select#boxCountry(
+                    name='boxCountry')
+                        each item in countries
+                            option(selected=item.name == org.box.boxCountry)=item.name
 
-        #billing-email-cg.control-group
-            label.control-label(for='billing-email-tf') Billing Email
-            .controls
-                input#billing-email-tf.input-full-width(
-                type='email',
-                name='billingEmail',
-                value=org.billing.billingEmail,
-                placeholder='Receipts will be sent here',
-                required)
+    if (formtype === 'create' || formtype === 'billing')
+        fieldset#bill
+            h4 Billing detail
+            input(type='hidden', name='billPlan', value=org.bill.billPlan)#billPlan
+            .control-group
+                label.control-label(for='billEmail') Billing Email
+                .controls
+                    input#billEmail.input-full-width(
+                    type='email',
+                    name='billEmail',
+                    value=org.bill.billEmail,
+                    placeholder='Receipts will be sent here',
+                    required)
+
+            h4 Choose the organization's plan
+            table.table.table-striped
+                thead
+                    tr
+                        th Plan
+                        th Cost
+                        th Size
+                tbody
+                    tr
+                        td Gold
+                        td R10/sim
+                        td Up to 500 SIMs
+                        td
+                            #gold Choose
+                    tr
+                        td Silver
+                        td R12/sim
+                        td Up to 250 SIMs
+                        td
+                            #silver Choose
+                    tr
+                        td Bronze
+                        td R15/sim
+                        td Up to 50 SIMs
+                        td
+                            #bronze Choose
+                    tr
+                        td Open
+                        td Free
+                        td A single SIM
+                        td
+                            #free Choose
+
+    if (formtype === 'create' || formtype === 'billing')
+        fieldset#card
+            //- The fields here are set to required by JS.
+            //- When a user selects a plan that requires a CC, these fields
+            // - come into play. Otherwise not.
+            h4 Credit Card details
+            .control-group
+                label.control-label(for='crdName') Card Name
+                .controls
+                    input#crdName.input-full-width(
+                    type='text',
+                    name='crdName',
+                    value=org.card.crdName,
+                    placeholder='Name as it it on the Card')
+
+            .control-group
+                label.control-label(for='crdType') Card Type
+                .controls
+                    select#crdType(
+                    name='crdType')
+                        each val, index in cCards
+                            option(value=index,
+                                selected=index == org.card.crdType
+                            )=val
+            .control-group
+                label.control-label(for='crdNumber') Card Number
+                .controls
+                    input#crdNumber.input-full-width(
+                    type='text',
+                    name='crdNumber',
+                    value=org.card.crdNumber,
+                    placeholder='Number as it is on the card')
+
+            .control-group
+                label.control-label(for='crdExpDate') Expiration (MM/YYYY)
+                .controls
+                    input#crdExpDate.input-full-width(
+                    type='text',
+                    name='crdExpDate',
+                    placeholder='MM/YYYY',
+                    value=org.card.crdExpDate,
+                    pattern="[0-9]{2}/[0-9]{4}")
+            .control-group
+                label.control-label(for='crdCvv') CVV
+                .controls
+                    input#crdCvv.input-mini(
+                    type='text',
+                    name='crdCvv',
+                    value=org.card.crdCvv,
+                    placeholder='3 or 4 digits',
+                    pattern="[0-9]{3,4}")
 
     fieldset
-        h4 Choose the organization's plan
-        table.table.table-striped
-            thead
-                tr
-                    th Plan
-                    th Cost
-                    th Size
-            tbody
-                tr
-                    td Gold
-                    td R10/sim
-                    td Up to 500 SIMs
-                    td
-                        #gold Choose
-                tr
-                    td Silver
-                    td R12/sim
-                    td Up to 250 SIMs
-                    td
-                        #silver Choose
-                tr
-                    td Bronze
-                    td R15/sim
-                    td Up to 50 SIMs
-                    td
-                        #bronze Choose
-                tr
-                    td Open
-                    td Free
-                    td A single SIM
-                    td
-                        #free Choose
-
-    fieldset#ccard
-        //- The fields here are set to required by JS.
-        //- When a user selects a plan that requires a CC, these fields
-        // - come into play. Otherwise not.
-        h4 Credit Card details
-
-        .control-group
-            label.control-label(for='ccardtype-tf') Card Type
-            .controls
-                select#ccardtype-tf(
-                name='cCardType')
-                    each val, index in cCards
-                        option(value=index,
-                            selected=index == org.billing.card.type
-                        )=val
-        .control-group
-            label.control-label(for='ccardnumber-tf') Card Number
-            .controls
-                input#ccardnumber-tf.input-full-width(
-                type='text',
-                name='number')
-        .control-group
-            label.control-label(for='ccardexpdate-tf') Expiration (MM/YYYY)
-            .controls
-                input#ccardexpdate-tf.input-full-width(
-                type='text',
-                name='expDate',
-                placeholder='MM/YYYY',
-                pattern="[0-9]{2}/[0-9]{4}")
-        .control-group
-            label.control-label(for='ccardcvv-tf') CVV
-            .controls
-                input#ccardcvv-tf.input-mini(
-                type='text',
-                name='cvv',
-                placeholder='3 digits',
-                pattern="[0-9]{3,4}")
-
-    fieldset
-        .form-actions(style="padding-left: #{button_span}px")
-            #create-org.g-button-submit
-                i.icon-group
-                | #{button_legend}
+        .form-actions
+            .form-action-right
+                #orgFormCancel Cancel
+                #orgFormSubmit.g-button-submit
+                    i.icon-group
+                    | #{button_legend}

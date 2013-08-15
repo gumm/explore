@@ -194,7 +194,6 @@ span i[class^="icon-"], span i[class*=" icon-"] {
 }
 
 #get-credentials-form.form-horizontal .form-actions {
-  padding: 17px 0 0 217px;
   margin-bottom: 0;
 }
 
@@ -202,9 +201,17 @@ span i[class^="icon-"], span i[class*=" icon-"] {
   margin-top: 7px;
 }
 
-.container-900-center .form-actions,
-.container-440-center .form-actions {
-  padding: 17px 0 0 262px;
+.form-actions {
+  padding: 17px 0 0 0;
+  width: 100%;
+}
+
+.form-horizontal .form-actions {
+    padding-left: 0;
+}
+
+.form-action-right {
+    float: right;
 }
 
 label {

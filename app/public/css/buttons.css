@@ -2,10 +2,6 @@ button i {
   padding-left: 8px;
 }
 
-#btn-login {
-    margin-top: 15px;
-}
-
 #get-credentials-form .g-button-submit,
 #account-form .g-button-submit,
 .topfixed button,

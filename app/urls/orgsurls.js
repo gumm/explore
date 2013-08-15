@@ -13,8 +13,8 @@ exp.orgsUrls = function(app) {
     app.get(exp.urlMap.ORGS.READ, route.read);
     app.get(exp.urlMap.ORGS.READ + '/:id', route.read);
 
-    app.get(exp.urlMap.ORGS.UPDATE + '/:id', route.update);
-    app.put(exp.urlMap.ORGS.UPDATE + '/:id', route.update);
+    app.get(exp.urlMap.ORGS.UPDATE + '/:id/:subset', route.update);
+    app.post(exp.urlMap.ORGS.UPDATE + '/:id/:subset', route.update);
 
     app.get(exp.urlMap.ORGS.DELETE + '/:id', route.delete);
     app.del(exp.urlMap.ORGS.DELETE + '/:id', route.delete);

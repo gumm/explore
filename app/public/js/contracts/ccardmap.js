@@ -1,6 +1,7 @@
 goog.provide('exp.cCardMap');
 
 exp.cCardMap = {
+    'none': 'Choose a card type',
     'mc': 'Master Card',
 //    'ec': '5[1-5][0-9]{14}',
     'vi': 'Visa',

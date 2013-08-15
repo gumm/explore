@@ -128,8 +128,9 @@ input(type='hidden', value= account._id)#accountId
                         required)
 
             .form-actions
-                #account-cancel Cancel
-                #account-submit.g-button-submit #{button_legend}
+                .form-action-right
+                    #account-cancel Cancel
+                    #account-submit.g-button-submit #{button_legend}
 
 if (formtype === 'editpassword')
     #removeAccount.container-440-center
@@ -140,7 +141,8 @@ if (formtype === 'editpassword')
             p Consider contacting us to get a copy of your data before doing this.
                 | After your account has been removed we will not be able to recover your data.
             fieldset
-                .form-actions(style="padding-left: 255px")
-                    #remove-account.g-button-red
-                        i.icon-user
-                        | Remove Account
+                .form-actions
+                    .form-action-right
+                        #remove-account.g-button-red
+                            i.icon-user
+                            | Remove Account

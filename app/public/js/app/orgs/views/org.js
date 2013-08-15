@@ -13,6 +13,8 @@ goog.require('bad.ui.View');
 app.org.view.Org = function(opt_orgId) {
     bad.ui.View.call(this);
 
+    console.debug('New view created...');
+
     /**
      * If an id is passed in we can view its detail, otherwise this is a
      * org create call.
@@ -27,27 +29,42 @@ app.org.view.Org.prototype.configurePanels = function() {
     var layout = this.getLayout();
     var user = this.getUser();
 
-    this.create = new app.org.panel.SignUp('org-form');
-    this.create.setUri(new goog.Uri(exp.urlMap.ORGS.CREATE));
-    this.create.setUser(user);
-    this.create.setNestAsTarget(layout.getNest('main', 'center'));
-    this.addPanelToView(bad.utils.makeId(), this.create);
 
-    this.read = new bad.ui.Panel();
-    this.read.setUser(user);
-    this.read.setNestAsTarget(layout.getNest('main', 'center'));
-    this.addPanelToView('replace', this.read);
 };
 
 app.org.view.Org.prototype.displayPanels = function() {
     if (this.activeOrgId_) {
         this.createNavPanel();
-        this.read.setUri(new goog.Uri(exp.urlMap.ORGS.READ + '/' +
-            this.activeOrgId_));
-        this.read.renderWithTemplate();
+        this.createOrgViewPanel();
     } else {
-        this.create.renderWithTemplate();
+        this.createOrgEditPanel();
     }
+};
+
+app.org.view.Org.prototype.createOrgViewPanel = function(opt_uri) {
+    var uriString = opt_uri || exp.urlMap.ORGS.READ + '/' + this.activeOrgId_;
+    var layout = this.getLayout();
+    var user = this.getUser();
+
+    var panel = new bad.ui.Panel();
+    panel.setUri(new goog.Uri(uriString));
+    panel.setUser(user);
+    panel.setNestAsTarget(layout.getNest('main', 'center'));
+    this.addPanelToView('replace', panel);
+    panel.renderWithTemplate();
+};
+
+app.org.view.Org.prototype.createOrgEditPanel = function(opt_url) {
+    var uriString = opt_url || exp.urlMap.ORGS.CREATE;
+    var layout = this.getLayout();
+    var user = this.getUser();
+
+    var panel = new app.org.panel.SignUp('orgForm');
+    panel.setUri(new goog.Uri(uriString));
+    panel.setUser(user);
+    panel.setNestAsTarget(layout.getNest('main', 'center'));
+    this.addPanelToView('replace', panel);
+    panel.renderWithTemplate();
 };
 
 app.org.view.Org.prototype.createNavPanel = function() {
@@ -74,18 +91,38 @@ app.org.view.Org.prototype.onPanelAction = function(e) {
     var data = e.getData();
     e.stopPropagation();
 
+    console.debug('View gets event:', value, data);
+
     /*
      * Nav panel dispatches:
      * app.org.EventType.UPDATE_PROFILE
      * app.org.EventType.UPDATE_SECURITY
      * app.org.EventType.UPDATE_EMAILS
      * app.org.EventType.UPDATE_BILLING
+     * app.org.EventType.UPDATE_SUCCESS
      */
-
+    var urlString = '';
     switch (value) {
+        case app.org.EventType.CANCEL:
+            console.debug('Event: app.org.EventType.CANCEL');
+            this.displayPanels();
+            break;
         case app.org.EventType.UPDATE_PROFILE:
-            var urlString = exp.urlMap.ORGS.UPDATE + '/' + this.activeOrgId_;
+            console.debug('Event: app.org.EventType.UPDATE_PROFILE');
+            urlString = exp.urlMap.ORGS.UPDATE + '/' + this.activeOrgId_ +
+                '/profile';
             this.enterEditForm(urlString);
+            break;
+        case app.org.EventType.UPDATE_BILLING:
+            console.debug('Event: app.org.EventType.UPDATE_BILLING');
+            urlString = exp.urlMap.ORGS.UPDATE + '/' + this.activeOrgId_ +
+                '/billing';
+            this.enterEditForm(urlString);
+            break;
+        case app.org.EventType.UPDATE_SUCCESS:
+            console.debug('Event: app.org.EventType.UPDATE_SUCCESS', data);
+            this.activeOrgId_ = data.id;
+            this.displayPanels();
             break;
         default:
             console.log('app.org.view.Org No action for: ', value, data);
@@ -98,22 +135,8 @@ app.org.view.Org.prototype.onPanelAction = function(e) {
 * @param {string} urlString The URL that will be called.
 */
 app.org.view.Org.prototype.enterEditForm = function(urlString) {
-
-    var layout = this.getLayout();
-    var user = this.getUser();
-
-    var form = new app.org.panel.SignUp('org-form');
-    form.setUri(new goog.Uri(urlString));
-    form.setUser(user);
-    form.setNestAsTarget(layout.getNest('main', 'center'));
-    this.addPanelToView('replace', form);
-    form.renderWithTemplate();
+    this.createOrgEditPanel(urlString);
 };
-
-
-
-
-
 
 /**
  * TODO: This also is used everywhere. Make it more general.

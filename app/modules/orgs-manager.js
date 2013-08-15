@@ -7,38 +7,40 @@ var makeOrg = function(data) {
     return {
         profile: {
             orgName: data.orgName || null,
-            orgUrl: data.orgUrl || null,
-            location: {
-                street: data.street || null,
-                suburb: data.suburb || null,
-                locationCode: data.locationCode || null,
-                city: data.locationCity || null,
-                country: data.locationCountry || null,
-                coordinates: {
-                    longitude: data.longitude || null,
-                    latitude: data.latitude || null
-                }
-            },
-            postal: {
-                boxNum: data.boxNum || null,
-                suburb: data.postalSuburb || null,
-                postalCode: data.postalCode || null,
-                city: data.postalCity || null,
-                country: data.postalCountry || null
-            },
-            media: {
-                logo: null,
-                css: null
+            orgUrl: data.orgUrl || null
+        },
+        loc: {
+            locStreet: data.locStreet || null,
+            locSuburb: data.locSuburb || null,
+            locCode: data.locCode || null,
+            locCity: data.locCity || null,
+            locCountry: data.locCountry || null,
+            locCords: {
+                cordLong: data.cordLong || null,
+                cordLat: data.cordLat || null
             }
         },
-        billing: {
-            billingEmail: data.billingEmail || null,
-            card: {
-                type: data.type || null,
-                number: data.number || null,
-                expDate: data.expDate || null,
-                cvv: data.cvv || null
-            }
+        box: {
+            boxNum: data.boxNum || null,
+            boxSuburb: data.boxSuburb || null,
+            boxCode: data.boxCode || null,
+            boxCity: data.boxCity || null,
+            boxCountry: data.boxCountry || null
+        },
+        media: {
+            logo: null,
+            css: null
+        },
+        bill: {
+            billPlan: data.billPlan || null,
+            billEmail: data.billEmail || null
+        },
+        card: {
+            crdName: data.crdName || null,
+            crdType: data.crdType || null,
+            crdNumber: data.crdNumber || null,
+            crdExpDate: data.crdExpDate || null,
+            crdCvv: data.crdCvv || null
         },
         members: [],
         owners: [data.userId]
@@ -97,10 +99,36 @@ var getOrgBId = function(id, callback) {
     });
 };
 
+var updateProfile = function(uid, newOrg, subset, callback) {
+
+    var findAndModifyCallback = function(err, account) {
+        if (err){
+            callback(err); // returns error if no matching object found
+        } else {
+            callback(null, account);
+        }
+    };
+
+    ORGS.findAndModify(
+        {_id: BSON.ObjectID(uid)}, // query
+        [['_id','asc']],           // sort order
+        {$set: {
+            loc: newOrg.loc,
+            box: newOrg.box,
+            'profile.orgUrl': newOrg.profile.orgUrl}
+        },
+        {new: true}, // options new - if set to true, callback function
+                     // returns the modified record.
+                     // Default is false (original record is returned)
+        findAndModifyCallback
+    );
+};
+
 module.exports = {
     makeOrg: makeOrg,
     addNewOrg: addNewOrg,
     getOrgsByUserId: getOrgsByUserId,
-    getOrgBId: getOrgBId
+    getOrgBId: getOrgBId,
+    updateProfile: updateProfile
 };
 
