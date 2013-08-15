@@ -3,7 +3,7 @@
 form()#orgForm.form-horizontal.well
     if (formtype === 'create' || formtype === 'profile')
         fieldset
-            h4 Profile
+            h4 Profile Information
             if (formtype === 'create')
                 .control-group
                     label.control-label(for='orgName') Org Name
@@ -13,6 +13,16 @@ form()#orgForm.form-horizontal.well
                         name='orgName',
                         value=org.profile.orgName,
                         placeholder="Your organization's name",
+                        required)
+            if (formtype === 'create' || formtype === 'profile')
+                .control-group
+                    label.control-label(for='billEmail') Email
+                    .controls
+                        input#billEmail.input-full-width(
+                        type='email',
+                        name='billEmail',
+                        value=org.bill.billEmail,
+                        placeholder='Receipts will be sent here',
                         required)
 
             if (formtype === 'profile')
@@ -27,7 +37,7 @@ form()#orgForm.form-horizontal.well
 
     if (formtype === 'profile')
         fieldset
-            h4 Physical address
+            h4 Physical Address
             .control-group
                 label.control-label(for='locStreet') Street
                 .controls
@@ -69,7 +79,7 @@ form()#orgForm.form-horizontal.well
                             option(selected=item.name == org.loc.locCountry)=item.name
 
         fieldset
-            h4 Postal address
+            h4 Postal Address
             .control-group
                 label.control-label(for='boxNum') PoBox Number
                 .controls
@@ -112,19 +122,8 @@ form()#orgForm.form-horizontal.well
 
     if (formtype === 'create' || formtype === 'billing')
         fieldset#bill
-            h4 Billing detail
-            input(type='hidden', name='billPlan', value=org.bill.billPlan)#billPlan
-            .control-group
-                label.control-label(for='billEmail') Billing Email
-                .controls
-                    input#billEmail.input-full-width(
-                    type='email',
-                    name='billEmail',
-                    value=org.bill.billEmail,
-                    placeholder='Receipts will be sent here',
-                    required)
-
             h4 Choose the organization's plan
+            input(type='hidden', name='billPlan', value=org.bill.billPlan)#billPlan
             table.table.table-striped
                 thead
                     tr
@@ -132,30 +131,13 @@ form()#orgForm.form-horizontal.well
                         th Cost
                         th Size
                 tbody
-                    tr
-                        td Gold
-                        td R10/sim
-                        td Up to 500 SIMs
-                        td
-                            #gold Choose
-                    tr
-                        td Silver
-                        td R12/sim
-                        td Up to 250 SIMs
-                        td
-                            #silver Choose
-                    tr
-                        td Bronze
-                        td R15/sim
-                        td Up to 50 SIMs
-                        td
-                            #bronze Choose
-                    tr
-                        td Open
-                        td Free
-                        td A single SIM
-                        td
-                            #free Choose
+                    each arr, key in products
+                        tr
+                            td= arr[0]
+                            td= arr[1]
+                            td= arr[2]
+                            td
+                                div(id=key)  Choose
 
     if (formtype === 'create' || formtype === 'billing')
         fieldset#card

@@ -60,7 +60,7 @@ app.user.view.Login.prototype.configurePanels = function() {
      * @type {app.user.panel.SignUp}
      */
     this.signUpForm = new app.user.panel.SignUp('account-form');
-    this.signUpForm.setUri(new goog.Uri(exp.urlMap.SIGNUP));
+    this.signUpForm.setUri(new goog.Uri(exp.urlMap.ACCOUNTS.CREATE));
     this.signUpForm.setNestAsTarget(layout.getNest('main', 'center'));
     this.addPanelToView(bad.utils.makeId(), this.signUpForm);
 
@@ -114,7 +114,7 @@ app.user.view.Login.prototype.onPanelAction = function(e) {
             this.enterLostPasswordForm();
             break;
         case app.user.EventType.LOGIN_SUCCESS:
-            this.fetchHomePage(data);
+            this.fetchHomePage(/** @type {Object} */ (data));
             break;
         case app.user.EventType.SIGNUP_CANCEL:
             this.exitSignUpForm();

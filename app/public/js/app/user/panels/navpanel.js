@@ -17,15 +17,6 @@ app.user.panel.NavPanel = function(opt_domHelper) {
 };
 goog.inherits(app.user.panel.NavPanel, bad.ui.Panel);
 
-app.user.panel.NavPanel.prototype.enterDocument = function() {
-    this.dom_ = goog.dom.getDomHelper(this.getElement());
-    this.initDom();
-
-    // Calling this last makes sure that the final PANEL-READY event really is
-    // dispatched right at the end of all of the enterDocument calls.
-    app.user.panel.NavPanel.superClass_.enterDocument.call(this);
-};
-
 app.user.panel.NavPanel.prototype.initDom = function() {
     this.buildNavMenu();
 };

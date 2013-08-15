@@ -7,6 +7,7 @@ goog.require('exp.cCardMap');
 goog.require('exp.EmailDispatcher');
 goog.require('exp.routesHelper');
 goog.require('goog.object');
+goog.require('exp.productMap');
 
 var helper = exp.routesHelper;
 
@@ -16,6 +17,7 @@ exp.routes.orgs.create = function(req, res) {
     var getCall = function() {
         res.render('orgs/create', {
                 countries: exp.countryList,
+                products: exp.productMap,
                 orgObj: OM.makeOrg({}),
                 cCards: exp.cCardMap});
     };
@@ -110,6 +112,7 @@ exp.routes.orgs.update = function(req, res) {
             res.render('orgs/edit/' + subset, {
                 countries: exp.countryList,
                 orgObj: org,
+                products: exp.productMap,
                 cCards: exp.cCardMap});
         } else {
             res.send(
@@ -197,7 +200,16 @@ exp.routes.orgs.update = function(req, res) {
             boxSuburb: req.param('boxSuburb'),
             boxCode: req.param('boxCode'),
             boxCity: req.param('boxCity'),
-            boxCountry: req.param('boxCountry')
+            boxCountry: req.param('boxCountry'),
+            billPlan: req.param('billPlan'),
+            billEmail: req.param('billEmail'),
+            logo: req.param('logo'),
+            css: req.param('css'),
+            crdName: req.param('crdName'),
+            crdType: req.param('crdType'),
+            crdNumber: req.param('crdNumber'),
+            crdExpDate: req.param('crdExpDate'),
+            crdCvv: req.param('crdCvv')
         });
         OM.updateProfile(id, newOrg, subset, postCallback);
     };

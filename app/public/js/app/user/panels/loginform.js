@@ -16,9 +16,10 @@ app.user.panel.Login = function(id, opt_domHelper) {
 };
 goog.inherits(app.user.panel.Login, bad.ui.Form);
 
-app.user.panel.Login.prototype.enterDocument = function() {
-    this.dom_ = goog.dom.getDomHelper(this.getElement());
-    this.initDom();
+app.user.panel.Login.prototype.initDom = function() {
+    bad.utils.makeButton('btn-login',
+        goog.bind(this.submitLoginForm, this)
+    );
 
     this.getHandler().listen(
         goog.dom.getElement('forgot-password'),
@@ -27,16 +28,6 @@ app.user.panel.Login.prototype.enterDocument = function() {
             //noinspection JSPotentiallyInvalidUsageOfThis
             this.dispatchActionEvent(app.user.EventType.FORGOT_PW);
         }, undefined, this
-    );
-
-    // Calling this last makes sure that the final PANEL-READY event really is
-    // dispatched right at the end of all of the enterDocument calls.
-    app.user.panel.Login.superClass_.enterDocument.call(this);
-};
-
-app.user.panel.Login.prototype.initDom = function() {
-    bad.utils.makeButton('btn-login',
-        goog.bind(this.submitLoginForm, this)
     );
 };
 

@@ -15,16 +15,6 @@ app.user.panel.SignUp = function(id, opt_domHelper) {
 };
 goog.inherits(app.user.panel.SignUp, bad.ui.Form);
 
-app.user.panel.SignUp.prototype.enterDocument = function() {
-
-    this.dom_ = goog.dom.getDomHelper(this.getElement());
-    this.initDom();
-
-    // Calling this last makes sure that the final PANEL-READY event really is
-    // dispatched right at the end of all of the enterDocument calls.
-    app.user.panel.SignUp.superClass_.enterDocument.call(this);
-};
-
 app.user.panel.SignUp.prototype.initDom = function() {
     bad.utils.makeButton('account-cancel',
         goog.bind(this.onCancel, this)

@@ -48,6 +48,9 @@ app.base.panel.Persistent.prototype.initMqtt = function() {
 
 app.base.panel.Persistent.prototype.buildUserButton = function() {
 
+    /**
+     * @type {Array}
+     */
     var menuItems = [
         ['Profile', 'icon-user', goog.bind(this.dispatchActionEvent,
             this, app.base.EventType.EDIT_PROFILE)],
@@ -55,8 +58,16 @@ app.base.panel.Persistent.prototype.buildUserButton = function() {
         ['Sign Out', 'icon-signout', goog.bind(this.logOut, this)]
     ];
 
+    /**
+     * @type {bad.ui.MenuFloatRenderer}
+     */
     var renderer = bad.ui.MenuFloatRenderer.getInstance();
+
+    /**
+     * @type {bad.ui.MenuItemRenderer}
+     */
     var itemRenderer = bad.ui.MenuItemRenderer.getInstance();
+
     var menu = bad.utils.makeMenu(
         menuItems, this.dom_, this.getHandler(), this, renderer, itemRenderer);
 

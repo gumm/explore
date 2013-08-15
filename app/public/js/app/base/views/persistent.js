@@ -40,7 +40,8 @@ app.base.view.Persistent.prototype.onPanelAction = function(e) {
 
     switch (value) {
         case app.base.EventType.EDIT_PROFILE:
-            this.switchView(goog.bind(this.appDo, this, app.doMap.VIEW_EDIT_USER));
+            this.switchView(goog.bind(
+                this.appDo, this, app.doMap.VIEW_EDIT_USER));
             break;
         default:
             console.log('app.base.view.Persistent No case for: ', value, data);
@@ -49,7 +50,7 @@ app.base.view.Persistent.prototype.onPanelAction = function(e) {
 
 app.base.view.Persistent.prototype.switchView = function(fn) {
     var nest = this.getLayout().getNest('main', 'left');
-    var callback = goog.bind(function(){
+    var callback = goog.bind(function() {
         nest.hide();
         fn();
     }, this);

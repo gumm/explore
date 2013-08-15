@@ -15,16 +15,6 @@ app.user.panel.DeleteAccount = function(id, opt_domHelper) {
 };
 goog.inherits(app.user.panel.DeleteAccount, bad.ui.Form);
 
-app.user.panel.DeleteAccount.prototype.enterDocument = function() {
-
-    this.dom_ = goog.dom.getDomHelper(this.getElement());
-    this.initDom();
-
-    // Calling this last makes sure that the final PANEL-READY event really is
-    // dispatched right at the end of all of the enterDocument calls.
-    app.user.panel.DeleteAccount.superClass_.enterDocument.call(this);
-};
-
 app.user.panel.DeleteAccount.prototype.initDom = function() {
     bad.utils.makeButton(
         'remove-account-cancel',

@@ -1,7 +1,7 @@
 goog.provide('app.org.view.Org');
 
-goog.require('app.org.panel.NavPanel');
 goog.require('app.org.EventType');
+goog.require('app.org.panel.NavPanel');
 goog.require('app.org.panel.SignUp');
 goog.require('bad.ui.View');
 
@@ -13,24 +13,15 @@ goog.require('bad.ui.View');
 app.org.view.Org = function(opt_orgId) {
     bad.ui.View.call(this);
 
-    console.debug('New view created...');
-
     /**
      * If an id is passed in we can view its detail, otherwise this is a
      * org create call.
-     * @type {string=|null}
+     * @type {?string}
      * @private
      */
     this.activeOrgId_ = opt_orgId || null;
 };
 goog.inherits(app.org.view.Org, bad.ui.View);
-
-app.org.view.Org.prototype.configurePanels = function() {
-    var layout = this.getLayout();
-    var user = this.getUser();
-
-
-};
 
 app.org.view.Org.prototype.displayPanels = function() {
     if (this.activeOrgId_) {
@@ -41,42 +32,47 @@ app.org.view.Org.prototype.displayPanels = function() {
     }
 };
 
+/**
+ * @param {string=} opt_uri
+ */
 app.org.view.Org.prototype.createOrgViewPanel = function(opt_uri) {
     var uriString = opt_uri || exp.urlMap.ORGS.READ + '/' + this.activeOrgId_;
-    var layout = this.getLayout();
-    var user = this.getUser();
 
+    /**
+     * @type {bad.ui.Panel}
+     */
     var panel = new bad.ui.Panel();
     panel.setUri(new goog.Uri(uriString));
-    panel.setUser(user);
-    panel.setNestAsTarget(layout.getNest('main', 'center'));
+    panel.setUser(this.getUser());
+    panel.setNestAsTarget(this.getLayout().getNest('main', 'center'));
     this.addPanelToView('replace', panel);
     panel.renderWithTemplate();
 };
 
-app.org.view.Org.prototype.createOrgEditPanel = function(opt_url) {
-    var uriString = opt_url || exp.urlMap.ORGS.CREATE;
-    var layout = this.getLayout();
-    var user = this.getUser();
+/**
+ * @param {string=} opt_uri
+ */
+app.org.view.Org.prototype.createOrgEditPanel = function(opt_uri) {
+    var uriString = opt_uri || exp.urlMap.ORGS.CREATE;
 
+    /**
+     * @type {app.org.panel.SignUp}
+     */
     var panel = new app.org.panel.SignUp('orgForm');
     panel.setUri(new goog.Uri(uriString));
-    panel.setUser(user);
-    panel.setNestAsTarget(layout.getNest('main', 'center'));
+    panel.setUser(this.getUser());
+    panel.setNestAsTarget(this.getLayout().getNest('main', 'center'));
     this.addPanelToView('replace', panel);
     panel.renderWithTemplate();
 };
 
 app.org.view.Org.prototype.createNavPanel = function() {
-    var layout = this.getLayout();
-    var user = this.getUser();
-
     /**
      * @type {app.org.panel.NavPanel}
      */
-    var panel = new app.org.panel.NavPanel(this.activeOrgId_);
-    panel.setUser(user);
-    panel.setNestAsTarget(layout.getNest('main', 'left', 'mid'));
+    var panel = new app.org.panel.NavPanel();
+    panel.setUser(this.getUser());
+    panel.setNestAsTarget(this.getLayout().getNest('main', 'left', 'mid'));
     panel.setBeforeReadyCallback(goog.bind(this.slideNavIn, this));
     this.addPanelToView(bad.utils.makeId(), panel);
     panel.render();
@@ -86,41 +82,30 @@ app.org.view.Org.prototype.createNavPanel = function() {
  * @param {bad.ActionEvent} e Event object.
  */
 app.org.view.Org.prototype.onPanelAction = function(e) {
-
     var value = e.getValue();
     var data = e.getData();
     e.stopPropagation();
 
-    console.debug('View gets event:', value, data);
-
     /*
      * Nav panel dispatches:
+     * app.org.EventType.CANCEL
      * app.org.EventType.UPDATE_PROFILE
-     * app.org.EventType.UPDATE_SECURITY
-     * app.org.EventType.UPDATE_EMAILS
      * app.org.EventType.UPDATE_BILLING
      * app.org.EventType.UPDATE_SUCCESS
      */
-    var urlString = '';
     switch (value) {
         case app.org.EventType.CANCEL:
-            console.debug('Event: app.org.EventType.CANCEL');
             this.displayPanels();
             break;
         case app.org.EventType.UPDATE_PROFILE:
-            console.debug('Event: app.org.EventType.UPDATE_PROFILE');
-            urlString = exp.urlMap.ORGS.UPDATE + '/' + this.activeOrgId_ +
-                '/profile';
-            this.enterEditForm(urlString);
+            this.enterEditForm(exp.urlMap.ORGS.UPDATE + '/' +
+                this.activeOrgId_ + '/profile');
             break;
         case app.org.EventType.UPDATE_BILLING:
-            console.debug('Event: app.org.EventType.UPDATE_BILLING');
-            urlString = exp.urlMap.ORGS.UPDATE + '/' + this.activeOrgId_ +
-                '/billing';
-            this.enterEditForm(urlString);
+            this.enterEditForm(exp.urlMap.ORGS.UPDATE + '/' +
+                this.activeOrgId_ + '/billing');
             break;
         case app.org.EventType.UPDATE_SUCCESS:
-            console.debug('Event: app.org.EventType.UPDATE_SUCCESS', data);
             this.activeOrgId_ = data.id;
             this.displayPanels();
             break;
@@ -149,18 +134,4 @@ app.org.view.Org.prototype.slideNavIn = function() {
             console.debug('OK all done - panel in view now.');
         }, this)
     );
-};
-
-/**
- * TODO: Generalise this higher up. More than ust this view uses something
- * like this.
- * @param view
- */
-app.org.view.Org.prototype.switchView = function(view) {
-    var nest = this.getLayout().getNest('main', 'left');
-    var callback = goog.bind(function(){
-        nest.hide();
-        this.appDo(view);
-    }, this);
-    nest.slideClosed(callback);
 };

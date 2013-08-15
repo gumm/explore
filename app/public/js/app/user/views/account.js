@@ -1,4 +1,4 @@
-goog.provide('app.user.view.EditUser');
+goog.provide('app.user.view.Account');
 
 goog.require('app.org.panel.List');
 goog.require('app.user.EventType');
@@ -11,12 +11,12 @@ goog.require('bad.ui.View');
  * @extends {bad.ui.View}
  * @constructor
  */
-app.user.view.EditUser = function() {
+app.user.view.Account = function() {
     bad.ui.View.call(this);
 };
-goog.inherits(app.user.view.EditUser, bad.ui.View);
+goog.inherits(app.user.view.Account, bad.ui.View);
 
-app.user.view.EditUser.prototype.configurePanels = function() {
+app.user.view.Account.prototype.configurePanels = function() {
     var layout = this.getLayout();
 
     /**
@@ -29,14 +29,14 @@ app.user.view.EditUser.prototype.configurePanels = function() {
     this.navPanel.render();
 };
 
-app.user.view.EditUser.prototype.displayPanels = function() {
+app.user.view.Account.prototype.displayPanels = function() {
     this.enterLandingView();
 };
 
 /**
  * @param {bad.ActionEvent} e Event object.
  */
-app.user.view.EditUser.prototype.onPanelAction = function(e) {
+app.user.view.Account.prototype.onPanelAction = function(e) {
 
     var value = e.getValue();
     var data = e.getData();
@@ -44,14 +44,14 @@ app.user.view.EditUser.prototype.onPanelAction = function(e) {
 
     switch (value) {
         case app.user.EventType.SIGNUP_CANCEL:
-            this.switchView(goog.bind(this.appDo, this, app.doMap.VIEW_HOME));
+            this.displayPanels();
             break;
         case app.user.EventType.SIGNUP_SUCCESS:
             this.appDo(app.doMap.UPDATE_USER, data.reply['data']);
             this.switchView(goog.bind(this.appDo, this, app.doMap.VIEW_HOME));
             break;
         case app.user.EventType.ACCOUNT_REMOVE_CANCELED:
-            this.switchView(goog.bind(this.appDo, this, app.doMap.VIEW_HOME));
+            this.displayPanels();
             break;
         case app.user.EventType.ACCOUNT_REMOVE:
             this.confirmRemoveAccount();
@@ -69,10 +69,11 @@ app.user.view.EditUser.prototype.onPanelAction = function(e) {
             this.switchView(goog.bind(this.appDo, this, value));
             break;
         case app.user.EventType.EDIT_ORG:
-            this.switchView(goog.bind(this.appDo, this, app.doMap.VIEW_ORG, data.id));
+            this.switchView(
+                goog.bind(this.appDo, this, app.doMap.VIEW_ORG, data.id));
             break;
         default:
-            console.log('app.user.view.EditUser No action for: ', value);
+            console.log('app.user.view.Account No action for: ', value);
     }
 };
 
@@ -83,11 +84,11 @@ app.user.view.EditUser.prototype.onPanelAction = function(e) {
 * It is destroyed on exit, and is thus recreated here each time it is called.
 * @param {string} value The event value describes the required form.
 */
-app.user.view.EditUser.prototype.enterSignUpForm = function(value) {
+app.user.view.Account.prototype.enterSignUpForm = function(value) {
 
     var layout = this.getLayout();
     var user = this.getUser();
-    var urlString = exp.urlMap.PROFILE.EDIT;
+    var urlString = exp.urlMap.ACCOUNTS.UPDATE;
     if (value === app.user.EventType.EDIT_PW) {
         urlString = exp.urlMap.PW.EDIT;
     }
@@ -103,9 +104,8 @@ app.user.view.EditUser.prototype.enterSignUpForm = function(value) {
 /**
 * The sign-up form is used for sign-up, editing accounts, and passwords.
 * It is destroyed on exit, and is thus recreated here each time it is called.
-* @param {string} value The event value describes the required form.
 */
-app.user.view.EditUser.prototype.enterOrgsList = function() {
+app.user.view.Account.prototype.enterOrgsList = function() {
 
     var layout = this.getLayout();
     var user = this.getUser();
@@ -118,20 +118,20 @@ app.user.view.EditUser.prototype.enterOrgsList = function() {
     panel.renderWithTemplate();
 };
 
-app.user.view.EditUser.prototype.enterLandingView = function() {
+app.user.view.Account.prototype.enterLandingView = function() {
 
     var layout = this.getLayout();
     var user = this.getUser();
 
     var panel = new bad.ui.Panel();
-    panel.setUri(new goog.Uri(exp.urlMap.PROFILE.READ));
+    panel.setUri(new goog.Uri(exp.urlMap.ACCOUNTS.READ));
     panel.setUser(user);
     panel.setNestAsTarget(layout.getNest('main', 'center'));
     this.addPanelToView('replace', panel);
     panel.renderWithTemplate();
 };
 
-app.user.view.EditUser.prototype.confirmRemoveAccount = function() {
+app.user.view.Account.prototype.confirmRemoveAccount = function() {
 
     var layout = this.getLayout();
     var user = this.getUser();
@@ -144,7 +144,7 @@ app.user.view.EditUser.prototype.confirmRemoveAccount = function() {
     form.renderWithTemplate();
 };
 
-app.user.view.EditUser.prototype.slideNavIn = function() {
+app.user.view.Account.prototype.slideNavIn = function() {
     var size = 270;
     var slider = this.getLayout().getNest('main', 'left');
     slider.slideOpen(null, size,
@@ -154,9 +154,9 @@ app.user.view.EditUser.prototype.slideNavIn = function() {
     );
 };
 
-app.user.view.EditUser.prototype.switchView = function(fn) {
+app.user.view.Account.prototype.switchView = function(fn) {
     var nest = this.getLayout().getNest('main', 'left');
-    var callback = goog.bind(function(){
+    var callback = goog.bind(function() {
         nest.hide();
         fn();
     }, this);

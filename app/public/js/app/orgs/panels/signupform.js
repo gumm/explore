@@ -1,6 +1,7 @@
 goog.provide('app.org.panel.SignUp');
 
 goog.require('bad.ui.Form');
+goog.require('exp.productMap');
 goog.require('goog.ui.CustomButton');
 
 /**
@@ -11,17 +12,10 @@ goog.require('goog.ui.CustomButton');
  */
 app.org.panel.SignUp = function(id, opt_domHelper) {
     bad.ui.Form.call(this, id, opt_domHelper);
+
+    this.productButtons_ = {};
 };
 goog.inherits(app.org.panel.SignUp, bad.ui.Form);
-
-app.org.panel.SignUp.prototype.enterDocument = function() {
-    this.dom_ = goog.dom.getDomHelper(this.getElement());
-    this.initDom();
-
-    // Calling this last makes sure that the final PANEL-READY event really is
-    // dispatched right at the end of all of the enterDocument calls.
-    app.org.panel.SignUp.superClass_.enterDocument.call(this);
-};
 
 app.org.panel.SignUp.prototype.initDom = function() {
     bad.utils.makeButton('orgFormCancel',
@@ -32,47 +26,36 @@ app.org.panel.SignUp.prototype.initDom = function() {
         goog.bind(this.submitSignUp, this)
     );
 
-
-
     if (this.dom_.getElement('bill')) {
-        this.gold = bad.utils.makeToggleButton('gold',
-        goog.bind(this.choosePlan_, this, 3)
-        );
-        this.silver = bad.utils.makeToggleButton('silver',
-            goog.bind(this.choosePlan_, this, 2)
-        );
-        this.bronze = bad.utils.makeToggleButton('bronze',
-            goog.bind(this.choosePlan_, this, 1)
-        );
-        this.free = bad.utils.makeToggleButton('free',
-            goog.bind(this.choosePlan_, this, 0)
-        );
-         goog.dom.classes.add(this.free.getElement(),
-             'goog-css3-button-checked');
+
+        goog.object.forEach(exp.productMap, function(product, key) {
+            this.productButtons_[key] = bad.utils.makeToggleButton(key,
+                goog.bind(this.choosePlan_, this, key)
+            );
+        }, this);
 
         this.ccardEl = goog.dom.getElement('card');
         goog.style.setElementShown(this.ccardEl, false);
 
         this.planType = goog.dom.getElement('billPlan');
-        goog.dom.forms.setValue(this.planType, 0);
+        this.choosePlan_(this.planType.value || 'free');
     }
 };
 
 app.org.panel.SignUp.prototype.choosePlan_ = function(plan) {
     goog.dom.forms.setValue(this.planType, plan);
-
-    var arr = [this.free, this.bronze, this.silver, this.gold];
-    goog.array.forEach(arr, function(button, index) {
-        if (index !== plan) {
-            goog.dom.classes.remove(button.getElement(),
+    goog.object.forEach(this.productButtons_, function(button, key) {
+        console.debug(key, plan, key === plan);
+        if (key === plan) {
+            goog.dom.classes.add(button.getElement(),
                 'goog-css3-button-checked');
         } else {
-            goog.dom.classes.add(button.getElement(),
+            goog.dom.classes.remove(button.getElement(),
                 'goog-css3-button-checked');
         }
     }, this);
 
-    if(plan) {
+    if (plan !== 'free') {
         this.makeCCardFieldsRequired(true);
         goog.style.setElementShown(this.ccardEl, true);
 
@@ -107,7 +90,7 @@ app.org.panel.SignUp.prototype.checkCreditCardNumberValidity = function() {
     var cardType = document.getElementById('crdType');
     var cardNumber = document.getElementById('crdNumber');
 
-    if (billPlan && billPlan.value > 0) {
+    if (billPlan && billPlan.value !== 'free') {
         if (cardType && cardType.value === 'none') {
             cardType.setCustomValidity('Please select a card type');
             return false;
@@ -118,7 +101,8 @@ app.org.panel.SignUp.prototype.checkCreditCardNumberValidity = function() {
                 var type = cardType.value;
                 var isValid = bad.utils.creditCardValidator(number, type);
                 if (!isValid) {
-                    cardNumber.setCustomValidity('This is not a valid card number');
+                    cardNumber.setCustomValidity(
+                        'This is not a valid card number');
                     return false;
                 } else {
                     cardNumber.setCustomValidity('');
@@ -142,7 +126,7 @@ app.org.panel.SignUp.prototype.onSubmitSignUp = function(queryData, e) {
         console.debug('We have success...');
         console.debug('Herald: ', app.org.EventType.UPDATE_SUCCESS);
         var orgId = data['data']['_id'];
-        this.dispatchActionEvent(app.org.EventType.UPDATE_SUCCESS, {id:orgId});
+        this.dispatchActionEvent(app.org.EventType.UPDATE_SUCCESS, {id: orgId});
     } else {
         this.displayErrors(data);
     }
@@ -150,7 +134,7 @@ app.org.panel.SignUp.prototype.onSubmitSignUp = function(queryData, e) {
 
 app.org.panel.SignUp.prototype.makeCCardFieldsRequired = function(bool) {
     var fields = ['crdName', 'crdType', 'crdNumber', 'crdExpDate', 'crdCvv'];
-    if(bool) {
+    if (bool) {
         goog.array.forEach(fields, function(id) {
             var field = this.dom_.getElement(id);
             field.setAttribute('required', 'required');

@@ -109,14 +109,29 @@ var updateProfile = function(uid, newOrg, subset, callback) {
         }
     };
 
+    var doc = {};
+    switch(subset){
+        case 'profile':
+            doc = {$set: {
+                loc: newOrg.loc,
+                box: newOrg.box,
+                'profile.orgUrl': newOrg.profile.orgUrl}
+            };
+            break;
+        case 'billing':
+            doc = {$set: {
+                bill: newOrg.bill,
+                card: newOrg.card}
+            };
+            break;
+        default:
+            console.log('Unknown subset', subset);
+    }
+
     ORGS.findAndModify(
         {_id: BSON.ObjectID(uid)}, // query
         [['_id','asc']],           // sort order
-        {$set: {
-            loc: newOrg.loc,
-            box: newOrg.box,
-            'profile.orgUrl': newOrg.profile.orgUrl}
-        },
+        doc,
         {new: true}, // options new - if set to true, callback function
                      // returns the modified record.
                      // Default is false (original record is returned)

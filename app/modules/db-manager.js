@@ -21,5 +21,5 @@ db.open(function(e, d) {
 
 module.exports = {
     accounts: db.collection('accounts'),
-    orgs: db.collection('organizations')
+    orgs: db.collection('orgs')
 };

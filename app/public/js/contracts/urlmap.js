@@ -8,26 +8,23 @@ exp.urlMap = {
     LOGOUT: '/logout',
     LOGIN: '/login',
     LOGIN_HEADER: '/login/header',
-    SIGNUP: '/signup',
     HOME: '/home',
 
-    PROFILE: {
-        READ: '/profile',
-        EDIT: '/profile/edit'
-    },
     PW: {
-        LOST: '/password/lost',
-        RESET: '/password/reset',
-        EDIT: '/password/edit'
+        LOST:       '/pw/lost',
+        RESET:      '/pw/reset',
+        EDIT:       '/pw/edit'
     },
     ACCOUNTS: {
-        DELETE: '/accs/delete',
-        LIST: '/accs/list'
+        CREATE:     '/accs/create',
+        READ:       '/accs',
+        UPDATE:     '/accs/update',
+        DELETE:     '/accs/delete'
     },
     ORGS: {
-        CREATE: '/organization/create',
-        READ: '/organization',
-        UPDATE: '/organization/update',
-        DELETE: '/organization/delete'
+        CREATE:     '/org/create',
+        READ:       '/org',
+        UPDATE:     '/org/update',
+        DELETE:     '/org/delete'
     }
 };

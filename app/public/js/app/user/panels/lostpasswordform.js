@@ -14,15 +14,6 @@ app.user.panel.LostPassword = function(id, opt_domHelper) {
 };
 goog.inherits(app.user.panel.LostPassword, bad.ui.Form);
 
-app.user.panel.LostPassword.prototype.enterDocument = function() {
-    this.dom_ = goog.dom.getDomHelper(this.getElement());
-    this.initDom();
-
-    // Calling this last makes sure that the final PANEL-READY event really is
-    // dispatched right at the end of all of the enterDocument calls.
-    app.user.panel.LostPassword.superClass_.enterDocument.call(this);
-};
-
 app.user.panel.LostPassword.prototype.initDom = function() {
     bad.utils.makeButton('cancel',
         goog.bind(function() {

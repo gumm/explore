@@ -6,15 +6,15 @@ goog.provide('app.doMap');
 
 goog.require('app.base.view.Home');
 goog.require('app.base.view.Persistent');
-goog.require('app.user.view.EditUser');
-goog.require('app.user.view.Login');
 goog.require('app.org.view.Org');
+goog.require('app.user.view.Account');
+goog.require('app.user.view.Login');
 goog.require('bad.ui.EventType');
 goog.require('bad.ui.Layout');
+goog.require('exp.urlMap');
 goog.require('goog.Uri');
 goog.require('goog.events.EventHandler');
 goog.require('goog.events.EventHandler');
-goog.require('exp.urlMap');
 
 /**
  * @enum {!string}
@@ -308,9 +308,9 @@ app.Site.prototype.viewHome = function() {
 app.Site.prototype.viewEditUser = function() {
 
     /**
-     * @type {app.user.view.EditUser}
+     * @type {app.user.view.Account}
      */
-    var view = new app.user.view.EditUser();
+    var view = new app.user.view.Account();
     this.switchView(view);
 };
 
