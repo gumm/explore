@@ -80,7 +80,7 @@ app.Site.prototype.rpc = function(method, opt_param) {
 
     switch (method) {
         case app.doMap.UPDATE_USER: this.updateUser_(opt_param); break;
-        case app.doMap.VIEW_EDIT_USER: this.viewEditUser(); break;
+        case app.doMap.VIEW_EDIT_USER: this.viewEditUser(opt_param); break;
         case app.doMap.USER_LOGGED_IN: this.userSignedIn(opt_param); break;
         case app.doMap.VIEW_LOGIN: this.viewLogin(); break;
         case app.doMap.RESET_PASSWORD: this.viewLogin(true); break;
@@ -270,6 +270,8 @@ app.Site.prototype.switchView = function(view) {
     this.activeView_.render();
     this.listen(
         this.activeView_, bad.ui.EventType.APP_DO, this.onApDo);
+
+    console.info('Listeners: ', goog.events.getTotalListenerCount());
 };
 
 /**
@@ -278,6 +280,7 @@ app.Site.prototype.switchView = function(view) {
 app.Site.prototype.onApDo = function(e) {
     var method = e.data.method;
     var param = e.data.param;
+    e.stopPropagation();
     this.rpc(method, param);
 };
 
@@ -298,6 +301,8 @@ app.Site.prototype.viewLogin = function(opt_reset) {
 
 app.Site.prototype.viewHome = function() {
 
+    console.debug('Creating new home view')
+
     /**
      * @type {app.base.view.Home}
      */
@@ -305,12 +310,12 @@ app.Site.prototype.viewHome = function() {
     this.switchView(view);
 };
 
-app.Site.prototype.viewEditUser = function() {
+app.Site.prototype.viewEditUser = function(opt_landing) {
 
     /**
      * @type {app.user.view.Account}
      */
-    var view = new app.user.view.Account();
+    var view = new app.user.view.Account(opt_landing);
     this.switchView(view);
 };
 

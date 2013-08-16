@@ -1,17 +1,20 @@
 - org = typeof(orgObj) != 'undefined' ? orgObj : {}
 
-.container-440-center
-    h2.icon-building
-        span(style="margin-left: 20px") #{org.profile.orgName}
+.container-440-left
+    .detail-head
+        .content Orginization Account
 
     if org.profile.orgUrl
-        dl.dl-horizontal
+        .dl-hwrap
+            .dl-head Contact
+        dl.dl-horizontal.left-100
             dt Homepage
             dd
                 a=org.profile.orgUrl
 
-    h4 Physical Address
-    dl.dl-horizontal
+    .dl-hwrap
+        .dl-head Physical Address
+    dl.dl-horizontal.left-100
         dt Street
         dd= org.loc.locStreet
 
@@ -27,8 +30,9 @@
         dt Country
         dd= org.loc.locCountry
 
-    h4 Postal Address
-    dl.dl-horizontal
+    .dl-hwrap
+        .dl-head Postal Address
+    dl.dl-horizontal.left-100
         dt PoBox Number
         dd= org.box.boxNum
 
@@ -44,8 +48,9 @@
         dt Country
         dd= org.box.boxCountry
 
-    h4 Members
-    dl.dl-horizontal
+    .dl-hwrap
+        .dl-head Members
+    dl.dl-horizontal.left-100
         dt No. of Owners
         dd= org.owners.length || 'None'
 

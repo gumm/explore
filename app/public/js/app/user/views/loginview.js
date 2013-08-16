@@ -31,7 +31,7 @@ app.user.view.Login.prototype.configurePanels = function() {
     this.headerPanel.setUri(new goog.Uri(exp.urlMap.HEADER));
     this.headerPanel.setNestAsTarget(layout.getNest('header'));
     this.headerPanel.setBeforeReadyCallback(goog.bind(function() {
-        bad.utils.makeButton('create-account',
+        bad.utils.makeButton('create-account', this.headerPanel,
             goog.bind(this.enterSignUpForm, this)
         );
     }, this));

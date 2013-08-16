@@ -16,15 +16,12 @@ app.base.view.Home.prototype.configurePanels = function() {
     var layout = this.getLayout();
     var user = this.getUser();
 
-    this.homePanel = new app.base.panel.Home();
-    this.homePanel.setUri(new goog.Uri(exp.urlMap.HOME));
-    this.homePanel.setUser(user);
-    this.homePanel.setNestAsTarget(layout.getNest('main', 'center'));
-    this.addPanelToView(bad.utils.makeId(), this.homePanel);
-};
-
-app.base.view.Home.prototype.displayPanels = function() {
-    this.homePanel.renderWithTemplate();
+    var homePanel = new app.base.panel.Home();
+    homePanel.setUri(new goog.Uri(exp.urlMap.HOME));
+    homePanel.setUser(user);
+    homePanel.setNestAsTarget(layout.getNest('main', 'center'));
+    this.addPanelToView(bad.utils.makeId(), homePanel);
+    homePanel.renderWithTemplate();
 };
 
 /**

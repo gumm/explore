@@ -17,11 +17,11 @@ goog.inherits(app.user.panel.DeleteAccount, bad.ui.Form);
 
 app.user.panel.DeleteAccount.prototype.initDom = function() {
     bad.utils.makeButton(
-        'remove-account-cancel',
+        'remove-account-cancel', this,
         goog.bind(this.cancel, this));
 
     bad.utils.makeButton(
-        'remove-account-confirm',
+        'remove-account-confirm', this,
         goog.bind(this.submitConfirmation, this)
     );
 };

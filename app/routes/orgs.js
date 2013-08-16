@@ -51,8 +51,12 @@ exp.routes.orgs.create = function(req, res) {
 
 exp.routes.orgs.read = function(req, res) {
     var id = req.params.id;
-    if(id) {
+    var subset = req.params.subset;
+
+    if(id && !subset) {
         exp.routes.orgs.readOne_(req, res, id);
+    } else if (id && subset) {
+        exp.routes.orgs.readOne_(req, res, id, subset);
     } else {
         exp.routes.orgs.readList_(req, res);
     }
@@ -77,16 +81,38 @@ exp.routes.orgs.readList_ = function(req, res) {
     helper.okGo(req, res, {'GET': getCall});
 };
 
-exp.routes.orgs.readOne_ = function(req, res, id) {
-    var callback = function(err, org) {
-        if (err) {
-            res.send(
-                helper.makeReplyWith(
-                    'Could not get organizations' + err), 400);
-        } else {
-            res.render('orgs/view', {orgObj: org});
-        }
-    };
+exp.routes.orgs.readOne_ = function(req, res, id, opt_subset) {
+    var callback;
+    if (opt_subset) {
+        var subset = opt_subset;
+        callback = function(err, org) {
+            if (err) {
+                res.send(
+                    helper.makeReplyWith(
+                        'Could not get organizations' + err), 400);
+            } else {
+                if(org[subset]) {
+                    res.send(
+                        helper.makeReplyWith(
+                            null, org[subset], 'Subset: ' + subset), 200);
+                } else {
+                    res.send(
+                    helper.makeReplyWith(
+                        'Subset not available' + err), 400);
+                }
+            }
+        };
+    } else {
+        callback = function(err, org) {
+            if (err) {
+                res.send(
+                    helper.makeReplyWith(
+                        'Could not get organizations' + err), 400);
+            } else {
+                res.render('orgs/view', {orgObj: org});
+            }
+        };
+    }
 
     var getCall = function() {
         OM.getOrgBId(id, callback);
@@ -99,9 +125,6 @@ exp.routes.orgs.update = function(req, res) {
 
     var id = req.params.id;
     var subset = req.params.subset;
-    console.log('ID:', id);
-    console.log('SUBSET:', subset);
-
     var getCallback = function(err, org) {
         if (err) {
             res.send(

@@ -25,7 +25,7 @@ goog.inherits(app.org.view.Org, bad.ui.View);
 
 app.org.view.Org.prototype.displayPanels = function() {
     if (this.activeOrgId_) {
-        this.createNavPanel();
+        this.createNavPanel(this.activeOrgId_);
         this.createOrgViewPanel();
     } else {
         this.createOrgEditPanel();
@@ -66,16 +66,21 @@ app.org.view.Org.prototype.createOrgEditPanel = function(opt_uri) {
     panel.renderWithTemplate();
 };
 
-app.org.view.Org.prototype.createNavPanel = function() {
+app.org.view.Org.prototype.createNavPanel = function(orgId) {
+
+    var uriString = exp.urlMap.ORGS.READ + '/' + orgId + '/profile';
+
     /**
      * @type {app.org.panel.NavPanel}
      */
     var panel = new app.org.panel.NavPanel();
+    panel.setUri(new goog.Uri(uriString));
     panel.setUser(this.getUser());
     panel.setNestAsTarget(this.getLayout().getNest('main', 'left', 'mid'));
     panel.setBeforeReadyCallback(goog.bind(this.slideNavIn, this));
     this.addPanelToView(bad.utils.makeId(), panel);
-    panel.render();
+
+    panel.renderWithJSON(goog.bind(panel.onOrgInfo, panel));
 };
 
 /**
@@ -95,7 +100,11 @@ app.org.view.Org.prototype.onPanelAction = function(e) {
      */
     switch (value) {
         case app.org.EventType.CANCEL:
-            this.displayPanels();
+            if (this.activeOrgId_) {
+                this.displayPanels();
+            } else {
+                this.appDo(app.doMap.VIEW_EDIT_USER, 'orgList');
+            }
             break;
         case app.org.EventType.UPDATE_PROFILE:
             this.enterEditForm(exp.urlMap.ORGS.UPDATE + '/' +

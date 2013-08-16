@@ -17,7 +17,7 @@ app.user.panel.Login = function(id, opt_domHelper) {
 goog.inherits(app.user.panel.Login, bad.ui.Form);
 
 app.user.panel.Login.prototype.initDom = function() {
-    bad.utils.makeButton('btn-login',
+    bad.utils.makeButton('btn-login', this,
         goog.bind(this.submitLoginForm, this)
     );
 
@@ -25,7 +25,6 @@ app.user.panel.Login.prototype.initDom = function() {
         goog.dom.getElement('forgot-password'),
         goog.events.EventType.CLICK,
         function() {
-            //noinspection JSPotentiallyInvalidUsageOfThis
             this.dispatchActionEvent(app.user.EventType.FORGOT_PW);
         }, undefined, this
     );

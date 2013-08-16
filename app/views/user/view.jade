@@ -7,26 +7,29 @@
     location: { city: 'Cape Town', country: 'South Africa' },
     contact: { phone: '+27123456789', cell: '082123456' } }
 
-.container-440-center
-    h2.icon-user
-        span(style="margin-left: 20px") #{account.name} #{account.surname}
+.container-440-left
+    .detail-head
+        .content Accounts
 
     if account.url
-        dl.dl-horizontal
+        .dl-hwrap
+            .dl-head Contact
+        dl.dl-horizontal.left-100
             dt Homepage
             dd
                 a(href=account.url)= account.url
-
-    h4 Physical Address
-    dl.dl-horizontal
+    .dl-hwrap
+        .dl-head Physical Address
+    dl.dl-horizontal.left-100
         dt City
         dd= account.location.city
 
         dt Country
         dd= account.location.country
 
-    h4 Contact Details
-    dl.dl-horizontal
+    .dl-hwrap
+        .dl-head Contact Details
+    dl.dl-horizontal.left-100
         dt Email
         dd
             a(href='mailto:' + account.email)= account.email

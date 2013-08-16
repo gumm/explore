@@ -15,18 +15,24 @@ app.base.view.Persistent = function(mqtt) {
 goog.inherits(app.base.view.Persistent, bad.ui.View);
 
 app.base.view.Persistent.prototype.configurePanels = function() {
-    var layout = this.getLayout();
-    var user = this.getUser();
+    var callback = goog.bind(function() {
+            this.getHandler().listen(
+            goog.dom.getElement('logoImg'),
+            goog.events.EventType.CLICK,
+            function() {
+                this.switchView(goog.bind(
+                    this.appDo, this, app.doMap.VIEW_HOME));
+            }, undefined, this
+        );
+    }, this);
 
-    this.headerPanel = new app.base.panel.Persistent(this.mqtt);
-    this.headerPanel.setUri(new goog.Uri('/header'));
-    this.headerPanel.setUser(user);
-    this.headerPanel.setNestAsTarget(layout.getNest('header'));
-    this.addPanelToView(bad.utils.makeId(), this.headerPanel);
-};
-
-app.base.view.Persistent.prototype.displayPanels = function() {
-    this.headerPanel.renderWithTemplate();
+    var headerPanel = new app.base.panel.Persistent(this.mqtt);
+    headerPanel.setUri(new goog.Uri(exp.urlMap.HEADER));
+    headerPanel.setUser(this.getUser());
+    headerPanel.setNestAsTarget( this.getLayout().getNest('header'));
+    headerPanel.setBeforeReadyCallback(callback);
+    this.addPanelToView(bad.utils.makeId(), headerPanel);
+    headerPanel.renderWithTemplate();
 };
 
 /**

@@ -16,17 +16,17 @@ app.user.panel.SignUp = function(id, opt_domHelper) {
 goog.inherits(app.user.panel.SignUp, bad.ui.Form);
 
 app.user.panel.SignUp.prototype.initDom = function() {
-    bad.utils.makeButton('account-cancel',
+    bad.utils.makeButton('account-cancel', this,
         goog.bind(this.onCancel, this)
     );
 
-    bad.utils.makeButton('account-submit',
+    bad.utils.makeButton('account-submit', this,
         goog.bind(this.submitSignUp, this)
     );
 
     var el = goog.dom.getElement('remove-account');
     if (el) {
-        bad.utils.makeButton('remove-account',
+        bad.utils.makeButton('remove-account', this,
             goog.bind(this.dispatchActionEvent, this,
                 app.user.EventType.ACCOUNT_REMOVE)
         );

@@ -4,8 +4,9 @@
 //- store the userId on the client side in a hidden input field
 input(type='hidden', value= account._id)#accountId
 
-#account-form-container.container-440-center
-    h3 #{title}
+#account-form-container.container-440-left
+    .detail-head
+            .content #{title}
     form()#account-form.form-horizontal.well
         p#sub1.subheading #{subhead}
         hr
@@ -133,8 +134,9 @@ input(type='hidden', value= account._id)#accountId
                     #account-submit.g-button-submit #{button_legend}
 
 if (formtype === 'editpassword')
-    #removeAccount.container-440-center
-        h3 Remove this account
+    #removeAccount.container-440-left
+        .detail-head
+            .content Remove this account
         form()#remove-account-form.form-horizontal.well
             p#sub1
                 strong This will destroy everything. There is no going back after this.

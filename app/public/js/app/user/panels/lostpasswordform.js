@@ -15,14 +15,14 @@ app.user.panel.LostPassword = function(id, opt_domHelper) {
 goog.inherits(app.user.panel.LostPassword, bad.ui.Form);
 
 app.user.panel.LostPassword.prototype.initDom = function() {
-    bad.utils.makeButton('cancel',
+    bad.utils.makeButton('cancel', this,
         goog.bind(function() {
             this.clearAlerts();
             this.dispatchActionEvent(app.user.EventType.FORGOT_PW_CANCEL);
         }, this)
     );
 
-    bad.utils.makeButton('submit',
+    bad.utils.makeButton('submit', this,
         goog.bind(this.submitLostPasswordForm, this)
     );
 };

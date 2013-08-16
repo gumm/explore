@@ -8,29 +8,40 @@ goog.require('app.user.panel.SignUp');
 goog.require('bad.ui.View');
 
 /**
+ * @param {string=} opt_landing Optional panel to land on.
  * @extends {bad.ui.View}
  * @constructor
  */
-app.user.view.Account = function() {
+app.user.view.Account = function(opt_landing) {
     bad.ui.View.call(this);
+
+    this.landing_ = opt_landing || null;
 };
 goog.inherits(app.user.view.Account, bad.ui.View);
 
 app.user.view.Account.prototype.configurePanels = function() {
     var layout = this.getLayout();
+    var user = this.getUser();
 
     /**
      * @type {bad.ui.Panel}
      */
-    this.navPanel = new app.user.panel.NavPanel();
-    this.navPanel.setNestAsTarget(layout.getNest('main', 'left', 'mid'));
-    this.navPanel.setBeforeReadyCallback(goog.bind(this.slideNavIn, this));
-    this.addPanelToView(bad.utils.makeId(), this.navPanel);
-    this.navPanel.render();
+    var navPanel = new app.user.panel.NavPanel();
+    navPanel.setUser(user);
+    navPanel.setNestAsTarget(layout.getNest('main', 'left', 'mid'));
+    navPanel.setBeforeReadyCallback(goog.bind(this.slideNavIn, this));
+    this.addPanelToView(bad.utils.makeId(), navPanel);
+    navPanel.render();
 };
 
 app.user.view.Account.prototype.displayPanels = function() {
-    this.enterLandingView();
+    switch(this.landing_) {
+        case 'orgList':
+            this.enterOrgsList();
+            break;
+        default:
+            this.enterOverview();
+    }
 };
 
 /**
@@ -44,14 +55,14 @@ app.user.view.Account.prototype.onPanelAction = function(e) {
 
     switch (value) {
         case app.user.EventType.SIGNUP_CANCEL:
-            this.displayPanels();
+            this.enterOverview();
             break;
         case app.user.EventType.SIGNUP_SUCCESS:
             this.appDo(app.doMap.UPDATE_USER, data.reply['data']);
             this.switchView(goog.bind(this.appDo, this, app.doMap.VIEW_HOME));
             break;
         case app.user.EventType.ACCOUNT_REMOVE_CANCELED:
-            this.displayPanels();
+            this.enterOverview();
             break;
         case app.user.EventType.ACCOUNT_REMOVE:
             this.confirmRemoveAccount();
@@ -71,6 +82,9 @@ app.user.view.Account.prototype.onPanelAction = function(e) {
         case app.user.EventType.EDIT_ORG:
             this.switchView(
                 goog.bind(this.appDo, this, app.doMap.VIEW_ORG, data.id));
+            break;
+        case app.user.EventType.VIEW_ACCOUNT:
+            this.enterOverview();
             break;
         default:
             console.log('app.user.view.Account No action for: ', value);
@@ -118,7 +132,7 @@ app.user.view.Account.prototype.enterOrgsList = function() {
     panel.renderWithTemplate();
 };
 
-app.user.view.Account.prototype.enterLandingView = function() {
+app.user.view.Account.prototype.enterOverview = function() {
 
     var layout = this.getLayout();
     var user = this.getUser();

@@ -18,18 +18,18 @@ app.org.panel.SignUp = function(id, opt_domHelper) {
 goog.inherits(app.org.panel.SignUp, bad.ui.Form);
 
 app.org.panel.SignUp.prototype.initDom = function() {
-    bad.utils.makeButton('orgFormCancel',
+    bad.utils.makeButton('orgFormCancel', this,
         goog.bind(this.onCancel, this)
     );
 
-    bad.utils.makeButton('orgFormSubmit',
+    bad.utils.makeButton('orgFormSubmit', this,
         goog.bind(this.submitSignUp, this)
     );
 
     if (this.dom_.getElement('bill')) {
 
         goog.object.forEach(exp.productMap, function(product, key) {
-            this.productButtons_[key] = bad.utils.makeToggleButton(key,
+            this.productButtons_[key] = bad.utils.makeToggleButton(key, this,
                 goog.bind(this.choosePlan_, this, key)
             );
         }, this);
@@ -123,8 +123,6 @@ app.org.panel.SignUp.prototype.onSubmitSignUp = function(queryData, e) {
     var data = xhr.getResponseJson();
     this.clearAlerts();
     if (xhr.isSuccess()) {
-        console.debug('We have success...');
-        console.debug('Herald: ', app.org.EventType.UPDATE_SUCCESS);
         var orgId = data['data']['_id'];
         this.dispatchActionEvent(app.org.EventType.UPDATE_SUCCESS, {id: orgId});
     } else {

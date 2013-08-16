@@ -42,7 +42,40 @@ app.user.panel.NavPanel.prototype.buildNavMenu = function() {
         menuItems, this.dom_, this.getHandler(), this, renderer,
         itemRenderer, stickySelect);
 
+    this.addChild(menu);
     menu.render(this.getElement());
     var menuElement = menu.getElement();
     goog.dom.classes.add(menuElement, 'well', 'menu-nav');
+
+    this.appendMenuTitle(menu);
+};
+
+app.user.panel.NavPanel.prototype.appendMenuTitle = function(menu) {
+
+    var user = this.getUser();
+    var salutation = this.user_['name'];
+    if (this.user_['surname']) {
+        salutation = salutation + ' ' + this.user_['surname'];
+    }
+
+    if (user) {
+        var child = this.dom_.createDom('div', {
+            style: 'padding-left: 28px; ' +
+                'border-bottom: 1px solid rgb(204, 204, 204)'
+        },
+        this.dom_.createDom('h3', {
+            style: 'margin: 0'
+        }, salutation));
+        this.dom_.insertChildAt(
+            this.dom_.getElementByClass('menu-nav',
+                this.getElement()), child, 0);
+        this.getHandler().listen(
+            child,
+            goog.events.EventType.CLICK,
+            function() {
+                menu.unStickAll();
+                this.dispatchActionEvent(app.user.EventType.VIEW_ACCOUNT);
+            }, undefined, this
+        );
+    }
 };

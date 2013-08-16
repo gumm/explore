@@ -8,6 +8,7 @@ app.user.EventType = {
     EDIT_ACCOUNT: bad.utils.privateRandom(),
     EDIT_PW: bad.utils.privateRandom(),
     VIEW_ORG: bad.utils.privateRandom(),
+    VIEW_ACCOUNT: bad.utils.privateRandom(),
     EDIT_ORG: bad.utils.privateRandom(),
     SIGNUP_CANCEL: bad.utils.privateRandom(),
     SIGNUP_SUCCESS: bad.utils.privateRandom(),

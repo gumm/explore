@@ -18,9 +18,10 @@ app.org.panel.List.prototype.initDom = function() {
     var tableElement = this.dom_.getElement('orgTable');
 
     if (buttonElement) {
-        bad.utils.makeButton('create-org',
+        var button = bad.utils.makeButton('createOrgBut', this,
             goog.bind(this.dispatchActionEvent, this, app.doMap.VIEW_ORG_CREATE)
         );
+        console.debug('button parent', button.getParent());
     }
 
     if (tableElement) {
@@ -28,6 +29,7 @@ app.org.panel.List.prototype.initDom = function() {
         table.element_ = tableElement;
         table.setTarget(this.dom_.getElement('orgContainer'));
         this.addChild(table);
+        console.debug('table parent', table.getParent());
 
         this.getHandler().listen(
             table.element_,

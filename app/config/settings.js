@@ -32,7 +32,7 @@ exp.settings.conf = {
         }
     },
     engine: 'jade',
-    production: true,
+    production: false,
     compiled: {
         JS: false,
         CSS: false
@@ -49,7 +49,7 @@ exp.settings.init = function(dev) {
     var conf = exp.settings.conf;
     if (dev) {
         conf.production = false;
-        conf.mqttServer = '54.229.30.67';
+        conf.mqttServer = 'localhost';
         conf.mqttPort = 1883;
         conf.wsServer = 'localhost';
         conf.wsPort = process.env.PORT || 3000;
