@@ -9,7 +9,7 @@ goog.addDependency('../../../../../../app/public/js/app/base/panels/homepanel.js
 goog.addDependency('../../../../../../app/public/js/app/base/panels/persistentpanel.js', ['app.base.panel.Persistent'], ['bad.MqttWsIo', 'bad.ui.MenuFloatRenderer', 'bad.ui.MenuItemRenderer', 'bad.ui.Panel', 'goog.ui.Css3MenuButtonRenderer', 'goog.ui.Menu', 'goog.ui.MenuButton', 'goog.ui.MenuItem', 'goog.ui.MenuSeparator']);
 goog.addDependency('../../../../../../app/public/js/app/base/views/homeview.js', ['app.base.view.Home'], ['app.base.panel.Home', 'bad.ui.View']);
 goog.addDependency('../../../../../../app/public/js/app/base/views/persistent.js', ['app.base.view.Persistent'], ['app.base.EventType', 'app.base.panel.Persistent', 'bad.ui.View']);
-goog.addDependency('../../../../../../app/public/js/app/orgs/constants.js', ['app.org.ElMap', 'app.org.EventType'], []);
+goog.addDependency('../../../../../../app/public/js/app/orgs/constants.js', ['app.org.EventType'], []);
 goog.addDependency('../../../../../../app/public/js/app/orgs/panels/list.js', ['app.org.panel.List'], ['bad.ui.Panel']);
 goog.addDependency('../../../../../../app/public/js/app/orgs/panels/navpanel.js', ['app.org.panel.NavPanel'], ['bad.ui.Form', 'bad.ui.MenuFlatRenderer', 'bad.ui.MenuItemRenderer', 'goog.style', 'goog.ui.CustomButton']);
 goog.addDependency('../../../../../../app/public/js/app/orgs/panels/signupform.js', ['app.org.panel.SignUp'], ['bad.ui.Form', 'exp.productMap', 'goog.ui.CustomButton']);
@@ -950,8 +950,8 @@ goog.addDependency('../../../../../../app/public/js/contracts/ccardmap.js', ['ex
 goog.addDependency('../../../../../../app/public/js/contracts/countrylist.js', ['exp.countryList'], []);
 goog.addDependency('../../../../../../app/public/js/contracts/productmap.js', ['exp.productMap'], []);
 goog.addDependency('../../../../../../app/public/js/contracts/urlmap.js', ['exp.urlMap'], []);
+goog.addDependency('../../../../../../app/routes/basic.js', ['exp.routes'], ['exp.routesHelper']);
 goog.addDependency('../../../../../../app/routes/helper.js', ['exp.routesHelper'], []);
-goog.addDependency('../../../../../../app/routes/index.js', ['exp.routes'], ['exp.routesHelper']);
 goog.addDependency('../../../../../../app/routes/orgs.js', ['exp.routes.orgs'], ['exp.EmailDispatcher', 'exp.cCardMap', 'exp.productMap', 'exp.routesHelper', 'goog.object']);
 goog.addDependency('../../../../../../app/routes/user.js', ['exp.routes.user'], ['exp.EmailDispatcher', 'exp.countryList', 'exp.routesHelper']);
 goog.addDependency('../../../../../../app/src/bridge.js', ['exp.Bridge'], []);

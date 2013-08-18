@@ -6,7 +6,7 @@ goog.addDependency('../../../app/base/panels/homepanel.js', ['app.base.panel.Hom
 goog.addDependency('../../../app/base/panels/persistentpanel.js', ['app.base.panel.Persistent'], ['bad.MqttWsIo', 'bad.ui.MenuFloatRenderer', 'bad.ui.MenuItemRenderer', 'bad.ui.Panel', 'goog.ui.Css3MenuButtonRenderer', 'goog.ui.Menu', 'goog.ui.MenuButton', 'goog.ui.MenuItem', 'goog.ui.MenuSeparator']);
 goog.addDependency('../../../app/base/views/homeview.js', ['app.base.view.Home'], ['app.base.panel.Home', 'bad.ui.View']);
 goog.addDependency('../../../app/base/views/persistent.js', ['app.base.view.Persistent'], ['app.base.EventType', 'app.base.panel.Persistent', 'bad.ui.View']);
-goog.addDependency('../../../app/orgs/constants.js', ['app.org.ElMap', 'app.org.EventType'], []);
+goog.addDependency('../../../app/orgs/constants.js', ['app.org.EventType'], []);
 goog.addDependency('../../../app/orgs/panels/list.js', ['app.org.panel.List'], ['bad.ui.Panel']);
 goog.addDependency('../../../app/orgs/panels/navpanel.js', ['app.org.panel.NavPanel'], ['bad.ui.Form', 'bad.ui.MenuFlatRenderer', 'bad.ui.MenuItemRenderer', 'goog.style', 'goog.ui.CustomButton']);
 goog.addDependency('../../../app/orgs/panels/signupform.js', ['app.org.panel.SignUp'], ['bad.ui.Form', 'exp.productMap', 'goog.ui.CustomButton']);

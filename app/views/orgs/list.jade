@@ -15,20 +15,15 @@
                             td= index + 1
                             td= org.profile.orgName
 
-            fieldset
-                .form-actions
-                    .form-action-right
-                        #createOrgBut.g-button-submit
-                            i.icon-group
-                            | Create new organization
-
         else
             .form-horizontal.well
                 p#sub1
                     strong You are not a member of any organization yet.
-                fieldset
-                    .form-actions
-                        .form-action-right
-                            #createOrgBut.g-button-submit
-                                i.icon-group
-                                | Create new organization
+
+        fieldset
+            .form-actions
+                .form-action-right
+                    #cancelOrgBut Cancel
+                    #createOrgBut.g-button-submit
+                        i.icon-group
+                        | Create new organization

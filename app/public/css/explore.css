@@ -1,5 +1,21 @@
 /*---------------------------------------------------------------[ Explore ]--*/
 
+/* Fix Google Maps canvas
+ *
+ * Wrap your Google Maps embed in a `.google-map-canvas` to reset Bootstrap's
+ * global `box-sizing` changes. You may optionally need to reset the `max-width`
+ * on images in case you've applied that anywhere else. (That shouldn't be as
+ * necessary with Bootstrap 3 though as that behavior is relegated to the
+ * `.img-responsive` class.)
+ */
+
+.google-map-canvas,
+.google-map-canvas * {.box-sizing(content-box); }
+
+/* Optional responsive image override */
+img { max-width: none; }
+
+
 .clickable {
     cursor: pointer;
 }
@@ -149,6 +165,14 @@ span i[class^="icon-"], span i[class*=" icon-"] {
   margin: 30px  0 0 30px;
 }
 
+.container-440-right {
+  position: absolute;
+  top: 122px;
+  left: 0;
+  width: 440px;
+  margin: 30px 0 0 500px;
+}
+
 .container-440-center {
   width: 440px;
   margin: 30px auto 0 auto;
@@ -241,6 +265,7 @@ label {
 .pan-wrapper {
     height: 100%;
     overflow: auto;
+    position: relative;
 }
 
 .org_progress > .active {
@@ -270,8 +295,10 @@ label {
 }
 
 .dl-horizontal.left-100 dt {
-    text-align: left;
     width: 100px;
+    margin-right: 10px;
+    border-right: 1px solid rgb(235, 235, 235);
+    padding-right: 10px;
 }
 
 .dl-horizontal.left-100 dd {

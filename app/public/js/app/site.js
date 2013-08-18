@@ -213,7 +213,7 @@ app.Site.prototype.initHeader = function() {
 
 app.Site.prototype.autoLogin = function() {
     var callback = goog.bind(this.onAutoLoginReply, this);
-    this.xMan_.get(new goog.Uri(exp.urlMap.AUTO_LOGIN), callback);
+    this.xMan_.get(new goog.Uri(exp.urlMap.LOG.AUTO), callback);
 };
 
 /**

@@ -28,7 +28,7 @@ app.user.view.Login.prototype.configurePanels = function() {
      * @type {bad.ui.Panel}
      */
     this.headerPanel = new bad.ui.Panel();
-    this.headerPanel.setUri(new goog.Uri(exp.urlMap.HEADER));
+    this.headerPanel.setUri(new goog.Uri(exp.urlMap.BASIC.HEADER));
     this.headerPanel.setNestAsTarget(layout.getNest('header'));
     this.headerPanel.setBeforeReadyCallback(goog.bind(function() {
         bad.utils.makeButton('create-account', this.headerPanel,
@@ -42,7 +42,7 @@ app.user.view.Login.prototype.configurePanels = function() {
      * @type {bad.ui.Panel}
      */
     this.introPanel = new bad.ui.Panel();
-    this.introPanel.setUri(new goog.Uri(exp.urlMap.INTRO));
+    this.introPanel.setUri(new goog.Uri(exp.urlMap.BASIC.INTRO));
     this.introPanel.setNestAsTarget(layout.getNest('main', 'center'));
     this.addPanelToView(bad.utils.makeId(), this.introPanel);
 
@@ -51,7 +51,7 @@ app.user.view.Login.prototype.configurePanels = function() {
      * @type {app.user.panel.Login}
      */
     this.loginPanel = new app.user.panel.Login('login-form');
-    this.loginPanel.setUri(new goog.Uri(exp.urlMap.LOGIN));
+    this.loginPanel.setUri(new goog.Uri(exp.urlMap.LOG.IN));
     this.loginPanel.setNestAsTarget(layout.getNest('main', 'right', 'mid'));
     this.addPanelToView(bad.utils.makeId(), this.loginPanel);
 

@@ -16,7 +16,7 @@ form()#orgForm.form-horizontal.well
                         required)
             if (formtype === 'create' || formtype === 'profile')
                 .control-group
-                    label.control-label(for='billEmail') Email
+                    label.control-label(for='billEmail') Billing Email
                     .controls
                         input#billEmail.input-full-width(
                         type='email',
@@ -37,51 +37,33 @@ form()#orgForm.form-horizontal.well
 
     if (formtype === 'profile')
         fieldset
+            input(
+                type='hidden',
+                name='geoLng',
+                value= org.geo.geoLng)#geoLng
+            input(
+                type='hidden',
+                name='geoLat',
+                value= org.geo.geoLat)#geoLat
+            input(
+                type='hidden',
+                name='geoZoom',
+                value= org.geo.geoZoom)#geoZoom
+
             h4 Physical Address
             .control-group
-                label.control-label(for='locStreet') Street
-                .controls
-                    input#locStreet.input-full-width(
-                    type='text',
-                    name='locStreet',
-                    value=org.loc.locStreet,
-                    placeholder="Street name and number")
+                #mapCanvas(style='width: 400px; height: 300px;')
             .control-group
-                label.control-label(for='locSuburb') Suburb
-                .controls
-                    input#locSuburb.input-full-width(
+                input#geoAddress.input-full-width(
                     type='text',
-                    name='locSuburb',
-                    value=org.loc.locSuburb,
-                    placeholder="Suburb")
-            .control-group
-                label.control-label(for='locCode') Code
-                .controls
-                    input#locCode.input-full-width(
-                    type='text',
-                    name='locCode',
-                    value=org.loc.locCode,
-                    placeholder="Postal Code")
-            .control-group
-                label.control-label(for='locCity') City
-                .controls
-                    input#locCity.input-full-width(
-                    type='text',
-                    name='locCity',
-                    value=org.loc.locCity,
-                    placeholder="Street name and number")
-            .control-group
-                label.control-label(for='locCountry') Country
-                .controls
-                    select#locCountry(
-                    name='locCountry')
-                        each item in countries
-                            option(selected=item.name == org.loc.locCountry)=item.name
+                    name='geoAddress',
+                    value= org.geo.geoAddress,
+                    placeholder="You can use the map and move the marker to your address")
 
         fieldset
             h4 Postal Address
             .control-group
-                label.control-label(for='boxNum') PoBox Number
+                label.control-label(for='boxNum') PoBox Num
                 .controls
                     input#boxNum.input-full-width(
                     type='text',

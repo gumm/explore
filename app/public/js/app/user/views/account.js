@@ -20,18 +20,15 @@ app.user.view.Account = function(opt_landing) {
 goog.inherits(app.user.view.Account, bad.ui.View);
 
 app.user.view.Account.prototype.configurePanels = function() {
-    var layout = this.getLayout();
-    var user = this.getUser();
-
     /**
      * @type {bad.ui.Panel}
      */
-    var navPanel = new app.user.panel.NavPanel();
-    navPanel.setUser(user);
-    navPanel.setNestAsTarget(layout.getNest('main', 'left', 'mid'));
-    navPanel.setBeforeReadyCallback(goog.bind(this.slideNavIn, this));
-    this.addPanelToView(bad.utils.makeId(), navPanel);
-    navPanel.render();
+    this.nav = new app.user.panel.NavPanel();
+    this.nav.setUser(this.getUser());
+    this.nav.setNestAsTarget(this.getLayout().getNest('main', 'left', 'mid'));
+    this.nav.setBeforeReadyCallback(goog.bind(this.slideNavIn, this));
+    this.addPanelToView(bad.utils.makeId(), this.nav);
+    this.nav.render();
 };
 
 app.user.view.Account.prototype.displayPanels = function() {
@@ -76,6 +73,9 @@ app.user.view.Account.prototype.onPanelAction = function(e) {
         case app.user.EventType.VIEW_ORG:
             this.enterOrgsList();
             break;
+        case app.user.EventType.CANCEL_VIEW_ORG:
+            this.enterOverview();
+            break;
         case app.doMap.VIEW_ORG_CREATE:
             this.switchView(goog.bind(this.appDo, this, value));
             break;
@@ -100,17 +100,18 @@ app.user.view.Account.prototype.onPanelAction = function(e) {
 */
 app.user.view.Account.prototype.enterSignUpForm = function(value) {
 
-    var layout = this.getLayout();
-    var user = this.getUser();
     var urlString = exp.urlMap.ACCOUNTS.UPDATE;
     if (value === app.user.EventType.EDIT_PW) {
         urlString = exp.urlMap.PW.EDIT;
     }
 
+    /**
+     * @type {app.user.panel.SignUp}
+     */
     var form = new app.user.panel.SignUp('account-form');
     form.setUri(new goog.Uri(urlString));
-    form.setUser(user);
-    form.setNestAsTarget(layout.getNest('main', 'center'));
+    form.setUser(this.getUser());
+    form.setNestAsTarget(this.getLayout().getNest('main', 'center'));
     this.addPanelToView('replace', form);
     form.renderWithTemplate();
 };
@@ -121,39 +122,38 @@ app.user.view.Account.prototype.enterSignUpForm = function(value) {
 */
 app.user.view.Account.prototype.enterOrgsList = function() {
 
-    var layout = this.getLayout();
-    var user = this.getUser();
-
+    /**
+     * @type {app.org.panel.List}
+     */
     var panel = new app.org.panel.List();
     panel.setUri(new goog.Uri(exp.urlMap.ORGS.READ));
-    panel.setUser(user);
-    panel.setNestAsTarget(layout.getNest('main', 'center'));
+    panel.setUser(this.getUser());
+    panel.setNestAsTarget(this.getLayout().getNest('main', 'center'));
     this.addPanelToView('replace', panel);
     panel.renderWithTemplate();
 };
 
 app.user.view.Account.prototype.enterOverview = function() {
 
-    var layout = this.getLayout();
-    var user = this.getUser();
+    if (this.nav) {this.nav.resetMenu();}
 
+    /**
+     * @type {bad.ui.Panel}
+     */
     var panel = new bad.ui.Panel();
     panel.setUri(new goog.Uri(exp.urlMap.ACCOUNTS.READ));
-    panel.setUser(user);
-    panel.setNestAsTarget(layout.getNest('main', 'center'));
+    panel.setUser(this.getUser());
+    panel.setNestAsTarget(this.getLayout().getNest('main', 'center'));
     this.addPanelToView('replace', panel);
     panel.renderWithTemplate();
 };
 
 app.user.view.Account.prototype.confirmRemoveAccount = function() {
 
-    var layout = this.getLayout();
-    var user = this.getUser();
-
     var form = new app.user.panel.DeleteAccount('confaccdel-form');
     form.setUri(new goog.Uri(exp.urlMap.ACCOUNTS.DELETE));
-    form.setUser(user);
-    form.setNestAsTarget(layout.getNest('main', 'center'));
+    form.setUser(this.getUser());
+    form.setNestAsTarget( this.getLayout().getNest('main', 'center'));
     this.addPanelToView('replace', form);
     form.renderWithTemplate();
 };

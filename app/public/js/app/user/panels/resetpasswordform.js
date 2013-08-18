@@ -43,7 +43,7 @@ app.user.panel.ResetPassword.prototype.onSubmitSignUp = function(queryData, e) {
 
     if (xhr.isSuccess()) {
         this.xMan.post(
-            new goog.Uri(exp.urlMap.LOGIN),
+            new goog.Uri(exp.urlMap.LOG.IN),
             queryData,
             goog.bind(this.loginCallback, this)
         );

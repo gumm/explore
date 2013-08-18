@@ -38,19 +38,19 @@ app.user.panel.NavPanel.prototype.buildNavMenu = function() {
     var renderer = bad.ui.MenuFlatRenderer.getInstance();
     var itemRenderer = bad.ui.MenuItemRenderer.getInstance();
     var stickySelect = true; // This keeps the last selected item highlighted.
-    var menu = bad.utils.makeMenu(
+    this.menu_ = bad.utils.makeMenu(
         menuItems, this.dom_, this.getHandler(), this, renderer,
         itemRenderer, stickySelect);
 
-    this.addChild(menu);
-    menu.render(this.getElement());
-    var menuElement = menu.getElement();
+    this.addChild(this.menu_);
+    this.menu_.render(this.getElement());
+    var menuElement = this.menu_.getElement();
     goog.dom.classes.add(menuElement, 'well', 'menu-nav');
 
-    this.appendMenuTitle(menu);
+    this.appendMenuTitle();
 };
 
-app.user.panel.NavPanel.prototype.appendMenuTitle = function(menu) {
+app.user.panel.NavPanel.prototype.appendMenuTitle = function() {
 
     var user = this.getUser();
     var salutation = this.user_['name'];
@@ -73,9 +73,12 @@ app.user.panel.NavPanel.prototype.appendMenuTitle = function(menu) {
             child,
             goog.events.EventType.CLICK,
             function() {
-                menu.unStickAll();
                 this.dispatchActionEvent(app.user.EventType.VIEW_ACCOUNT);
             }, undefined, this
         );
     }
+};
+
+app.user.panel.NavPanel.prototype.resetMenu = function() {
+    this.menu_.unStickAll();
 };

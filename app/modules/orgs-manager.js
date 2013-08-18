@@ -14,11 +14,13 @@ var makeOrg = function(data) {
             locSuburb: data.locSuburb || null,
             locCode: data.locCode || null,
             locCity: data.locCity || null,
-            locCountry: data.locCountry || null,
-            locCords: {
-                cordLong: data.cordLong || null,
-                cordLat: data.cordLat || null
-            }
+            locCountry: data.locCountry || null
+        },
+        geo: {
+            geoLng: data.geoLng || null,
+            geoLat: data.geoLat || null,
+            geoAddress: data.geoAddress || null,
+            geoZoom: data.geoZoom || null
         },
         box: {
             boxNum: data.boxNum || null,
@@ -113,6 +115,7 @@ var updateProfile = function(uid, newOrg, subset, callback) {
     switch(subset){
         case 'profile':
             doc = {$set: {
+                geo: newOrg.geo,
                 loc: newOrg.loc,
                 box: newOrg.box,
                 'profile.orgUrl': newOrg.profile.orgUrl}

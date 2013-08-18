@@ -10,10 +10,13 @@ goog.require('exp.urlMap');
 exp.urls = function(app) {
 
     /** Index */
-    app.get(    exp.urlMap.INDEX,   exp.routes.index);
+    app.get(    exp.urlMap.INDEX,           exp.routes.index);
 
     /** Home */
-    app.get(    exp.urlMap.HOME,    exp.routes.home);
+    app.get(    exp.urlMap.BASIC.HOME,      exp.routes.home);
+    app.get(    exp.urlMap.BASIC.INTRO,     exp.routes.intro);
+    app.get(    exp.urlMap.BASIC.HEADER,    exp.routes.header);
+    app.post(   exp.urlMap.BASIC.LOGOUT,    exp.routes.logout);
 
     /** All other module urls */
     exp.userUrls(app);

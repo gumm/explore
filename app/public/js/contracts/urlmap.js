@@ -2,13 +2,19 @@ goog.provide('exp.urlMap');
 
 exp.urlMap = {
     INDEX: '/',
-    AUTO_LOGIN: '/auto_login',
-    INTRO: '/intro',
-    HEADER: '/header',
-    LOGOUT: '/logout',
-    LOGIN: '/login',
-    LOGIN_HEADER: '/login/header',
-    HOME: '/home',
+
+    LOG: {
+        AUTO: '/auto_login',
+        IN: '/login',
+        HEADER: '/login/header'
+    },
+
+    BASIC: {
+        HOME: '/home',
+        INTRO: '/intro',
+        HEADER: '/header',
+        LOGOUT: '/logout'
+    },
 
     PW: {
         LOST:       '/pw/lost',

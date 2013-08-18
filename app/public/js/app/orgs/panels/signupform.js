@@ -17,6 +17,12 @@ app.org.panel.SignUp = function(id, opt_domHelper) {
 };
 goog.inherits(app.org.panel.SignUp, bad.ui.Form);
 
+app.org.panel.SignUp.prototype.enterDocument = function() {
+    app.org.panel.SignUp.superClass_.enterDocument.call(this);
+
+    this.loadScript();
+};
+
 app.org.panel.SignUp.prototype.initDom = function() {
     bad.utils.makeButton('orgFormCancel', this,
         goog.bind(this.onCancel, this)
@@ -149,5 +155,100 @@ app.org.panel.SignUp.prototype.onCancel = function() {
     this.clearAlerts();
     this.dispatchActionEvent(app.org.EventType.CANCEL);
 };
+
+app.org.panel.SignUp.prototype.loadScript = function() {
+    callbackFunc = goog.bind(this.killCallback, this);
+    try {
+        goog.isDefAndNotNull(google.maps);
+        this.killCallback();
+    } catch (e) {
+        var script = document.createElement('script');
+        script.type = 'text/javascript';
+        script.src = 'https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&' +
+          'callback=callbackFunc';
+        document.body.appendChild(script);
+    }
+};
+
+app.org.panel.SignUp.prototype.killCallback = function() {
+    var latInput = document.getElementById('geoLat');
+    var lngInput = document.getElementById('geoLng');
+    var geoAddressInput = document.getElementById('geoAddress');
+    var geoZoomInput = document.getElementById('geoZoom');
+
+    var landLat = latInput.value || 0;
+    var landLng = lngInput.value || 0;
+    var landZoom = geoZoomInput.value || 13;
+
+    var geocoder = new google.maps.Geocoder();
+
+    function geocodePosition(pos) {
+        geocoder.geocode({latLng: pos}, function(responses) {
+            var result = '';
+            if (responses && responses.length > 0) {
+            result = responses[0].formatted_address;
+            }
+            updateMarkerAddress(result);
+        });
+    }
+
+    function updateMarkerPosition(latLng) {
+        latInput.value = latLng.lat();
+        lngInput.value = latLng.lng();
+    }
+
+    function updateMarkerAddress(str) {
+        geoAddressInput.value = str;
+    }
+
+    function updateZoomLevel(num) {
+        geoZoomInput.value = num;
+    }
+
+    function initialize() {
+      var latLng = new google.maps.LatLng(landLat, landLng);
+      var map = new google.maps.Map(document.getElementById('mapCanvas'), {
+        zoom: parseInt(landZoom, 10),
+        center: latLng,
+        mapTypeId: google.maps.MapTypeId.ROADMAP
+      });
+      var marker = new google.maps.Marker({
+        position: latLng,
+        title: 'Point A',
+        map: map,
+        draggable: true
+      });
+
+      // Update current position info.
+      updateMarkerPosition(latLng);
+      geocodePosition(latLng);
+
+      // Add dragging event listeners.
+      google.maps.event.addListener(marker, 'dragstart', function() {
+        updateMarkerAddress('Dragging...');
+      });
+
+      google.maps.event.addListener(marker, 'drag', function() {
+        updateMarkerPosition(marker.getPosition());
+      });
+
+      google.maps.event.addListener(marker, 'dragend', function() {
+        geocodePosition(marker.getPosition());
+      });
+
+      google.maps.event.addListener(map, 'dragend', function() {
+        updateZoomLevel(map.getZoom());
+      });
+
+      google.maps.event.addListener(map, 'zoom_changed', function() {
+          updateZoomLevel(map.getZoom());
+      });
+    }
+    initialize();
+};
+
+
+
+
 
 

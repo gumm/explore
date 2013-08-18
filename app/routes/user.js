@@ -80,43 +80,12 @@ exp.routes.user.login = function(req, res) {
     helper.okGo(req, res, {'GET': getCall, 'POST': postCall});
 };
 
-exp.routes.user.header = function(req, res) {
-
-    var getCall = function() {
-        if (!req.session.user) {
-            // if user is not logged-in redirect back to login page //
-            res.render('header', {});
-//            res.redirect('/');
-        } else {
-            res.render('header',
-                helper.makeReplyWith(null, req.session.user.profile));
-        }
-    };
-
-    var postCall = function() {
-        if (req.param('logout') === 'true') {
-            res.clearCookie('user');
-            res.clearCookie('pass');
-            req.session.destroy(function() {
-                res.send('ok', 200);
-            });
-        }
-    };
-
-    helper.okGo(req, res, {'GET': getCall, 'POST': postCall});
-};
-
-exp.routes.user.intro = function(req, res) {
-    var app = req.app;
-    res.render('intro', {title: app.get('title')});
-};
-
 //------------------------------------------------------------[ New Accounts ]--
 
 exp.routes.user.signUp = function(req, res) {
     var getCall = function() {
         var user = AM.makeAccount({});
-        res.render('signup', {udata: user.profile});
+        res.render('user/create', {udata: user.profile});
     };
 
     var postCall = function() {
@@ -182,7 +151,7 @@ exp.routes.user.editProfile = function(req, res) {
     var getCall = function() {
         var user = req.session.user;
         res.render(
-            'editaccount',
+            'user/edit/profile',
             {countries: exp.countryList, udata: user.profile});
     };
 
@@ -212,7 +181,7 @@ exp.routes.user.editPassword = function(req, res) {
 
     var getCall = function() {
         var user = req.session.user;
-        res.render('editpassword', {udata: user.profile});
+        res.render('user/edit/password', {udata: user.profile});
     };
 
     var postCall = function() {
@@ -330,7 +299,7 @@ exp.routes.user.deleteAccount = function(req, res) {
     var confPhrase = 'Please delete my account and all my data';
 
     var getCall = function() {
-        res.render('accountdelete', {confPhrase: confPhrase});
+        res.render('user/delete', {confPhrase: confPhrase});
     };
 
     var onDeleteCallback = function(e) {

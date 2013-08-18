@@ -98,7 +98,7 @@ app.base.panel.Persistent.prototype.setUser = function(user) {
 };
 
 app.base.panel.Persistent.prototype.logOut = function() {
-    var uri = new goog.Uri(exp.urlMap.LOGOUT);
+    var uri = new goog.Uri(exp.urlMap.BASIC.LOGOUT);
     var queryData = goog.uri.utils.buildQueryDataFromMap({'logout': true});
     this.xMan.post(uri, queryData, goog.bind(this.onLogOut, this));
 };

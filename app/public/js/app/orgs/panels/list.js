@@ -14,15 +14,16 @@ app.org.panel.List = function(opt_domHelper) {
 goog.inherits(app.org.panel.List, bad.ui.Panel);
 
 app.org.panel.List.prototype.initDom = function() {
-    var buttonElement = this.dom_.getElement('createOrgBut');
     var tableElement = this.dom_.getElement('orgTable');
 
-    if (buttonElement) {
-        var button = bad.utils.makeButton('createOrgBut', this,
-            goog.bind(this.dispatchActionEvent, this, app.doMap.VIEW_ORG_CREATE)
-        );
-        console.debug('button parent', button.getParent());
-    }
+    bad.utils.makeButton('cancelOrgBut', this,
+        goog.bind(this.dispatchActionEvent, this,
+            app.user.EventType.CANCEL_VIEW_ORG)
+    );
+
+    bad.utils.makeButton('createOrgBut', this,
+        goog.bind(this.dispatchActionEvent, this, app.doMap.VIEW_ORG_CREATE)
+    );
 
     if (tableElement) {
         var table = new bad.ui.Component();

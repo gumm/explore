@@ -27,7 +27,7 @@ app.base.view.Persistent.prototype.configurePanels = function() {
     }, this);
 
     var headerPanel = new app.base.panel.Persistent(this.mqtt);
-    headerPanel.setUri(new goog.Uri(exp.urlMap.HEADER));
+    headerPanel.setUri(new goog.Uri(exp.urlMap.BASIC.HEADER));
     headerPanel.setUser(this.getUser());
     headerPanel.setNestAsTarget( this.getLayout().getNest('header'));
     headerPanel.setBeforeReadyCallback(callback);
