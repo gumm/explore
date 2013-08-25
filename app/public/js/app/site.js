@@ -28,7 +28,8 @@ app.doMap = {
     AUTO: bad.utils.privateRandom(),
     VIEW_HOME: bad.utils.privateRandom(),
     VIEW_ORG_CREATE: bad.utils.privateRandom(),
-    VIEW_ORG: bad.utils.privateRandom()
+    VIEW_ORG: bad.utils.privateRandom(),
+    SWAP_THEME: bad.utils.privateRandom()
 };
 
 /**
@@ -88,6 +89,7 @@ app.Site.prototype.rpc = function(method, opt_param) {
         case app.doMap.VIEW_HOME: this.viewHome(); break;
         case app.doMap.VIEW_ORG_CREATE: this.viewOrgCreate(); break;
         case app.doMap.VIEW_ORG: this.viewOrg(opt_param); break;
+        case app.doMap.SWAP_THEME: this.swapCss(opt_param); break;
         default:
             console.log('Switch fall through for: ', method, opt_param);
     }
@@ -270,8 +272,6 @@ app.Site.prototype.switchView = function(view) {
     this.activeView_.render();
     this.listen(
         this.activeView_, bad.ui.EventType.APP_DO, this.onApDo);
-
-    console.info('Listeners: ', goog.events.getTotalListenerCount());
 };
 
 /**
@@ -300,9 +300,7 @@ app.Site.prototype.viewLogin = function(opt_reset) {
 };
 
 app.Site.prototype.viewHome = function() {
-
-    console.debug('Creating new home view')
-
+    this.swapCss('theme');
     /**
      * @type {app.base.view.Home}
      */
@@ -311,6 +309,7 @@ app.Site.prototype.viewHome = function() {
 };
 
 app.Site.prototype.viewEditUser = function(opt_landing) {
+    this.swapCss('theme');
 
     /**
      * @type {app.user.view.Account}
@@ -347,4 +346,9 @@ app.Site.prototype.hideAllNests = function() {
     goog.array.forEach(nests, function(nest) {
         nest.hide();
     }, this);
+};
+
+app.Site.prototype.swapCss = function(filename) {
+    document.getElementById('pagestyle').setAttribute('href',
+        'css/themes/'+ filename +'.css');
 };

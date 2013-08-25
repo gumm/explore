@@ -16,7 +16,7 @@ goog.inherits(app.org.panel.List, bad.ui.Panel);
 app.org.panel.List.prototype.initDom = function() {
     var tableElement = this.dom_.getElement('orgTable');
 
-    bad.utils.makeButton('cancelOrgBut', this,
+    bad.utils.makeButton('but-cancel', this,
         goog.bind(this.dispatchActionEvent, this,
             app.user.EventType.CANCEL_VIEW_ORG)
     );
@@ -30,7 +30,6 @@ app.org.panel.List.prototype.initDom = function() {
         table.element_ = tableElement;
         table.setTarget(this.dom_.getElement('orgContainer'));
         this.addChild(table);
-        console.debug('table parent', table.getParent());
 
         this.getHandler().listen(
             table.element_,

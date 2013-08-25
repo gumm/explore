@@ -4,47 +4,57 @@
     .detail-head
         .content Orginization Account
 
-    if org.profile.orgUrl
-        .dl-hwrap
-            .dl-head Contact
-        dl.dl-horizontal.left-100
-            dt Homepage
-            dd
-                a=org.profile.orgUrl
+    .dl-hwrap
+        .dl-head Contact
+        #editContacts.edit.linklike Edit
+    dl.dl-horizontal.left-100
+        dt Homepage
+        dd
+            if org.profile.orgUrl
+                a(href=org.profile.orgUrl)= org.profile.orgUrl
+            else
+                .not-set Not set yet
 
+
+    .dl-hwrap
+        .dl-head Physical Address
+        #editPhysAddress.edit.linklike Edit
     if (org.geo.geoAddress && org.geo.geoLat && org.geo.geoLng && org.geo.geoAddress != "Cannot determine address at this location.")
-        .dl-hwrap
-            .dl-head Physical Address
         img(
             border = "0",
-            src = "http://maps.googleapis.com/maps/api/staticmap?center=#{org.geo.geoLat},#{org.geo.geoLng}&size=400x300&zoom=#{org.geo.geoZoom}&maptype=roadmap&visual_refresh=true&&markers=color:red%7Ccolor:red%7C#{org.geo.geoLat},#{org.geo.geoLng}&sensor=false")
-        dl.dl-horizontal.left-100
-            dt Address
-            dd= org.geo.geoAddress
+            src = "http://maps.googleapis.com/maps/api/staticmap?center=#{org.geo.geoLat},#{org.geo.geoLng}&size=440x280&zoom=#{org.geo.geoZoom}&maptype=roadmap&visual_refresh=true&&markers=color:red%7Ccolor:red%7C#{org.geo.geoLat},#{org.geo.geoLng}&sensor=false")
+    dl.dl-horizontal.left-100
+        dt Address
+        dd
+            if org.geo.geoAddress
+                =org.geo.geoAddress
+            else
+                .not-set Not set yet
 
     .dl-hwrap
         .dl-head Postal Address
+        #editPostalAddress.edit.linklike Edit
     dl.dl-horizontal.left-100
         dt PoBox Number
-        dd= org.box.boxNum
+        dd(class=org.box.boxNum?'':'not-set')= org.box.boxNum?org.box.boxNum:'Not set yet'
 
         dt Suburb
-        dd= org.box.boxSuburb
+        dd(class=org.box.boxSuburb?'':'not-set')= org.box.boxSuburb?org.box.boxSuburb:'Not set yet'
 
         dt Postal Code
-        dd= org.box.boxCode
+        dd(class=org.box.boxCode?'':'not-set')= org.box.boxCode?org.box.boxCode:'Not set yet'
 
         dt City
-        dd= org.box.boxCity
+        dd(class=org.box.boxCity?'':'not-set')= org.box.boxCity?org.box.boxCity:'Not set yet'
 
         dt Country
-        dd= org.box.boxCountry
+        dd(class=org.box.boxCountry?'':'not-set')= org.box.boxCountry?org.box.boxCountry:'Not set yet'
 
     .dl-hwrap
         .dl-head Members
     dl.dl-horizontal.left-100
-        dt No. of Owners
-        dd= org.owners.length || 'None'
+        dt Owner
+        dd#ownerLink(data-id= org.owner.uid).numberreadout= org.owner.salutation
 
         dt No. of Members
-        dd= org.members.length || 'None'
+        dd.numberreadout= org.members.length || 'None'

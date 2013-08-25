@@ -28,15 +28,22 @@ var makeAccount = function(data) {
 
 
 /**
- * BEWARE: This passes the account with credentials into the callback.
+ * BEWARE: Unless the transform strips this,
+ *      the full account with credentials is passed into the callback.
  * @param user
  * @param pass
  * @param callback
+ * @param {Function=} opt_transform An optional transform to run the successful
+ *      result through before it is passed into the callback.
  */
-var autoLogin = function(user, pass, callback) {
+var autoLogin = function(user, pass, callback, opt_transform) {
     accounts.findOne({'credentials.user': user}, function(err, account) {
         if (account && account.credentials.pass === pass) {
-            callback(account);
+            var result = account;
+            if (opt_transform) {
+                result = opt_transform(account);
+            }
+            callback(result);
         } else {
             callback(null);
         }
@@ -225,16 +232,30 @@ var getAccountByEmail = function(email, callback) {
     });
 };
 
-var getAccountByUser = function(user, callback) {
+var getAccountByUsername = function(user, callback) {
     var error = {
         user: null
     };
-    accounts.findOne({'credentials.user': user}, function(e, account) {
+    accounts.findOne({'credentials.user': user}, function(err, account) {
         if (account) {
             callback(null, account);
         } else {
             error.user = 'User not found';
             callback(error, null);
+        }
+    });
+};
+
+var findById = function(id, callback, opt_transform) {
+    accounts.findOne({_id: getObjectId(id)}, function(err, res) {
+        if (err) {
+            callback(err);
+        } else {
+            var result = res;
+            if (opt_transform) {
+                result = opt_transform(res);
+            }
+            callback(null, result);
         }
     });
 };
@@ -298,7 +319,8 @@ module.exports = {
     delAllRecords: delAllRecords,
     makeAccount: makeAccount,
     seedAccountWithResetKey: seedAccountWithResetKey,
-    resetPassword: resetPassword
+    resetPassword: resetPassword,
+    findById: findById
 };
 
 /* private encryption & validation methods */
@@ -373,18 +395,6 @@ var validatePassword = function(plainPass, hashedPass, callback) {
 var getObjectId = function(id) {
     return accounts.db.bson_serializer.ObjectID.createFromHexString(id);
 };
-
-var findById = function(id, callback) {
-    accounts.findOne({_id: getObjectId(id)},
-        function(e, res) {
-            if (e) {
-                callback(e);
-            } else {
-                callback(null, res);
-            }
-        });
-};
-
 
 var findByMultipleFields = function(a, callback) {
     // this takes an array of name/val pairs to search

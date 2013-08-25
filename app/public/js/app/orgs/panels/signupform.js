@@ -20,7 +20,9 @@ goog.inherits(app.org.panel.SignUp, bad.ui.Form);
 app.org.panel.SignUp.prototype.enterDocument = function() {
     app.org.panel.SignUp.superClass_.enterDocument.call(this);
 
-    this.loadScript();
+    if (this.dom_.getElement('mapCanvas')) {
+        this.loadGoogleMaps();
+    }
 };
 
 app.org.panel.SignUp.prototype.initDom = function() {
@@ -51,7 +53,6 @@ app.org.panel.SignUp.prototype.initDom = function() {
 app.org.panel.SignUp.prototype.choosePlan_ = function(plan) {
     goog.dom.forms.setValue(this.planType, plan);
     goog.object.forEach(this.productButtons_, function(button, key) {
-        console.debug(key, plan, key === plan);
         if (key === plan) {
             goog.dom.classes.add(button.getElement(),
                 'goog-css3-button-checked');
@@ -130,7 +131,8 @@ app.org.panel.SignUp.prototype.onSubmitSignUp = function(queryData, e) {
     this.clearAlerts();
     if (xhr.isSuccess()) {
         var orgId = data['data']['_id'];
-        this.dispatchActionEvent(app.org.EventType.UPDATE_SUCCESS, {id: orgId});
+        var orgData = data['data'];
+        this.dispatchActionEvent(app.org.EventType.UPDATE_SUCCESS, {org: orgData});
     } else {
         this.displayErrors(data);
     }
@@ -156,21 +158,33 @@ app.org.panel.SignUp.prototype.onCancel = function() {
     this.dispatchActionEvent(app.org.EventType.CANCEL);
 };
 
-app.org.panel.SignUp.prototype.loadScript = function() {
-    callbackFunc = goog.bind(this.killCallback, this);
+app.org.panel.SignUp.prototype.loadGoogleMaps = function() {
+
+    // Makes a random name for the callback in the global scope
+    var randName = bad.utils.makeId();
+
+    // The callback below is placed in the global scope so the call to google
+    // maps can access it on callback. It is destroyed
+    // immediately inside the callback;
+    goog.global[randName] = goog.bind(this.renderMap, this, randName);
+
+    // the 'google.maps' namespace may already be in the document.
+    // If it is, there is no need to get the namespace again.
     try {
         goog.isDefAndNotNull(google.maps);
-        this.killCallback();
+        this.renderMap();
     } catch (e) {
         var script = document.createElement('script');
         script.type = 'text/javascript';
-        script.src = 'https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&' +
-          'callback=callbackFunc';
+        script.src = 'https://maps.googleapis.com/maps/api/js?v=3.exp' +
+            '&sensor=false' +
+            '&callback=' + randName;
         document.body.appendChild(script);
     }
 };
 
-app.org.panel.SignUp.prototype.killCallback = function() {
+app.org.panel.SignUp.prototype.renderMap = function(randName) {
+    delete goog.global[randName];
     var latInput = document.getElementById('geoLat');
     var lngInput = document.getElementById('geoLng');
     var geoAddressInput = document.getElementById('geoAddress');
@@ -221,7 +235,6 @@ app.org.panel.SignUp.prototype.killCallback = function() {
 
       // Update current position info.
       updateMarkerPosition(latLng);
-      geocodePosition(latLng);
 
       // Add dragging event listeners.
       google.maps.event.addListener(marker, 'dragstart', function() {

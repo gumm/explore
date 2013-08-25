@@ -30,8 +30,8 @@ var makeOrg = function(data) {
             boxCountry: data.boxCountry || null
         },
         media: {
-            logo: null,
-            css: null
+            logo: data.mediaLogo || null,
+            css: data.mediaCss || null
         },
         bill: {
             billPlan: data.billPlan || null,
@@ -86,8 +86,9 @@ var addNewOrg = function(newOrg, callback) {
     checkUniqueOrgName(newOrg.profile.orgName, uniqueOrgNameCallback);
 };
 
-var getOrgsByUserId = function(userId, callback) {
-    ORGS.find({'owners': userId}).toArray(callback);
+var getOrgsByOwnerId = function(userId, callback) {
+    var ownerId = userId.toString();
+    ORGS.find({'owners': ownerId}).toArray(callback);
 };
 
 var getOrgBId = function(id, callback) {
@@ -112,14 +113,21 @@ var updateProfile = function(uid, newOrg, subset, callback) {
     };
 
     var doc = {};
-    switch(subset){
+    switch(subset) {
         case 'profile':
             doc = {$set: {
-                geo: newOrg.geo,
-                loc: newOrg.loc,
-                box: newOrg.box,
-                'profile.orgUrl': newOrg.profile.orgUrl}
+                'profile.orgUrl': newOrg.profile.orgUrl,
+                media: newOrg.media}
             };
+            break;
+        case 'box':
+            doc = {$set: {box: newOrg.box}};
+            break;
+        case 'loc':
+            doc = {$set: {
+                loc: newOrg.loc,
+                geo: newOrg.geo
+            }};
             break;
         case 'billing':
             doc = {$set: {
@@ -145,7 +153,7 @@ var updateProfile = function(uid, newOrg, subset, callback) {
 module.exports = {
     makeOrg: makeOrg,
     addNewOrg: addNewOrg,
-    getOrgsByUserId: getOrgsByUserId,
+    getOrgsByOwnerId: getOrgsByOwnerId,
     getOrgBId: getOrgBId,
     updateProfile: updateProfile
 };

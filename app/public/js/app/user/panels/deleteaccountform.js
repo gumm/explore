@@ -17,7 +17,7 @@ goog.inherits(app.user.panel.DeleteAccount, bad.ui.Form);
 
 app.user.panel.DeleteAccount.prototype.initDom = function() {
     bad.utils.makeButton(
-        'remove-account-cancel', this,
+        'but-cancel', this,
         goog.bind(this.cancel, this));
 
     bad.utils.makeButton(

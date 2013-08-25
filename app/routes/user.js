@@ -1,4 +1,5 @@
 var AM = require('../modules/account-manager');
+var OM = require('../modules/orgs-manager');
 
 goog.provide('exp.routes.user');
 
@@ -89,13 +90,15 @@ exp.routes.user.signUp = function(req, res) {
     };
 
     var postCall = function() {
+        var cleanCountry = req.param('country') === exp.countryList[0].name ?
+            null : req.param('country');
         var newAccount = AM.makeAccount({
             name: req.param('name'),
             surname: req.param('surname'),
             email: req.param('email'),
             user: req.param('user'),
             pass: req.param('pass'),
-            country: req.param('country')
+            country: cleanCountry
         });
         var callback = function(error, profile) {
             if (error) {
@@ -115,9 +118,39 @@ exp.routes.user.signUp = function(req, res) {
 //-----------------------------------------------------------[ Read Accounts ]--
 
 exp.routes.user.readProfile = function(req, res) {
+    var id = req.params.id;
+    if(id) {
+        exp.routes.user.readPublicProfile(req, res, id);
+    } else {
+        exp.routes.user.readOwnProfile(req, res);
+    }
+};
+
+exp.routes.user.readOwnProfile = function(req, res) {
+    console.log('Private profile');
     var getCall = function() {
         var user = req.session.user;
         res.render('user/view', {udata: user.profile});
+    };
+    helper.okGo(req, res, {'GET': getCall});
+};
+
+exp.routes.user.readPublicProfile = function(req, res, id) {
+    console.log('Public profile' , id);
+    var transform = function(acc) {
+        return acc.profile;
+    };
+
+    var callback = function(err, account) {
+        if (err) {
+            res.send(helper.makeReplyWith(err), 400);
+        } else {
+            res.render('user/view', {udata: account});
+        }
+    };
+
+    var getCall = function() {
+        AM.findById(id, callback, transform);
     };
     helper.okGo(req, res, {'GET': getCall});
 };
@@ -298,8 +331,21 @@ exp.routes.user.deleteAccount = function(req, res) {
 
     var confPhrase = 'Please delete my account and all my data';
 
+    var doesUserOwnOrgs = function() {
+        var account = req.session.user;
+        OM.getOrgsByOwnerId(account._id, function(err, orgList) {
+            if (err) {
+                res.send(helper.makeReplyWith(err), 400);
+            } else if(orgList.length > 0) {
+                res.render('user/nodelete', {oList: orgList});
+            } else {
+                res.render('user/delete', {confPhrase: confPhrase});
+            }
+        });
+    };
+
     var getCall = function() {
-        res.render('user/delete', {confPhrase: confPhrase});
+        doesUserOwnOrgs();
     };
 
     var onDeleteCallback = function(e) {
@@ -324,7 +370,15 @@ exp.routes.user.deleteAccount = function(req, res) {
         if (!account) {
             res.send(helper.makeReplyWith(err), 400);
         } else {
-            AM.deleteAccount(account._id, onDeleteCallback);
+            OM.getOrgsByOwnerId(account._id, function(err, orgList) {
+                if (err) {
+                    res.send(helper.makeReplyWith(err), 400);
+                } else if(orgList.length > 0) {
+                    res.send(helper.makeReplyWith('You still own orgs'), 400);
+                } else {
+                    AM.deleteAccount(account._id, onDeleteCallback);
+                }
+            });
         }
     };
 

@@ -81,15 +81,12 @@ input.error {
     position: absolute;
 }
 
-.sysreadout .number {
+.numberreadout {
     display: inline-block;
     font-size: 12px;
     font-weight: bold;
     opacity: 1;
     color: rgb(255, 255, 255);
-}
-
-.sysreadout .number {
     -webkit-border-radius: 3px;
     border-radius: 3px;
     -webkit-transition: background-color .218s,border-color .218s,box-shadow .218s;
@@ -305,6 +302,15 @@ label {
     margin-left: 100px;
 }
 
+.dl-horizontal.left-100 dd {
+    margin-left: 100px;
+}
+
+.dl-horizontal.left-100 dd.numberreadout {
+    float: left;
+    margin-left: 0;
+}
+
 .detail-head {
 margin: 58px 0 20px;
 border-bottom: 1px solid rgb(235, 235, 235);
@@ -323,4 +329,24 @@ display: table-cell;
 line-height: 71px;
 overflow: hidden;
 vertical-align: middle;
+}
+
+.edit {
+    float: right;
+    position: relative;
+}
+.detail-head .edit {
+    top: 50px;
+}
+
+.dl-hwrap .edit {
+    top: 10px;
+}
+
+.not-set {
+    color: rgb(200,200,200);
+}
+
+#annOther {
+    float: right;
 }

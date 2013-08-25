@@ -19,8 +19,7 @@ var rootCA = fs.readFileSync('./certs/Thawte-Test-CA-Root-certificate.pem');
 
 var options = {
     key: hskey,
-    cert: hscert,
-    ca: rootCA
+    cert: hscert
 };
 
 //// This line is from the Node.js HTTPS documentation.

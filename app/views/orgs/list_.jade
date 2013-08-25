@@ -1,0 +1,33 @@
+- orgs = typeof(oList) != 'undefined' ? oList : []
+
+#orgContainer.container-440-left
+    .detail-head
+        .content Organizations
+    block warning
+    if (orgs.length > 0)
+        table#orgTable.table.table-striped.table-hover
+            thead
+                tr
+                    th No.
+                    th Orginization Name
+            tbody#orgBody
+                each org, index in orgs
+                    - theme = org.media.css
+                    - color = themes[theme].color
+                    tr(id= org._id)
+                        td= index + 1
+                        td= org.profile.orgName
+                            #annOther.icon.icon-sign-blank(style='color:' + color)
+    else
+        .form-horizontal.well
+            p#sub1
+                strong You are not a member of any organization yet.
+
+    fieldset
+        .form-actions
+            .form-action-right
+                #but-cancel Cancel
+                if (showCreate)
+                    #createOrgBut.g-button-submit
+                        i.icon-group
+                        | Create new organization

@@ -32,12 +32,13 @@ app.user.view.Account.prototype.configurePanels = function() {
 };
 
 app.user.view.Account.prototype.displayPanels = function() {
+
     switch(this.landing_) {
         case 'orgList':
             this.enterOrgsList();
             break;
         default:
-            this.enterOverview();
+            this.enterOverview(this.landing_);
     }
 };
 
@@ -133,17 +134,33 @@ app.user.view.Account.prototype.enterOrgsList = function() {
     panel.renderWithTemplate();
 };
 
-app.user.view.Account.prototype.enterOverview = function() {
+app.user.view.Account.prototype.enterOverview = function(opt_id) {
 
     if (this.nav) {this.nav.resetMenu();}
+    var uriString = exp.urlMap.ACCOUNTS.READ;
+    if (opt_id) {
+        uriString = uriString + '/' + opt_id;
+    }
+
 
     /**
      * @type {bad.ui.Panel}
      */
     var panel = new bad.ui.Panel();
-    panel.setUri(new goog.Uri(exp.urlMap.ACCOUNTS.READ));
+    panel.setUri(new goog.Uri(uriString));
     panel.setUser(this.getUser());
     panel.setNestAsTarget(this.getLayout().getNest('main', 'center'));
+    var beforeReadyCallback = goog.bind(function() {
+        var editProfile = goog.dom.getElement('editProfile');
+        this.getHandler().listen(
+            editProfile,
+            goog.events.EventType.CLICK,
+            function() {
+                this.dispatchActionEvent(app.user.EventType.EDIT_ACCOUNT);
+            }, undefined, this
+        );
+    }, panel);
+    panel.setBeforeReadyCallback(beforeReadyCallback);
     this.addPanelToView('replace', panel);
     panel.renderWithTemplate();
 };
@@ -161,11 +178,7 @@ app.user.view.Account.prototype.confirmRemoveAccount = function() {
 app.user.view.Account.prototype.slideNavIn = function() {
     var size = 270;
     var slider = this.getLayout().getNest('main', 'left');
-    slider.slideOpen(null, size,
-        goog.bind(function() {
-            console.debug('OK all done - panel in view now.');
-        }, this)
-    );
+    slider.slideOpen(null, size, goog.nullFunction);
 };
 
 app.user.view.Account.prototype.switchView = function(fn) {

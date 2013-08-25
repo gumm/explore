@@ -33,6 +33,7 @@ exp.userUrls = function(app) {
 
     /** Read */
     app.get(    exp.urlMap.ACCOUNTS.READ,   route.readProfile);
+    app.get(    exp.urlMap.ACCOUNTS.READ + '/:id',   route.readProfile);
 
     /** Update */
     app.get(    exp.urlMap.ACCOUNTS.UPDATE, route.editProfile);

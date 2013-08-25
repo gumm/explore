@@ -1,0 +1,39 @@
+.layout-nest-header {
+    background-color: rgb(255, 190, 0);
+    border-bottom: 1px solid rgb(229, 229, 229);
+}
+
+#sysreadout,
+.signup {
+    color: rgb(47, 47, 47);
+}
+
+.numberreadout {
+background-color: rgb(217, 28, 0);;
+border: none;
+}
+
+.detail-head .content {
+    color: rgb(167, 9, 0);
+}
+
+
+.layout-nest-main {
+background-color: rgb(244, 243, 240);
+}
+
+.layout-drag-handle {
+    background-color: rgb(244, 243, 240) !important;
+}
+
+.layout-drag-handle.grabber {
+    background: none;
+}
+
+.well {
+border: none !important;
+background-color: transparent;
+-webkit-box-shadow: none;
+-moz-box-shadow: none;
+box-shadow: none;
+}

@@ -1,0 +1,18 @@
+.layout-nest-header {
+    background-color: rgb(86, 108, 194);
+    border-bottom: 1px solid rgb(229, 229, 229);
+}
+
+#sysreadout,
+.signup {
+    color: rgb(26, 26, 66);
+}
+
+.numberreadout {
+background-color: rgb(40, 40, 105);
+border: none;
+}
+
+.detail-head .content {
+    color: rgb(86, 108, 194);
+}

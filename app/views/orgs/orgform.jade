@@ -14,16 +14,6 @@ form()#orgForm.form-horizontal.well
                         value=org.profile.orgName,
                         placeholder="Your organization's name",
                         required)
-            if (formtype === 'create' || formtype === 'profile')
-                .control-group
-                    label.control-label(for='billEmail') Billing Email
-                    .controls
-                        input#billEmail.input-full-width(
-                        type='email',
-                        name='billEmail',
-                        value=org.bill.billEmail,
-                        placeholder='Receipts will be sent here',
-                        required)
 
             if (formtype === 'profile')
                 .control-group
@@ -35,7 +25,24 @@ form()#orgForm.form-horizontal.well
                         value=org.profile.orgUrl,
                         placeholder="Organization's website")
 
-    if (formtype === 'profile')
+                .control-group
+                    label.control-label(for='mediaCss') Color
+                    .controls
+                        select#mediaCss(
+                            name='mediaCss')
+                            each value, key in themes
+                                option(value=key, selected=key == org.media.css)=value.name
+
+                .control-group
+                    label.control-label(for='mediaLogo') Logo
+                    .controls
+                        input#orgUrl.input-full-width(
+                        type='file',
+                        name='mediaLogo',
+                        value=org.media.logo,
+                        placeholder="Upload your company logo")
+
+    if (formtype === 'physical')
         fieldset
             input(
                 type='hidden',
@@ -60,6 +67,7 @@ form()#orgForm.form-horizontal.well
                     value= org.geo.geoAddress,
                     placeholder="You can use the map and move the marker to your address")
 
+    if (formtype === 'postal')
         fieldset
             h4 Postal Address
             .control-group
@@ -77,7 +85,7 @@ form()#orgForm.form-horizontal.well
                     type='text',
                     name='boxSuburb',
                     value=org.box.boxSuburb,
-                    placeholder="Street name and number")
+                    placeholder="Suburb")
             .control-group
                 label.control-label(for='boxCode') Code
                 .controls
@@ -93,7 +101,7 @@ form()#orgForm.form-horizontal.well
                     type='text',
                     name='boxCity',
                     value=org.box.boxCity,
-                    placeholder="City")
+                    placeholder="Town or City")
             .control-group
                 label.control-label(for='boxCountry') Country
                 .controls
@@ -121,7 +129,6 @@ form()#orgForm.form-horizontal.well
                             td
                                 div(id=key)  Choose
 
-    if (formtype === 'create' || formtype === 'billing')
         fieldset#card
             //- The fields here are set to required by JS.
             //- When a user selects a plan that requires a CC, these fields
@@ -172,6 +179,18 @@ form()#orgForm.form-horizontal.well
                     value=org.card.crdCvv,
                     placeholder='3 or 4 digits',
                     pattern="[0-9]{3,4}")
+
+        fieldset#bill
+            h4 Billing contact
+            .control-group
+                label.control-label(for='billEmail') Billing Email
+                .controls
+                    input#billEmail.input-full-width(
+                    type='email',
+                    name='billEmail',
+                    value=org.bill.billEmail,
+                    placeholder='Receipts will be sent here',
+                    required)
 
     fieldset
         .form-actions

@@ -15,6 +15,7 @@ goog.require('goog.ui.CustomButton');
 app.org.panel.NavPanel = function(opt_domHelper) {
     bad.ui.Panel.call(this, opt_domHelper);
 
+    this.menu_ = null;
     this.orgProfile_ = null;
 };
 goog.inherits(app.org.panel.NavPanel, bad.ui.Panel);
@@ -41,19 +42,19 @@ app.org.panel.NavPanel.prototype.buildNavMenu = function() {
     var renderer = bad.ui.MenuFlatRenderer.getInstance();
     var itemRenderer = bad.ui.MenuItemRenderer.getInstance();
     var stickySelect = true; // This keeps the last selected item highlighted.
-    var menu = bad.utils.makeMenu(
+    this.menu_ = bad.utils.makeMenu(
         menuItems, this.dom_, this.getHandler(), this, renderer,
         itemRenderer, stickySelect);
 
-    this.addChild(menu);
-    menu.render(this.getElement());
-    var menuElement = menu.getElement();
+    this.addChild(this.menu_);
+    this.menu_.render(this.getElement());
+    var menuElement = this.menu_.getElement();
     goog.dom.classes.add(menuElement, 'well', 'menu-nav');
 
-    this.appendMenuTitle(menu);
+    this.appendMenuTitle();
 };
 
-app.org.panel.NavPanel.prototype.appendMenuTitle = function(menu) {
+app.org.panel.NavPanel.prototype.appendMenuTitle = function() {
     if (this.orgProfile_) {
         var child = this.dom_.createDom('div', {
             style: 'padding-left: 28px; ' +
@@ -69,7 +70,6 @@ app.org.panel.NavPanel.prototype.appendMenuTitle = function(menu) {
             child,
             goog.events.EventType.CLICK,
             function() {
-                menu.unStickAll();
                 this.dispatchActionEvent(app.org.EventType.CANCEL);
             }, undefined, this
         );
@@ -83,9 +83,16 @@ app.org.panel.NavPanel.prototype.onOrgInfo = function(e) {
     var xhr = e.target;
     var data = xhr.getResponseJson();
     if (xhr.isSuccess()) {
-        this.orgProfile_ = data['data'];
+        this.orgProfile_ = data['data']['profile'];
+        this.dispatchActionEvent(app.org.EventType.CHANGE_SCOPE,
+            data['data']);
+
     } else {
         this.orgProfile_ = '';
         console.debug('Oops Error --- ', data);
     }
+};
+
+app.org.panel.NavPanel.prototype.resetMenu = function() {
+    this.menu_.unStickAll();
 };

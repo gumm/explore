@@ -1,29 +1,3 @@
-- orgs = typeof(oList) != 'undefined' ? oList : []
+- showCreate = true
 
-    #orgContainer.container-440-left
-        .detail-head
-            .content Organizations
-        if (orgs.length > 0)
-            table#orgTable.table.table-striped.table-hover
-                thead
-                    tr
-                        th No.
-                        th Orginization Name
-                tbody#orgBody
-                    each org, index in orgs
-                        tr(id= org._id)
-                            td= index + 1
-                            td= org.profile.orgName
-
-        else
-            .form-horizontal.well
-                p#sub1
-                    strong You are not a member of any organization yet.
-
-        fieldset
-            .form-actions
-                .form-action-right
-                    #cancelOrgBut Cancel
-                    #createOrgBut.g-button-submit
-                        i.icon-group
-                        | Create new organization
+include list_

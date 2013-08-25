@@ -8,6 +8,10 @@ goog.require('exp.EmailDispatcher');
 goog.require('exp.routesHelper');
 goog.require('goog.object');
 goog.require('exp.productMap');
+goog.require('exp.themes');
+
+
+
 
 var helper = exp.routesHelper;
 
@@ -18,6 +22,7 @@ exp.routes.orgs.create = function(req, res) {
         res.render('orgs/create', {
                 countries: exp.countryList,
                 products: exp.productMap,
+                themes: exp.themes,
                 orgObj: OM.makeOrg({}),
                 cCards: exp.cCardMap});
     };
@@ -70,12 +75,15 @@ exp.routes.orgs.readList_ = function(req, res) {
                     helper.makeReplyWith(
                         'Could not get organizations' + err), 400);
         } else {
-            res.render('orgs/list', {oList: list});
+            res.render('orgs/list', {
+                themes: exp.themes,
+                oList: list
+            });
         }
     };
 
     var getCall = function() {
-        OM.getOrgsByUserId(user._id, callback);
+        OM.getOrgsByOwnerId(user._id, callback);
     };
 
     helper.okGo(req, res, {'GET': getCall});
@@ -83,6 +91,15 @@ exp.routes.orgs.readList_ = function(req, res) {
 
 exp.routes.orgs.readOne_ = function(req, res, id, opt_subset) {
     var callback;
+
+    var getUsername = function(acc) {
+        var salutation = acc.profile.name;
+        if (acc.profile.surname) {
+            salutation = salutation + ' ' + acc.profile.surname;
+        }
+        return salutation;
+    };
+
     if (opt_subset) {
         var subset = opt_subset;
         callback = function(err, org) {
@@ -95,6 +112,10 @@ exp.routes.orgs.readOne_ = function(req, res, id, opt_subset) {
                     res.send(
                         helper.makeReplyWith(
                             null, org[subset], 'Subset: ' + subset), 200);
+                } else if (subset === 'all') {
+                    res.send(
+                    helper.makeReplyWith(
+                            null, org, 'All org info'), 200);
                 } else {
                     res.send(
                     helper.makeReplyWith(
@@ -109,7 +130,17 @@ exp.routes.orgs.readOne_ = function(req, res, id, opt_subset) {
                     helper.makeReplyWith(
                         'Could not get organizations' + err), 400);
             } else {
-                res.render('orgs/view', {orgObj: org});
+                AM.findById(org.owners[0], function(err, username) {
+                    if (err) {
+                        res.send(helper.makeReplyWith(err), 400);
+                    } else if (username) {
+                        org.owner = {uid: org.owners[0], salutation: username};
+                        res.render('orgs/view', {orgObj: org});
+                    } else {
+                        res.send(helper.makeReplyWith('No username found'), 400);
+                    }
+                }, getUsername);
+
             }
         };
     }
@@ -122,7 +153,6 @@ exp.routes.orgs.readOne_ = function(req, res, id, opt_subset) {
 };
 
 exp.routes.orgs.update = function(req, res) {
-
     var id = req.params.id;
     var subset = req.params.subset;
     var getCallback = function(err, org) {
@@ -131,11 +161,11 @@ exp.routes.orgs.update = function(req, res) {
                 helper.makeReplyWith('Error finding account: ' + err),
                 400);
         } else if (org) {
-            console.log('HERE IS THE ORG TO EDIT:', org);
             res.render('orgs/edit/' + subset, {
                 countries: exp.countryList,
                 orgObj: org,
                 products: exp.productMap,
+                themes: exp.themes,
                 cCards: exp.cCardMap});
         } else {
             res.send(
@@ -211,6 +241,11 @@ exp.routes.orgs.update = function(req, res) {
         }
     };
 
+    var locCountry = req.param('locCountry') === exp.countryList[0].name ?
+            null : req.param('locCountry');
+    var boxCountry = req.param('boxCountry') === exp.countryList[0].name ?
+            null : req.param('boxCountry');
+
     var postCall = function() {
         var newOrg = OM.makeOrg({
             orgUrl: req.param('orgUrl'),
@@ -218,7 +253,7 @@ exp.routes.orgs.update = function(req, res) {
             locSuburb: req.param('locSuburb'),
             locCode: req.param('locCode'),
             locCity: req.param('locCity'),
-            locCountry: req.param('locCountry'),
+            locCountry: locCountry,
             geoLng: req.param('geoLng'),
             geoLat: req.param('geoLat'),
             geoAddress: req.param('geoAddress'),
@@ -227,7 +262,9 @@ exp.routes.orgs.update = function(req, res) {
             boxSuburb: req.param('boxSuburb'),
             boxCode: req.param('boxCode'),
             boxCity: req.param('boxCity'),
-            boxCountry: req.param('boxCountry'),
+            boxCountry: boxCountry,
+            mediaLogo: req.param('mediaLogo'),
+            mediaCss: req.param('mediaCss'),
             billPlan: req.param('billPlan'),
             billEmail: req.param('billEmail'),
             logo: req.param('logo'),
