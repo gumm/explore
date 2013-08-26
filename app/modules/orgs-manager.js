@@ -91,7 +91,7 @@ var getOrgsByOwnerId = function(userId, callback) {
     ORGS.find({'owners': ownerId}).toArray(callback);
 };
 
-var getOrgBId = function(id, callback) {
+var getOrgById = function(id, callback) {
     ORGS.findOne({_id: BSON.ObjectID(id)}, function(err, org) {
         if(err) {
             console.log('ERROR', err);
@@ -150,11 +150,16 @@ var updateProfile = function(uid, newOrg, subset, callback) {
     );
 };
 
+var deleteOrg = function(id, callback) {
+    ORGS.remove({_id: BSON.ObjectID(id)}, callback);
+};
+
 module.exports = {
     makeOrg: makeOrg,
     addNewOrg: addNewOrg,
     getOrgsByOwnerId: getOrgsByOwnerId,
-    getOrgBId: getOrgBId,
-    updateProfile: updateProfile
+    getOrgById: getOrgById,
+    updateProfile: updateProfile,
+    deleteOrg: deleteOrg
 };
 

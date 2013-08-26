@@ -6,6 +6,7 @@ goog.provide('exp.routes.user');
 goog.require('exp.countryList');
 goog.require('exp.EmailDispatcher');
 goog.require('exp.routesHelper');
+goog.require('exp.themes');
 
 var helper = exp.routesHelper;
 
@@ -161,7 +162,7 @@ exp.routes.user.editProfile = function(req, res) {
     /**
      * BEWARE: The account passed in here contains the full account.
      * Only pass the profile component to the user.
-     * @param {Object} err The Error object if any.
+     * @param {Object} err The Error objectedit if any.
      * @param {Object} account The full account object from mongo.
      */
     var callback = function(err, account) {
@@ -337,7 +338,9 @@ exp.routes.user.deleteAccount = function(req, res) {
             if (err) {
                 res.send(helper.makeReplyWith(err), 400);
             } else if(orgList.length > 0) {
-                res.render('user/nodelete', {oList: orgList});
+                res.render('user/nodelete', {
+                    oList: orgList,
+                    themes: exp.themes});
             } else {
                 res.render('user/delete', {confPhrase: confPhrase});
             }
@@ -396,13 +399,3 @@ exp.routes.user.accounts = function(req, res) {
         res.render('accounts', { title: 'Account List', accts: accounts });
     });
 };
-
-//    app.get('/reset', function(req, res) {
-//        AM.delAllRecords(function() {
-//            res.redirect('/print');
-//        });
-//    });
-
-
-
-

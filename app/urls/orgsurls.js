@@ -18,5 +18,5 @@ exp.orgsUrls = function(app) {
     app.post(   exp.urlMap.ORGS.UPDATE + '/:id/:subset',    route.update);
 
     app.get(    exp.urlMap.ORGS.DELETE + '/:id',            route.delete);
-    app.del(    exp.urlMap.ORGS.DELETE + '/:id',            route.delete);
+    app.post(    exp.urlMap.ORGS.DELETE + '/:id',           route.delete);
 };

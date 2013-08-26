@@ -1,6 +1,7 @@
 goog.provide('app.org.view.Org');
 
 goog.require('app.org.EventType');
+goog.require('app.org.panel.DeleteOrg');
 goog.require('app.org.panel.NavPanel');
 goog.require('app.org.panel.SignUp');
 goog.require('bad.ui.View');
@@ -38,10 +39,9 @@ app.org.view.Org.prototype.displayPanels = function() {
 };
 
 /**
- * @param {string=} opt_uri
  */
-app.org.view.Org.prototype.createOrgViewPanel = function(opt_uri) {
-    var uriString = opt_uri || exp.urlMap.ORGS.READ + '/' + this.activeOrgId_;
+app.org.view.Org.prototype.createOrgViewPanel = function() {
+    var uriString = exp.urlMap.ORGS.READ + '/' + this.activeOrgId_;
 
     /**
      * @type {bad.ui.Panel}
@@ -131,13 +131,6 @@ app.org.view.Org.prototype.onPanelAction = function(e) {
     var data = e.getData();
     e.stopPropagation();
 
-    /*
-     * Nav panel dispatches:
-     * app.org.EventType.CANCEL
-     * app.org.EventType.UPDATE_PROFILE
-     * app.org.EventType.UPDATE_BILLING
-     * app.org.EventType.UPDATE_SUCCESS
-     */
     switch (value) {
         case app.org.EventType.CANCEL:
             if (this.activeOrgId_) {
@@ -164,26 +157,44 @@ app.org.view.Org.prototype.onPanelAction = function(e) {
             break;
         case app.org.EventType.UPDATE_SUCCESS:
             this.activeOrgId_ = data.org['_id'];
-//            this.swapCss(data.org['media']);
             this.appDo(app.doMap.SWAP_THEME, data.org['media']['css']);
             this.displayPanels();
             break;
         case app.org.EventType.CHANGE_SCOPE:
-//            this.swapCss(data['media']);
-
             this.appDo(app.doMap.SWAP_THEME, data['media']['css']);
             break;
         case app.org.EventType.VIEW_OWNER:
             this.switchView(goog.bind(
                 this.appDo, this, app.doMap.VIEW_EDIT_USER, data));
             break;
+        case app.org.EventType.DELETE:
+            this.confirmRemoveAccount();
+            break;
+        case app.org.EventType.ORG_DELETE_CANCELED:
+            this.displayPanels();
+            break;
+        case app.org.EventType.ORG_DELETE_SUCCESS:
+            this.switchView(goog.bind(
+                this.appDo, this, app.doMap.VIEW_HOME));
+            break;
         default:
             console.log('app.org.view.Org No action for: ', value, data);
     }
 };
 
+app.org.view.Org.prototype.confirmRemoveAccount = function() {
+
+    var form = new app.org.panel.DeleteOrg('confaccdel-form');
+    form.setUri(new goog.Uri(exp.urlMap.ORGS.DELETE + '/' + this.activeOrgId_));
+    form.setUser(this.getUser());
+    form.setNestAsTarget( this.getLayout().getNest('main', 'center'));
+    this.addPanelToView('replace', form);
+    form.renderWithTemplate();
+};
+
 app.org.view.Org.prototype.swapCss = function(media) {
-    document.getElementById('pagestyle').setAttribute('href', 'css/themes/'+ media['css'] +'.css');
+    document.getElementById('pagestyle').setAttribute(
+        'href', 'css/themes/'+ media['css'] +'.css');
 };
 
 /**

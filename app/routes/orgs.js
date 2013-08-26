@@ -10,9 +10,6 @@ goog.require('goog.object');
 goog.require('exp.productMap');
 goog.require('exp.themes');
 
-
-
-
 var helper = exp.routesHelper;
 
 //--------------------------------------------------------------------[ Edit ]--
@@ -146,7 +143,7 @@ exp.routes.orgs.readOne_ = function(req, res, id, opt_subset) {
     }
 
     var getCall = function() {
-        OM.getOrgBId(id, callback);
+        OM.getOrgById(id, callback);
     };
 
     helper.okGo(req, res, {'GET': getCall});
@@ -174,7 +171,7 @@ exp.routes.orgs.update = function(req, res) {
         }
     };
     var getCall = function() {
-        OM.getOrgBId(id, getCallback);
+        OM.getOrgById(id, getCallback);
     };
 
 
@@ -283,13 +280,39 @@ exp.routes.orgs.update = function(req, res) {
 
 exp.routes.orgs.delete = function(req, res) {
     var id = req.params.id;
+    var confPhrase = 'Please delete this organization and all its data';
 
     var getCall = function() {
-        res.render('orgs/edit', {});
+        res.render('orgs/delete', {confPhrase: confPhrase});
     };
 
-    var delCall = function() {
+    var onGetAccountCallback = function(err, account) {
+        if (!account) {
+            res.send(helper.makeReplyWith(err), 400);
+        } else {
+            OM.getOrgById(id, function(err, org) {
+                if (err) {
+                    res.send(helper.makeReplyWith(err), 400);
+                } else {
+                    if (org.owners[0] == account._id) {
+                        OM.deleteOrg(id, function() {
+                            res.send(helper.makeReplyWith(
+                                null, null, 'Org deleted successfully'), 200);
+                        });
+                    } else {
+                        res.send(helper.makeReplyWith(
+                            'You are not listed as an owner of this org'), 400);
+                    }
+                }
+            });
+        }
     };
 
-    helper.okGo(req, res, {'GET': getCall, 'DELETE': delCall});
+    var postCall = function() {
+        var user = req.param('user');
+        var pass = req.param('pass');
+        AM.manualLogin(user, pass, onGetAccountCallback);
+    };
+
+    helper.okGo(req, res, {'GET': getCall, 'POST': postCall});
 };

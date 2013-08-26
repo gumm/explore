@@ -48,6 +48,14 @@ app.org.panel.SignUp.prototype.initDom = function() {
         this.planType = goog.dom.getElement('billPlan');
         this.choosePlan_(this.planType.value || 'free');
     }
+
+    var el = goog.dom.getElement('remove-account');
+    if (el) {
+        bad.utils.makeButton('remove-account', this,
+            goog.bind(this.dispatchActionEvent, this,
+                app.org.EventType.DELETE)
+        );
+    }
 };
 
 app.org.panel.SignUp.prototype.choosePlan_ = function(plan) {

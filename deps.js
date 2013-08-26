@@ -10,10 +10,11 @@ goog.addDependency('../../../../../../app/public/js/app/base/panels/persistentpa
 goog.addDependency('../../../../../../app/public/js/app/base/views/homeview.js', ['app.base.view.Home'], ['app.base.panel.Home', 'bad.ui.View']);
 goog.addDependency('../../../../../../app/public/js/app/base/views/persistent.js', ['app.base.view.Persistent'], ['app.base.EventType', 'app.base.panel.Persistent', 'bad.ui.View']);
 goog.addDependency('../../../../../../app/public/js/app/orgs/constants.js', ['app.org.EventType'], []);
+goog.addDependency('../../../../../../app/public/js/app/orgs/panels/deleteorgform.js', ['app.org.panel.DeleteOrg'], ['bad.ui.Form', 'goog.ui.CustomButton']);
 goog.addDependency('../../../../../../app/public/js/app/orgs/panels/list.js', ['app.org.panel.List'], ['bad.ui.Panel']);
 goog.addDependency('../../../../../../app/public/js/app/orgs/panels/navpanel.js', ['app.org.panel.NavPanel'], ['bad.ui.Form', 'bad.ui.MenuFlatRenderer', 'bad.ui.MenuItemRenderer', 'goog.style', 'goog.ui.CustomButton']);
 goog.addDependency('../../../../../../app/public/js/app/orgs/panels/signupform.js', ['app.org.panel.SignUp'], ['bad.ui.Form', 'exp.productMap', 'goog.ui.CustomButton']);
-goog.addDependency('../../../../../../app/public/js/app/orgs/views/org.js', ['app.org.view.Org'], ['app.org.EventType', 'app.org.panel.NavPanel', 'app.org.panel.SignUp', 'bad.ui.View', 'goog.dom.dataset']);
+goog.addDependency('../../../../../../app/public/js/app/orgs/views/org.js', ['app.org.view.Org'], ['app.org.EventType', 'app.org.panel.DeleteOrg', 'app.org.panel.NavPanel', 'app.org.panel.SignUp', 'bad.ui.View', 'goog.dom.dataset']);
 goog.addDependency('../../../../../../app/public/js/app/site.js', ['app.Site', 'app.doMap'], ['app.base.view.Home', 'app.base.view.Persistent', 'app.org.view.Org', 'app.user.view.Account', 'app.user.view.Login', 'bad.ui.EventType', 'bad.ui.Layout', 'exp.urlMap', 'goog.Uri', 'goog.events.EventHandler']);
 goog.addDependency('../../../../../../app/public/js/app/user/constants.js', ['app.user.EventType'], []);
 goog.addDependency('../../../../../../app/public/js/app/user/panels/deleteaccountform.js', ['app.user.panel.DeleteAccount'], ['bad.ui.Form', 'goog.ui.CustomButton']);
@@ -959,7 +960,7 @@ goog.addDependency('../../../../../../app/public/js/contracts/urlmap.js', ['exp.
 goog.addDependency('../../../../../../app/routes/basic.js', ['exp.routes'], ['exp.routesHelper']);
 goog.addDependency('../../../../../../app/routes/helper.js', ['exp.routesHelper'], []);
 goog.addDependency('../../../../../../app/routes/orgs.js', ['exp.routes.orgs'], ['exp.EmailDispatcher', 'exp.cCardMap', 'exp.productMap', 'exp.routesHelper', 'exp.themes', 'goog.object']);
-goog.addDependency('../../../../../../app/routes/user.js', ['exp.routes.user'], ['exp.EmailDispatcher', 'exp.countryList', 'exp.routesHelper']);
+goog.addDependency('../../../../../../app/routes/user.js', ['exp.routes.user'], ['exp.EmailDispatcher', 'exp.countryList', 'exp.routesHelper', 'exp.themes']);
 goog.addDependency('../../../../../../app/src/bridge.js', ['exp.Bridge'], []);
 goog.addDependency('../../../../../../app/src/websocket.js', ['exp.WebSocket'], ['exp.Bridge']);
 goog.addDependency('../../../../../../app/urls/orgsurls.js', ['exp.orgsUrls'], ['exp.routes.orgs', 'exp.urlMap']);

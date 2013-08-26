@@ -15,5 +15,7 @@ app.org.EventType = {
     UPDATE_BILLING: bad.utils.privateRandom(),
     UPDATE_SUCCESS: bad.utils.privateRandom(),
     DELETE: bad.utils.privateRandom(),
+    ORG_DELETE_CANCELED: bad.utils.privateRandom(),
+    ORG_DELETE_SUCCESS: bad.utils.privateRandom(),
     CHANGE_SCOPE: bad.utils.privateRandom()
 };
