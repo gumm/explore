@@ -138,9 +138,9 @@ app.org.panel.SignUp.prototype.onSubmitSignUp = function(queryData, e) {
     var data = xhr.getResponseJson();
     this.clearAlerts();
     if (xhr.isSuccess()) {
-        var orgId = data['data']['_id'];
         var orgData = data['data'];
-        this.dispatchActionEvent(app.org.EventType.UPDATE_SUCCESS, {org: orgData});
+        this.dispatchActionEvent(app.org.EventType.UPDATE_SUCCESS,
+            {org: orgData});
     } else {
         this.displayErrors(data);
     }
@@ -191,8 +191,15 @@ app.org.panel.SignUp.prototype.loadGoogleMaps = function() {
     }
 };
 
-app.org.panel.SignUp.prototype.renderMap = function(randName) {
-    delete goog.global[randName];
+/**
+ * Once google maps is available this is the callback to execute.
+ * @param {string=} opt_randName
+ */
+app.org.panel.SignUp.prototype.renderMap = function(opt_randName) {
+    if (goog.global[opt_randName]) {
+        delete goog.global[opt_randName];
+    }
+
     var latInput = document.getElementById('geoLat');
     var lngInput = document.getElementById('geoLng');
     var geoAddressInput = document.getElementById('geoAddress');

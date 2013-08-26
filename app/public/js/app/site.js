@@ -350,5 +350,5 @@ app.Site.prototype.hideAllNests = function() {
 
 app.Site.prototype.swapCss = function(filename) {
     document.getElementById('pagestyle').setAttribute('href',
-        'css/themes/'+ filename +'.css');
+        'css/themes/' + filename + '.css');
 };

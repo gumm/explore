@@ -33,7 +33,7 @@ app.user.view.Account.prototype.configurePanels = function() {
 
 app.user.view.Account.prototype.displayPanels = function() {
 
-    switch(this.landing_) {
+    switch (this.landing_) {
         case 'orgList':
             this.enterOrgsList();
             break;
@@ -134,14 +134,18 @@ app.user.view.Account.prototype.enterOrgsList = function() {
     panel.renderWithTemplate();
 };
 
+/**
+ * An overview of the account
+ * @param {(string|null)=} opt_id
+ */
 app.user.view.Account.prototype.enterOverview = function(opt_id) {
 
     if (this.nav) {this.nav.resetMenu();}
+
     var uriString = exp.urlMap.ACCOUNTS.READ;
     if (opt_id) {
         uriString = uriString + '/' + opt_id;
     }
-
 
     /**
      * @type {bad.ui.Panel}
@@ -170,7 +174,7 @@ app.user.view.Account.prototype.confirmRemoveAccount = function() {
     var form = new app.user.panel.DeleteAccount('confaccdel-form');
     form.setUri(new goog.Uri(exp.urlMap.ACCOUNTS.DELETE));
     form.setUser(this.getUser());
-    form.setNestAsTarget( this.getLayout().getNest('main', 'center'));
+    form.setNestAsTarget(this.getLayout().getNest('main', 'center'));
     this.addPanelToView('replace', form);
     form.renderWithTemplate();
 };

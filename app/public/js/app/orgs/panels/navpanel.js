@@ -1,8 +1,8 @@
 goog.provide('app.org.panel.NavPanel');
 
-goog.require('bad.ui.Form');
 goog.require('bad.ui.MenuFlatRenderer');
 goog.require('bad.ui.MenuItemRenderer');
+goog.require('bad.ui.Panel');
 goog.require('goog.style');
 goog.require('goog.ui.CustomButton');
 

@@ -1,52 +1,14 @@
-#confaccdel.container-440-left
-    .detail-head
-            .content Make sure you want to do this
-    form()#confaccdel-form.well
-        .alert.alert-error
-            h3.text-center
-                i.icon-large.icon-warning-sign
-                |   Warning
-            strong This is extreamly important. If you don't read
-                | this unexpected bad things will almost certainly happen. Kittens may die!
-        p Deleting your account will deleta all your data. There is no turning back.
-            | Please review the terms of service regarding account deletion.
-        hr
-        fieldset
-            #user-cg
-                label.control-label(for='user-tf') Enter your username
-                .controls
-                    input#uname-tf.input-full-width(
-                    type='text',
-                    name='user',
-                    value='',
-                    placeholder='Your login name',
-                    required)
+- buttonLegend = 'Remove Account'
 
-            #confphrase-cg
-                label.control-label(for='confphrase-tf') Type the following phrase:&nbsp;
-                    em.text-info #{confPhrase}
-                .controls
-                    input#confphrase-tf.input-full-width(
-                    type='text',
-                    name='confphrase',
-                    pattern="#{confPhrase}"
-                    value='',
-                    placeholder='We will be sad to see you go',
-                    required)
+extends ../delete_
 
-            #pass-cg
-                label.control-label(for='pass-tf') Confirm your password
-                .controls
-                    input#pass-tf.input-full-width(
-                    type='password',
-                    name='pass',
-                    value='',
-                    placeholder='Your login password',
-                    required)
+block warningOne
+    | Make sure you want to do this
 
-            .form-actions
-                .form-action-right
-                    #but-cancel Cancel
-                    #remove-account-confirm(style="margin-left: 10px").g-button-red
-                        i.icon-user
-                        | Remove Account
+block warningTwo
+    | This is extreamly important. If you don't read this unexpected bad
+    | things will almost certainly happen. Kittens may die!
+
+block warningThree
+    | Deleting your account will deleta all your data. There is no turning back.
+    | Please review the terms of service regarding account deletion.

@@ -2,6 +2,7 @@ goog.provide('app.org.view.Org');
 
 goog.require('app.org.EventType');
 goog.require('app.org.panel.DeleteOrg');
+goog.require('app.org.panel.DetailPanel');
 goog.require('app.org.panel.NavPanel');
 goog.require('app.org.panel.SignUp');
 goog.require('bad.ui.View');
@@ -32,58 +33,23 @@ app.org.view.Org.prototype.displayPanels = function() {
         } else {
             this.createNavPanel(this.activeOrgId_);
         }
-        this.createOrgViewPanel();
+        this.createOrgDetailPanel();
     } else {
         this.createOrgEditPanel();
     }
 };
 
-/**
- */
-app.org.view.Org.prototype.createOrgViewPanel = function() {
+
+app.org.view.Org.prototype.createOrgDetailPanel = function() {
     var uriString = exp.urlMap.ORGS.READ + '/' + this.activeOrgId_;
 
     /**
-     * @type {bad.ui.Panel}
+     * @type {app.org.panel.DetailPanel}
      */
-    var panel = new bad.ui.Panel();
+    var panel = new app.org.panel.DetailPanel();
     panel.setUri(new goog.Uri(uriString));
     panel.setUser(this.getUser());
     panel.setNestAsTarget(this.getLayout().getNest('main', 'center'));
-    var beforeReadyCallback = goog.bind(function() {
-        var ownerLink = goog.dom.getElement('ownerLink');
-        var ownerId = goog.dom.dataset.get(ownerLink, 'id');
-        var editProfile = goog.dom.getElement('editContacts');
-        var editPhysical = goog.dom.getElement('editPhysAddress');
-        var editPostal = goog.dom.getElement('editPostalAddress');
-
-        this.getHandler().listen(
-            ownerLink,
-            goog.events.EventType.CLICK,
-            function() {
-                this.dispatchActionEvent(app.org.EventType.VIEW_OWNER, ownerId);
-            }, undefined, this
-        ).listen(
-            editPhysical,
-            goog.events.EventType.CLICK,
-            function() {
-                this.dispatchActionEvent(app.org.EventType.UPDATE_PHYSICAL);
-            }, undefined, this
-        ).listen(
-            editPostal,
-            goog.events.EventType.CLICK,
-            function() {
-                this.dispatchActionEvent(app.org.EventType.UPDATE_POSTAL);
-            }, undefined, this
-        ).listen(
-            editProfile,
-            goog.events.EventType.CLICK,
-            function() {
-                this.dispatchActionEvent(app.org.EventType.UPDATE_PROFILE);
-            }, undefined, this);
-    }, panel);
-
-    panel.setBeforeReadyCallback(beforeReadyCallback);
     this.addPanelToView('replace', panel);
     panel.renderWithTemplate();
 };
@@ -187,14 +153,14 @@ app.org.view.Org.prototype.confirmRemoveAccount = function() {
     var form = new app.org.panel.DeleteOrg('confaccdel-form');
     form.setUri(new goog.Uri(exp.urlMap.ORGS.DELETE + '/' + this.activeOrgId_));
     form.setUser(this.getUser());
-    form.setNestAsTarget( this.getLayout().getNest('main', 'center'));
+    form.setNestAsTarget(this.getLayout().getNest('main', 'center'));
     this.addPanelToView('replace', form);
     form.renderWithTemplate();
 };
 
 app.org.view.Org.prototype.swapCss = function(media) {
     document.getElementById('pagestyle').setAttribute(
-        'href', 'css/themes/'+ media['css'] +'.css');
+        'href', 'css/themes/' + media['css'] + '.css');
 };
 
 /**
