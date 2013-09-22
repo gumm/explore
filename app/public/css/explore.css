@@ -10,116 +10,130 @@
  */
 
 .google-map-canvas,
-.google-map-canvas * {.box-sizing(content-box); }
+.google-map-canvas * { .box-sizing(content-box); }
+
+.layout-nest-main-right-mid {
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+#body-background.noimg {
+  background: none;
+}
 
 /* Optional responsive image override */
-img { max-width: none; }
-
+img {
+  max-width: none;
+}
 
 .clickable {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 #logo_container {
-    margin: 10px;
-    float: left;
+  margin: 10px;
+  float: left;
 }
 
 input.error {
-    border-color: rgb(233, 50, 45);
-    -webkit-box-shadow: 0 0 6px rgb(248, 185, 183);
-    -moz-box-shadow: 0 0 6px #f8b9b7;
-    box-shadow: 0 0 6px rgb(248, 185, 183);
-    color: rgb(185, 74, 72);
+  border-color: rgb(233, 50, 45);
+  -webkit-box-shadow: 0 0 6px rgb(248, 185, 183);
+  -moz-box-shadow: 0 0 6px #f8b9b7;
+  box-shadow: 0 0 6px rgb(248, 185, 183);
+  color: rgb(185, 74, 72);
 }
 
 .input-full-width {
-    width: calc(100% - 15px);
+  width: calc(100% -15px);
 }
 
 .control-group .alert {
-    margin-top:10px;
-    margin-bottom: 0;
+  margin-top: 10px;
+  margin-bottom: 0;
 }
 
 .layout-drag-handle {
-    background-color: rgb(250, 250, 250) !important;
+  background-color: rgba(0, 0, 0, 0.01) !important;
 }
+
 .linklike {
-    color: rgb(0, 136, 204);
-    text-decoration: none;
-    cursor: pointer;
+  color: rgb(0, 136, 204);
+  text-decoration: none;
+  cursor: pointer;
 }
+
 .linklike:hover {
-    color: rgb(0, 85, 128);
-    text-decoration: underline;
+  color: rgb(0, 85, 128);
+  text-decoration: underline;
 }
+
 .signup {
-    color: rgb(133, 133, 133);
-    float: right;
+  float: right;
 }
+
 .topfixed {
-    position: relative;
-    top: 33px;
-    width: 260px;
-    right: 18px;
-    float: right;
+  position: relative;
+  top: 33px;
+  width: 260px;
+  right: 18px;
+  float: right;
 }
 
 .topfixed-left {
-    position: relative;
-    /*top: 18px;*/
-    width: 160px;
-    left: 18px;
-    float: left;
+  position: relative;
+  /*top: 18px;*/
+  width: 160px;
+  left: 18px;
+  float: left;
 }
 
 #sysreadout {
-    color: rgb(133, 133, 133);
-    top: 7px;
-    right: 20px;
-    position: absolute;
+  top: 7px;
+  right: 20px;
+  position: absolute;
 }
 
 .numberreadout {
-    display: inline-block;
-    font-size: 12px;
-    font-weight: bold;
-    opacity: 1;
-    color: rgb(255, 255, 255);
-    -webkit-border-radius: 3px;
-    border-radius: 3px;
-    -webkit-transition: background-color .218s,border-color .218s,box-shadow .218s;
-    transition: background-color .218s,border-color .218s,box-shadow .218s;
-    -webkit-user-select: none;
-    cursor: pointer;
-    height: 15px;
-    line-height: 15px;
-    margin-left: 8px;
-    outline: none;
-    width: auto;
-    background-image: none;
-    -webkit-appearance: none;
-    -webkit-box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
-    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
-    background-color: rgb(93, 126, 221);
-    border: none;
-    padding: 1px 5px 1px 5px;
+  display: inline-block;
+  font-size: 12px;
+  font-weight: bold;
+  opacity: 1;
+  color: rgb(255, 255, 255);
+  -webkit-border-radius: 3px;
+  border-radius: 3px;
+  -webkit-transition: background-color .218s, border-color .218s, box-shadow .218s;
+  transition: background-color .218s, border-color .218s, box-shadow .218s;
+  -webkit-user-select: none;
+  cursor: pointer;
+  height: 15px;
+  line-height: 15px;
+  margin-left: 8px;
+  outline: none;
+  width: auto;
+  background-image: none;
+  -webkit-appearance: none;
+  -webkit-box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
+  background-color: rgb(93, 126, 221);
+  border: none;
+  padding: 1px 5px 1px 5px;
 }
 
 .expr_wrapper {
-    padding: 30px;
+  padding: 30px;
 }
+
 .layout-nest-header {
-    background-color: rgb(66, 66, 66);
-    border-bottom: 1px solid rgb(229, 229, 229);
+  background-color: rgb(66, 66, 66);
+  border-bottom: 1px solid rgb(229, 229, 229);
 }
+
 .layout-nest-main {
-    background-color: #FCFCFC;
+  background-color: #FCFCFC;
 }
+
 .layout-nest-footer {
-    background-color: #EEE;
-    border-top: 1px solid #CCC;
+  background-color: #EEE;
+  border-top: 1px solid #CCC;
 }
 
 /* Buttons and things created with bad.utils.getIconString have space between
@@ -127,9 +141,8 @@ input.error {
  */
 .goog-css3-button i[class^="icon-"], .goog-css3-button i[class*=" icon-"],
 span i[class^="icon-"], span i[class*=" icon-"] {
-    margin-right: 10px;
+  margin-right: 10px;
 }
-
 
 #login-container {
   width: 260px;
@@ -137,29 +150,33 @@ span i[class^="icon-"], span i[class*=" icon-"] {
 }
 
 #login-container > input {
-    width: calc(100% - 14px);
+  width: calc(100% - 14px);
 }
 
 #login-container .btm-links {
   text-align: center;
   margin-top: 10px;
 }
+
 #login-container #create-account {
-    float: right;
-    margin-right: 13px;
+  float: right;
+  margin-right: 13px;
 }
+
 #login-container #forgot-password {
   float: left;
   margin-left: 10px;
 }
+
 .form-actions {
-    padding: 0;
-    margin-bottom: 0;
+  padding: 0;
+  margin-bottom: 0;
 }
 
 .container-440-left {
   width: 440px;
-  margin: 30px  0 0 30px;
+  margin: 0 0 0 30px;
+  padding: 10px;
 }
 
 .container-440-right {
@@ -186,7 +203,7 @@ span i[class^="icon-"], span i[class*=" icon-"] {
 }
 
 #account-form .control-label {
-    width: 100px;
+  width: 100px;
 }
 
 #country-list {
@@ -216,12 +233,13 @@ span i[class^="icon-"], span i[class*=" icon-"] {
 .form-horizontal .control-label {
   width: 80px;
 }
+
 .form-horizontal .controls {
   margin-left: 120px;
 }
 
 #get-credentials-form > input {
-    width: calc(100% - 14px);
+  width: calc(100% - 14px);
 }
 
 #get-credentials-form.form-horizontal .form-actions {
@@ -239,11 +257,11 @@ span i[class^="icon-"], span i[class*=" icon-"] {
 }
 
 .form-horizontal .form-actions {
-    padding-left: 0;
+  padding-left: 0;
 }
 
 .form-action-right {
-    float: right;
+  float: right;
 }
 
 label {
@@ -252,6 +270,7 @@ label {
   -moz-text-shadow: -1px 1px 0 #fff;
   -webkit-text-shadow: -1px 1px 0 #fff;
 }
+
 .subheading {
   color: #808080;
   text-shadow: -1px 1px 0 #fff;
@@ -259,94 +278,88 @@ label {
   -webkit-text-shadow: -1px 1px 0 #fff;
   margin-top: 3px;
 }
+
 .pan-wrapper {
-    height: 100%;
-    overflow: auto;
-    position: relative;
+  height: 100%;
+  overflow: auto;
+  position: relative;
 }
 
 .org_progress > .active {
-    font-weight: bold;
+  font-weight: bold;
 }
 
 .menu-nav {
-    width: 230px;
-    position: absolute;
-    right: 0;
-    top: 0;
-    margin: 80px 0 20px 0;
+  position: relative;
+  float: right;
+  margin: 30px;
+}
+
+.menu-head {
+  padding-left: 28px;
+  border-bottom: 1px solid rgb(204, 204, 204);
 }
 
 .dl-hwrap {
-    border-bottom: 1px solid rgb(235, 235, 235);
-    margin-bottom: 10px;
-    display: block;
+  border-bottom: 1px solid rgb(235, 235, 235);
+  margin-bottom: 10px;
+  display: block;
 }
 
 .dl-head {
-    font-size: 20px;
-    color: rgb(102, 102, 102);
-    font-family: arial,sans-serif;
-    line-height: 1.5;
-    display: inline-block;
+  font-size: 20px;
+  color: rgb(102, 102, 102);
+  font-family: arial, sans-serif;
+  line-height: 1.5;
+  display: inline-block;
 }
 
 .dl-horizontal.left-100 dt {
-    width: 100px;
-    margin-right: 10px;
-    border-right: 1px solid rgb(235, 235, 235);
-    padding-right: 10px;
+  width: 100px;
+  margin-right: 10px;
+  padding-right: 10px;
+  margin-bottom: 1px;
 }
 
 .dl-horizontal.left-100 dd {
-    margin-left: 100px;
-}
-
-.dl-horizontal.left-100 dd {
-    margin-left: 100px;
+  margin-left: 113px;
 }
 
 .dl-horizontal.left-100 dd.numberreadout {
-    float: left;
-    margin-left: 0;
+  float: left;
+  margin-left: 0;
 }
 
 .detail-head {
-margin: 58px 0 20px;
-border-bottom: 1px solid rgb(235, 235, 235);
-border-bottom-color: rgb(204, 204, 204);
-display: table;
-height: 71px;
-width: 100%;
+  /*margin: 5px 0 10px;*/
+  /*border-bottom: 1px solid rgb(235, 235, 235);*/
+  /*border-bottom-color: rgb(204, 204, 204);*/
+  /*display: table;*/
+  /*height: 71px;*/
+  /*width: 100%;*/
 }
 
 .detail-head .content {
-width: 160px;
-color: rgb(221, 75, 57);
-font-size: 20px;
-min-width: 160px;
-display: table-cell;
-line-height: 71px;
-overflow: hidden;
-vertical-align: middle;
+  color: rgb(221, 75, 57);
+  font-size: 2em;
+  line-height: 2.5em;
+  overflow: hidden;
+  vertical-align: middle;
 }
 
 .edit {
-    float: right;
-    position: relative;
-}
-.detail-head .edit {
-    top: 50px;
+  float: right;
+  position: relative;
 }
 
+.detail-head .edit,
 .dl-hwrap .edit {
-    top: 10px;
+  top: 10px;
 }
 
 .not-set {
-    color: rgb(200,200,200);
 }
 
 #annOther {
-    float: right;
+  float: right;
 }

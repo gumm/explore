@@ -21,8 +21,8 @@
         #editPhysAddress.edit.linklike Edit
     if (org.geo.geoAddress && org.geo.geoLat && org.geo.geoLng && org.geo.geoAddress != "Cannot determine address at this location.")
         img(
-            border = "0",
-            src = "http://maps.googleapis.com/maps/api/staticmap?center=#{org.geo.geoLat},#{org.geo.geoLng}&size=440x280&zoom=#{org.geo.geoZoom}&maptype=roadmap&visual_refresh=true&&markers=color:red%7Ccolor:red%7C#{org.geo.geoLat},#{org.geo.geoLng}&sensor=false")
+        border = "0",
+        src = "http://maps.googleapis.com/maps/api/staticmap?center=#{org.geo.geoLat},#{org.geo.geoLng}&size=440x280&zoom=#{org.geo.geoZoom}&maptype=roadmap&visual_refresh=true&&markers=color:red%7Ccolor:red%7C#{org.geo.geoLat},#{org.geo.geoLng}&sensor=false")
     dl.dl-horizontal.left-100
         dt Address
         dd

@@ -70,7 +70,7 @@ deps) echo  "Build Closure Dependencies"
         ${PROJECT_NAME}
    ;;
 
-# Build the deps file needed for un-compiled work.
+# Build the deps file needed by Node so we can use goog.provide and require.
 nodedeps) echo  "Build Node Dependencies"
    ${BUILD_PATH}/build-node-deps.sh \
         ${WORKSPACE} \

@@ -7,5 +7,6 @@ goog.require('bad.utils');
  * @enum {string}
  */
 app.base.EventType = {
-    EDIT_PROFILE: bad.utils.privateRandom()
+  EDIT_PROFILE: bad.utils.privateRandom(),
+  MENU_HEAD: bad.utils.privateRandom()
 };

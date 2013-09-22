@@ -70,13 +70,13 @@ form()#account-form.form-horizontal.well
                     value=account.contact.cell,
                     placeholder='+00 12 3456789')
             #phone-cg.control-group
-                    label.control-label(for='phone-tf') Landline
-                    .controls
-                        input#phone-tf.input-full-width(
-                        type='text',
-                        name='phone',
-                        value=account.contact.phone,
-                        placeholder='+00 12 3456789')
+                label.control-label(for='phone-tf') Landline
+                .controls
+                    input#phone-tf.input-full-width(
+                    type='text',
+                    name='phone',
+                    value=account.contact.phone,
+                    placeholder='+00 12 3456789')
 
         if (formtype === 'signup')
             hr

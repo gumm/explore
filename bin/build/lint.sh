@@ -12,6 +12,7 @@ echo "LINT_TARGET: ${LINT_TARGET}"
 echo "-----------------------------------------------------"
 echo ""
 
+fixjsstyle --nojsdoc -r ${JS_PATH}/$2/
 gjslint \
     --nojsdoc -r ${JS_PATH}/$2/ \
     --check_html

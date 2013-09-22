@@ -1,18 +1,51 @@
+#body-background {
+  /* This image will be displayed fullscreen */
+  background: url('../../img/5-1-8-im-SlideshowImagewelcome-5324.jpg') no-repeat center center;
+
+  /* Ensure the html element always takes up the full height of the browser window */
+  min-height: 100%;
+
+  /* The Magic */
+  background-size: cover;
+}
+
+.layout-nest-main {
+  background-color: transparent;
+}
+
+.layout-nest-header,
+.layout-nest-footer {
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
 .layout-nest-header {
-    background-color: rgb(86, 108, 194);
-    border-bottom: 1px solid rgb(229, 229, 229);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.layout-nest-footer {
+  border-top: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.layout-nest-main-left-mid,
+.layout-nest-main-right-mid {
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+.layout-nest-header {
+  background-color: #275265;
+  border-bottom: 1px solid rgb(229, 229, 229);
 }
 
 #sysreadout,
 .signup {
-    color: rgb(26, 26, 66);
+  color: rgb(26, 26, 66);
 }
 
 .numberreadout {
-background-color: rgb(40, 40, 105);
-border: none;
+  background-color: #275265;
+  border: none;
 }
 
 .detail-head .content {
-    color: rgb(86, 108, 194);
+  color: #275265;
 }

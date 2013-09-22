@@ -4,7 +4,7 @@ form()#orgForm.form-horizontal.well
     if (formtype === 'create' || formtype === 'profile')
         fieldset
             h4 Profile Information
-            if (formtype === 'create')
+            if (formtype === 'create' || formtype === 'profile')
                 .control-group
                     label.control-label(for='orgName') Org Name
                     .controls
@@ -29,7 +29,7 @@ form()#orgForm.form-horizontal.well
                     label.control-label(for='mediaCss') Color
                     .controls
                         select#mediaCss(
-                            name='mediaCss')
+                        name='mediaCss')
                             each value, key in themes
                                 option(value=key, selected=key == org.media.css)=value.name
 
@@ -45,27 +45,27 @@ form()#orgForm.form-horizontal.well
     if (formtype === 'physical')
         fieldset
             input(
-                type='hidden',
-                name='geoLng',
-                value= org.geo.geoLng)#geoLng
+            type='hidden',
+            name='geoLng',
+            value= org.geo.geoLng)#geoLng
             input(
-                type='hidden',
-                name='geoLat',
-                value= org.geo.geoLat)#geoLat
+            type='hidden',
+            name='geoLat',
+            value= org.geo.geoLat)#geoLat
             input(
-                type='hidden',
-                name='geoZoom',
-                value= org.geo.geoZoom)#geoZoom
+            type='hidden',
+            name='geoZoom',
+            value= org.geo.geoZoom)#geoZoom
 
             h4 Physical Address
             .control-group
                 #mapCanvas(style='width: 400px; height: 300px;')
             .control-group
                 input#geoAddress.input-full-width(
-                    type='text',
-                    name='geoAddress',
-                    value= org.geo.geoAddress,
-                    placeholder="You can use the map and move the marker to your address")
+                type='text',
+                name='geoAddress',
+                value= org.geo.geoAddress,
+                placeholder="You can use the map and move the marker to your address")
 
     if (formtype === 'postal')
         fieldset
@@ -130,9 +130,9 @@ form()#orgForm.form-horizontal.well
                                 div(id=key)  Choose
 
         fieldset#card
-            //- The fields here are set to required by JS.
-            //- When a user selects a plan that requires a CC, these fields
-            // - come into play. Otherwise not.
+//- The fields here are set to required by JS.
+//- When a user selects a plan that requires a CC, these fields
+// - come into play. Otherwise not.
             h4 Credit Card details
             .control-group
                 label.control-label(for='crdName') Card Name
@@ -150,7 +150,7 @@ form()#orgForm.form-horizontal.well
                     name='crdType')
                         each val, index in cCards
                             option(value=index,
-                                selected=index == org.card.crdType
+                            selected=index == org.card.crdType
                             )=val
             .control-group
                 label.control-label(for='crdNumber') Card Number

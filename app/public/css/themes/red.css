@@ -1,32 +1,65 @@
+#body-background {
+  /* This image will be displayed fullscreen */
+  background: url('../../img/e0rrklhqq4dme97o.jpg') no-repeat center center;
+
+  /* Ensure the html element always takes up the full height of the browser window */
+  min-height: 100%;
+
+  /* The Magic */
+  background-size: cover;
+}
+
+.layout-nest-main {
+  background-color: transparent;
+}
+
+.layout-nest-header,
+.layout-nest-footer {
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
 .layout-nest-header {
-    background-color: rgb(167, 9, 0);
-    border-bottom: 1px solid rgb(229, 229, 229);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.layout-nest-footer {
+  border-top: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.layout-nest-main-left-mid,
+.layout-nest-main-right-mid {
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+.layout-nest-header {
+  background-color: rgb(167, 9, 0);
+  border-bottom: 1px solid rgb(229, 229, 229);
 }
 
 #sysreadout,
 .signup {
-    color: rgb(233, 132, 119);
+  color: rgb(233, 132, 119);
 }
 
 .numberreadout {
-background-color: rgb(75, 8, 0);
-border: none;
+  background-color: rgb(75, 8, 0);
+  border: none;
 }
 
 .detail-head .content {
-    color: rgb(167, 9, 0);
+  color: rgb(167, 9, 0);
 }
 
 .well {
-border: none;
-background-color: transparent;
--webkit-box-shadow: none;
--moz-box-shadow: none;
-box-shadow: none;
+  border: none;
+  background-color: rgba(255, 255, 255, 0.65);
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
 }
 
 .flat-menu {
-border-top: 6px solid rgb(167, 9, 0);
-padding: 0;
+  border-top: 6px solid rgb(167, 9, 0);
+  padding: 0;
 }
 

@@ -3,57 +3,11 @@ var BSON = require('mongodb').BSONPure;
 var moment = require('moment');
 var ORGS = require('./db-manager').orgs;
 
-var makeOrg = function(data) {
-    return {
-        profile: {
-            orgName: data.orgName || null,
-            orgUrl: data.orgUrl || null
-        },
-        loc: {
-            locStreet: data.locStreet || null,
-            locSuburb: data.locSuburb || null,
-            locCode: data.locCode || null,
-            locCity: data.locCity || null,
-            locCountry: data.locCountry || null
-        },
-        geo: {
-            geoLng: data.geoLng || null,
-            geoLat: data.geoLat || null,
-            geoAddress: data.geoAddress || null,
-            geoZoom: data.geoZoom || null
-        },
-        box: {
-            boxNum: data.boxNum || null,
-            boxSuburb: data.boxSuburb || null,
-            boxCode: data.boxCode || null,
-            boxCity: data.boxCity || null,
-            boxCountry: data.boxCountry || null
-        },
-        media: {
-            logo: data.mediaLogo || null,
-            css: data.mediaCss || null
-        },
-        bill: {
-            billPlan: data.billPlan || null,
-            billEmail: data.billEmail || null
-        },
-        card: {
-            crdName: data.crdName || null,
-            crdType: data.crdType || null,
-            crdNumber: data.crdNumber || null,
-            crdExpDate: data.crdExpDate || null,
-            crdCvv: data.crdCvv || null
-        },
-        members: [],
-        owners: [data.userId]
-    };
-};
-
 var checkUniqueOrgName = function(orgName, callback) {
-    ORGS.findOne(
-        {'profile.orgName': orgName},
-        callback
-    );
+  ORGS.findOne(
+    {'profile.orgName': orgName},
+    callback
+  );
 };
 
 /**
@@ -68,98 +22,101 @@ var checkUniqueOrgName = function(orgName, callback) {
  */
 var addNewOrg = function(newOrg, callback) {
 
-    var error = {
-        orgName: null
-    };
+  var error = {
+    orgName: null
+  };
 
-    var uniqueOrgNameCallback = function(err, org) {
-        if (org) {
-            error.orgName = 'This name is not available';
-            callback(error);
-        } else {
-            newOrg.date = moment().format('MMMM Do YYYY, h:mm:ss a');
-            ORGS.insert(newOrg, {safe: true}, function() {
-                callback(null, newOrg);
-            });
-        }
-    };
-    checkUniqueOrgName(newOrg.profile.orgName, uniqueOrgNameCallback);
+  var uniqueOrgNameCallback = function(err, org) {
+    if (org) {
+      error.orgName = 'This name is not available';
+      callback(error);
+    } else {
+      newOrg.date = moment().format('MMMM Do YYYY, h:mm:ss a');
+      ORGS.insert(newOrg, {safe: true}, function() {
+        callback(null, newOrg);
+      });
+    }
+  };
+  checkUniqueOrgName(newOrg.profile.orgName, uniqueOrgNameCallback);
 };
 
 var getOrgsByOwnerId = function(userId, callback) {
-    var ownerId = userId.toString();
-    ORGS.find({'owners': ownerId}).toArray(callback);
+  var ownerId = userId.toString();
+  ORGS.find({'owners': ownerId}).toArray(callback);
 };
 
 var getOrgById = function(id, callback) {
-    ORGS.findOne({_id: BSON.ObjectID(id)}, function(err, org) {
-        if(err) {
-            console.log('ERROR', err);
-            callback(err);
-        } else {
-            callback(null, org);
-        }
-    });
+  ORGS.findOne({_id: BSON.ObjectID(id)}, function(err, org) {
+    if (err) {
+      console.log('ERROR', err);
+      callback(err);
+    } else {
+      callback(null, org);
+    }
+  });
 };
 
 var updateProfile = function(uid, newOrg, subset, callback) {
 
-    var findAndModifyCallback = function(err, account) {
-        if (err){
-            callback(err); // returns error if no matching object found
-        } else {
-            callback(null, account);
-        }
-    };
-
-    var doc = {};
-    switch(subset) {
-        case 'profile':
-            doc = {$set: {
-                'profile.orgUrl': newOrg.profile.orgUrl,
-                media: newOrg.media}
-            };
-            break;
-        case 'box':
-            doc = {$set: {box: newOrg.box}};
-            break;
-        case 'loc':
-            doc = {$set: {
-                loc: newOrg.loc,
-                geo: newOrg.geo
-            }};
-            break;
-        case 'billing':
-            doc = {$set: {
-                bill: newOrg.bill,
-                card: newOrg.card}
-            };
-            break;
-        default:
-            console.log('Unknown subset', subset);
+  var findAndModifyCallback = function(err, account) {
+    if (err) {
+      callback(err); // returns error if no matching object found
+    } else {
+      callback(null, account);
     }
+  };
 
-    ORGS.findAndModify(
-        {_id: BSON.ObjectID(uid)}, // query
-        [['_id','asc']],           // sort order
-        doc,
-        {new: true}, // options new - if set to true, callback function
-                     // returns the modified record.
-                     // Default is false (original record is returned)
-        findAndModifyCallback
-    );
+  var doc = {};
+  switch (subset) {
+    case 'profile':
+      doc = {$set: {
+        'profile.orgName': newOrg.profile.orgName,
+        'profile.orgUrl': newOrg.profile.orgUrl,
+        media: newOrg.media}
+      };
+      break;
+    case 'box':
+      doc = {$set: {box: newOrg.box}};
+      break;
+    case 'loc':
+      doc = {$set: {
+        loc: newOrg.loc,
+        geo: newOrg.geo
+      }};
+      break;
+    case 'billing':
+      doc = {$set: {
+        bill: newOrg.bill,
+        card: newOrg.card}
+      };
+      break;
+    default:
+      console.log('Unknown subset', subset);
+  }
+
+  ORGS.findAndModify(
+    {_id: BSON.ObjectID(uid)}, // query
+    [
+      ['_id', 'asc']
+    ],           // sort order
+    doc,
+    {new: true}, // options new - if set to true, callback function
+    // returns the modified record.
+    // Default is false (original record is returned)
+    findAndModifyCallback
+  );
 };
 
 var deleteOrg = function(id, callback) {
-    ORGS.remove({_id: BSON.ObjectID(id)}, callback);
+  ORGS.remove({_id: BSON.ObjectID(id)}, callback);
 };
 
 module.exports = {
-    makeOrg: makeOrg,
-    addNewOrg: addNewOrg,
-    getOrgsByOwnerId: getOrgsByOwnerId,
-    getOrgById: getOrgById,
-    updateProfile: updateProfile,
-    deleteOrg: deleteOrg
+//    makeOrg: makeOrg,
+  addNewOrg: addNewOrg,
+  getOrgsByOwnerId: getOrgsByOwnerId,
+  getOrgById: getOrgById,
+  updateProfile: updateProfile,
+  deleteOrg: deleteOrg
 };
 

@@ -11,23 +11,23 @@ goog.require('app.user.panel.SignUp');
  * @constructor
  */
 app.user.panel.ResetPassword = function(id, opt_domHelper) {
-    app.user.panel.SignUp.call(this, id, opt_domHelper);
+  app.user.panel.SignUp.call(this, id, opt_domHelper);
 };
 goog.inherits(app.user.panel.ResetPassword, app.user.panel.SignUp);
 
 app.user.panel.ResetPassword.prototype.initDom = function() {
-    var formContainer = goog.dom.removeNode(
-        goog.dom.getElement('pwreset')
-    );
-    var panelWrapper = goog.dom.getElementByClass(
-        'pan-wrapper', this.getTarget());
-    goog.dom.append(/** @type (!Node) */ (panelWrapper), formContainer);
+  var formContainer = goog.dom.removeNode(
+    goog.dom.getElement('pwreset')
+  );
+  var panelWrapper = goog.dom.getElementByClass(
+    'pan-wrapper', this.getTarget());
+  goog.dom.append(/** @type (!Node) */ (panelWrapper), formContainer);
 
-    app.user.panel.ResetPassword.superClass_.initDom.call(this);
+  app.user.panel.ResetPassword.superClass_.initDom.call(this);
 };
 
 app.user.panel.ResetPassword.prototype.onCancel = function() {
-    window.open(exp.urlMap.INDEX, '_self');
+  window.open(exp.urlMap.INDEX, '_self');
 };
 
 /**
@@ -37,32 +37,32 @@ app.user.panel.ResetPassword.prototype.onCancel = function() {
  */
 app.user.panel.ResetPassword.prototype.onSubmitSignUp = function(queryData, e) {
 
-    var xhr = e.target;
-    var data = xhr.getResponseJson();
-    this.clearAlerts();
+  var xhr = e.target;
+  var data = xhr.getResponseJson();
+  this.clearAlerts();
 
-    if (xhr.isSuccess()) {
-        this.xMan.post(
-            new goog.Uri(exp.urlMap.LOG.IN),
-            queryData,
-            goog.bind(this.loginCallback, this)
-        );
-    } else {
-        this.displayErrors(data);
-    }
+  if (xhr.isSuccess()) {
+    this.xMan.post(
+      new goog.Uri(exp.urlMap.LOG.IN),
+      queryData,
+      goog.bind(this.loginCallback, this)
+    );
+  } else {
+    this.displayErrors(data);
+  }
 };
 
 /**
  * @param {goog.events.EventLike} e Event object.
  */
 app.user.panel.ResetPassword.prototype.loginCallback = function(e) {
-    var xhr = e.target;
-    var data = xhr.getResponseJson();
-    this.clearAlerts();
-    if (xhr.isSuccess()) {
-        this.dispatchActionEvent(
-            app.user.EventType.LOGIN_SUCCESS, data.data);
-    } else {
-        this.displayErrors(data);
-    }
+  var xhr = e.target;
+  var data = xhr.getResponseJson();
+  this.clearAlerts();
+  if (xhr.isSuccess()) {
+    this.dispatchActionEvent(
+      app.user.EventType.LOGIN_SUCCESS, data.data);
+  } else {
+    this.displayErrors(data);
+  }
 };

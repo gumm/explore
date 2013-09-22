@@ -101,6 +101,7 @@
 /home/gumm/Workspace/explore/app/public/js/app/base/constants.js
 /home/gumm/Workspace/explore/app/public/js/bad-library/bad/ui/view.js
 /home/gumm/Workspace/explore/app/public/js/app/base/views/persistent.js
+/home/gumm/Workspace/explore/app/public/js/app/orgs/components/orgmanager.js
 /home/gumm/Workspace/explore/app/public/js/closure-library/closure/goog/dom/forms.js
 /home/gumm/Workspace/explore/app/public/js/bad-library/bad/ui/form.js
 /home/gumm/Workspace/explore/app/public/js/contracts/productmap.js
@@ -109,7 +110,9 @@
 /home/gumm/Workspace/explore/app/public/js/app/orgs/panels/detail.js
 /home/gumm/Workspace/explore/app/public/js/closure-library/closure/goog/dom/dataset.js
 /home/gumm/Workspace/explore/app/public/js/bad-library/bad/ui/renderers/menuflatrenderer.js
+/home/gumm/Workspace/explore/app/public/js/app/base/panels/navpanel.js
 /home/gumm/Workspace/explore/app/public/js/app/orgs/panels/navpanel.js
+/home/gumm/Workspace/explore/app/public/js/app/base/views/basic.js
 /home/gumm/Workspace/explore/app/public/js/app/orgs/panels/deleteorgform.js
 /home/gumm/Workspace/explore/app/public/js/app/orgs/views/org.js
 /home/gumm/Workspace/explore/app/public/js/app/user/panels/deleteaccountform.js
@@ -129,6 +132,8 @@
 /home/gumm/Workspace/explore/app/public/js/closure-library/closure/goog/dom/viewportsizemonitor.js
 /home/gumm/Workspace/explore/app/public/js/bad-library/bad/ui/layout.js
 /home/gumm/Workspace/explore/app/public/js/contracts/urlmap.js
+/home/gumm/Workspace/explore/app/public/js/contracts/accountmap.js
+/home/gumm/Workspace/explore/app/public/js/app/user/components/usermanager.js
 /home/gumm/Workspace/explore/app/public/js/app/user/panels/lostpasswordform.js
 /home/gumm/Workspace/explore/app/public/js/app/user/panels/resetpasswordform.js
 /home/gumm/Workspace/explore/app/public/js/app/user/panels/loginform.js

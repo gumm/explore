@@ -1,8 +1,47 @@
+#body-background {
+  /* This image will be displayed fullscreen */
+  background: url('../../img/background.jpg') no-repeat center center;
+
+  /* Ensure the html element always takes up the full height of the browser window */
+  min-height: 100%;
+
+  /* The Magic */
+  background-size: cover;
+}
+
+.layout-nest-main {
+  background-color: transparent;
+}
+
+.layout-nest-header,
+.layout-nest-footer {
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
 .layout-nest-header {
-    background-color: rgb(66, 66, 66);
-    border-bottom: 1px solid rgb(229, 229, 229);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.layout-nest-footer {
+  border-top: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.layout-nest-main-left-mid,
+.layout-nest-main-right-mid {
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+.well {
+  background-color: rgba(255, 255, 255, 0.65);
 }
 
 .detail-head .content {
-    color: rgb(221, 75, 57);
+  color: rgb(221, 75, 57);
+}
+
+label {
+  color: rgb(70, 70, 70);
+  text-shadow: -1px 1px 0 rgb(255, 255, 255);
+  -moz-text-shadow: -1px 1px 0 #fff;
+  -webkit-text-shadow: -1px 1px 0 #fff;
 }

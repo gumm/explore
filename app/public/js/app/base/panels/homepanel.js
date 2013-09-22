@@ -1,6 +1,8 @@
 goog.provide('app.base.panel.Home');
 
+goog.require('bad.MqttEventType');
 goog.require('bad.ui.Panel');
+goog.require('goog.json');
 
 /**
  * The home panel.
@@ -9,11 +11,59 @@ goog.require('bad.ui.Panel');
  * @constructor
  */
 app.base.panel.Home = function(opt_domHelper) {
-    bad.ui.Panel.call(this, opt_domHelper);
+  bad.ui.Panel.call(this, opt_domHelper);
 };
 goog.inherits(app.base.panel.Home, bad.ui.Panel);
 
+app.base.panel.Home.prototype.setMqtt = function(mqtt) {
+  this.mqtt = mqtt;
+};
+
 app.base.panel.Home.prototype.enterDocument = function() {
-    this.dom_ = goog.dom.getDomHelper(this.getElement());
-    app.base.panel.Home.superClass_.enterDocument.call(this);
+  this.dom_ = goog.dom.getDomHelper(this.getElement());
+
+  if (this.dom_.getElement('mapCanvas')) {
+    bad.utils.loadGoogleMaps(goog.bind(this.renderMap, this));
+  }
+
+  app.base.panel.Home.superClass_.enterDocument.call(this);
+};
+
+/**
+ * Once google maps is available this is the callback to execute.
+ * @param {string=} opt_randName
+ */
+app.base.panel.Home.prototype.renderMap = function(opt_randName) {
+  if (goog.global[opt_randName]) {
+    delete goog.global[opt_randName];
+  }
+
+  var latLng = new google.maps.LatLng(0, 0);
+  var map = new google.maps.Map(document.getElementById('mapCanvas'), {
+    zoom: 13,
+    center: latLng,
+    mapTypeId: google.maps.MapTypeId.ROADMAP
+  });
+
+  var marker = new google.maps.Marker({
+    position: latLng,
+    title: 'Point A',
+    map: map,
+    draggable: true
+  });
+
+  var setPosition = function(payload) {
+    console.debug('MQTT: ', payload);
+    latLng = new google.maps.LatLng(payload.lat, payload.lon);
+    marker.setPosition(latLng);
+    map.setCenter(latLng);
+  };
+
+  this.getHandler().listen(
+    this.mqtt,
+    '/mqttitude',
+    function(e) {
+      setPosition(goog.json.parse(e.payload));
+    }, undefined, this
+  );
 };
