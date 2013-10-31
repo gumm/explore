@@ -40,7 +40,7 @@ app.base.panel.Home.prototype.renderMap = function(opt_randName) {
 
   var latLng = new google.maps.LatLng(0, 0);
   var map = new google.maps.Map(document.getElementById('mapCanvas'), {
-    zoom: 13,
+    zoom: 15,
     center: latLng,
     mapTypeId: google.maps.MapTypeId.ROADMAP
   });
