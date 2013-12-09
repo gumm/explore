@@ -150,12 +150,17 @@ app.org.panel.SignUp.prototype.makeCCardFieldsRequired = function(bool) {
   if (bool) {
     goog.array.forEach(fields, function(id) {
       var field = this.dom_.getElement(id);
-      field.setAttribute('required', 'required');
+      console.debug(field);
+      if (field) {
+        field.setAttribute('required', 'required');
+      }
     }, this);
   } else {
     goog.array.forEach(fields, function(id) {
       var field = this.dom_.getElement(id);
-      field.removeAttribute('required');
+      if (field) {
+        field.removeAttribute('required');
+      }
     }, this);
   }
 };

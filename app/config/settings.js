@@ -4,7 +4,6 @@ goog.require('exp.urls');
 
 var pjson = require('../../package.json');
 var path = require('path');
-//var urls = require('../urls/urls').urls;
 var root = path.resolve(__dirname, '../../');
 var appPath = path.resolve(__dirname, '../');
 
@@ -51,15 +50,15 @@ exp.settings.init = function(dev) {
     conf.mqttServer = 'localhost';
     conf.mqttPort = 1883;
     conf.wsServer = 'localhost';
-    conf.wsPort = process.env.PORT || 3000;
-    conf.port = process.env.PORT || 3000;
+    conf.wsPort = process.env.PORT || 3333;
+    conf.port = process.env.PORT || 3333;
   } else {
     conf.production = true;
-    conf.mqttServer = '54.229.30.67';
+    conf.mqttServer = 'blahblee.com';
     conf.mqttPort = 1883;
-    conf.wsServer = '54.229.30.67';
-    conf.wsPort = 80;
-    conf.port = 80;
+    conf.wsServer = 'blahblee.com';
+    conf.wsPort = 3000;
+    conf.port = 3000;
   }
   return conf;
 };

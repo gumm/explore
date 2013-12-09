@@ -12,22 +12,6 @@ var https = require('https');
 var http = require('http');
 var fs = require('fs');
 
-var hskey = fs.readFileSync('./certs/explore-key.pem');
-var hscert = fs.readFileSync('./certs/explore-cert.pem');
-var interMediateCA = fs.readFileSync('./certs/trail-secure-server-intermediat-ca.pem');
-var rootCA = fs.readFileSync('./certs/Thawte-Test-CA-Root-certificate.pem');
-
-var options = {
-    key: hskey,
-    cert: hscert
-};
-
-//// This line is from the Node.js HTTPS documentation.
-//var options = {
-//  key: fs.readFileSync('test/fixtures/keys/agent2-key.pem'),
-//  cert: fs.readFileSync('test/fixtures/keys/agent2-cert.pem')
-//};
-
 var dev = false;
 if (process.argv[2] === 'dev') {
     dev = true;
@@ -50,10 +34,6 @@ var app = exp.settings.configure(express(), express, dev);
 */
 var server = http.createServer(app).listen(app.get('port'), function() {
     console.log('Express server listening on port ' + app.get('port'));
-});
-
-var secureServer = https.createServer(options, app).listen(8888, function() {
-    console.log('Express secure server listening on port ' + 8888);
 });
 
 /**

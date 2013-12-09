@@ -1,8 +1,8 @@
 goog.provide('exp.productMap');
 
 exp.productMap = {
-  'gold': ['Gold', 'R10/sim', 'Over 250 SIMs'],
-  'silver': ['Silver', 'R12/sim', '51 to 250 SIMs'],
-  'bronze': ['Bronze', 'R15/sim', '2 to 50 SIMs'],
-  'free': ['Open', 'Free', 'A single SIM']
+  'gold': ['Gold', 'R10/UID', 'Over 250 UIDs'],
+  'silver': ['Silver', 'R12/UID', '51 to 250 UIDs'],
+  'bronze': ['Bronze', 'R15/UID', '11 to 50 UIDs'],
+  'free': ['Open', 'Free', 'Up to 10 UIDs']
 };

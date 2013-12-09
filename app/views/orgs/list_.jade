@@ -12,9 +12,9 @@
                     th Orginization Name
             tbody#orgBody
                 each org, index in orgs
-                    - theme = org.media.css
+                    - theme = org.media.css ? org.media.css : 'theme'
                     - color = themes[theme].color
-                    tr(id= org._id)
+                    tr(id= org._id, data-theme='#{theme}')
                         td= index + 1
                         td= org.profile.orgName
                             #annOther.icon.icon-sign-blank(style='color:' + color)
