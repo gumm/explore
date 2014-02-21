@@ -26,24 +26,24 @@ app.org.panel.DetailPanel.prototype.initDom = function() {
     goog.events.EventType.CLICK,
     function() {
       this.dispatchActionEvent(app.org.EventType.VIEW_OWNER, ownerId);
-    }, undefined, this
+    }
   ).listen(
     editPhysical,
     goog.events.EventType.CLICK,
     function() {
       this.dispatchActionEvent(app.org.EventType.UPDATE_PHYSICAL);
-    }, undefined, this
+    }
   ).listen(
     editPostal,
     goog.events.EventType.CLICK,
     function() {
       this.dispatchActionEvent(app.org.EventType.UPDATE_POSTAL);
-    }, undefined, this
+    }
   ).listen(
     editProfile,
     goog.events.EventType.CLICK,
     function() {
       this.dispatchActionEvent(app.org.EventType.UPDATE_PROFILE);
-    }, undefined, this);
+    });
 };
 

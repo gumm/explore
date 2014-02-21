@@ -34,9 +34,7 @@ app.org.panel.List.prototype.initDom = function() {
     this.getHandler().listen(
       table.element_,
       goog.events.EventType.CLICK,
-      this.goGetTheCompanyWithThisId,
-      false,
-      this
+      this.goGetTheCompanyWithThisId
     );
 
     var children = this.dom_.getChildren(this.dom_.getElement('orgBody'));

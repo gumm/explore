@@ -22,7 +22,7 @@ app.base.view.Persistent.prototype.configurePanels = function() {
       function() {
         this.switchView(goog.bind(
           this.appDo, this, app.doMap.VIEW_HOME));
-      }, undefined, this
+      }
     );
   }, this);
 

@@ -26,7 +26,7 @@ app.user.panel.Login.prototype.initDom = function() {
     goog.events.EventType.CLICK,
     function() {
       this.dispatchActionEvent(app.user.EventType.FORGOT_PW);
-    }, undefined, this
+    }
   );
 };
 

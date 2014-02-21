@@ -57,7 +57,7 @@ app.base.NavPanel.prototype.appendMenuTitle = function() {
     goog.events.EventType.CLICK,
     function() {
       this.dispatchActionEvent(app.base.EventType.MENU_HEAD);
-    }, undefined, this
+    }
   );
 };
 

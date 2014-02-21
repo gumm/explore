@@ -30,7 +30,7 @@ mkdir -p ${TEMP_PATH}
 cd ${TEMP_PATH}
 
 # Get and compile the source
-wget http://closure-compiler.googlecode.com/files/compiler-latest.zip
+wget http://dl.google.com/closure-compiler/compiler-latest.zip
 unzip compiler-latest.zip
 mv compiler.jar ${TARGET_PATH};
 

@@ -50,8 +50,8 @@ exp.settings.init = function(dev) {
     conf.mqttServer = 'localhost';
     conf.mqttPort = 1883;
     conf.wsServer = 'localhost';
-    conf.wsPort = process.env.PORT || 3333;
-    conf.port = process.env.PORT || 3333;
+    conf.wsPort = process.env.PORT || 3000;
+    conf.port = process.env.PORT || 3000;
   } else {
     conf.production = true;
     conf.mqttServer = 'blahblee.com';

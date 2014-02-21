@@ -54,7 +54,7 @@ app.base.panel.Home.prototype.renderMap = function(opt_randName) {
 
   var setPosition = function(payload) {
     console.debug('MQTT: ', payload);
-    latLng = new google.maps.LatLng(payload.lat, payload.lon);
+    latLng = new google.maps.LatLng(payload['lat'], payload['lon']);
     marker.setPosition(latLng);
     map.setCenter(latLng);
   };
@@ -64,6 +64,6 @@ app.base.panel.Home.prototype.renderMap = function(opt_randName) {
     '/mqttitude',
     function(e) {
       setPosition(goog.json.parse(e.payload));
-    }, undefined, this
+    }
   );
 };

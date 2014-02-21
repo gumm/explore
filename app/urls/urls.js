@@ -9,6 +9,9 @@ goog.require('exp.urlMap');
 
 exp.urls = function(app) {
 
+  app.get('/data.php', exp.routes.debug);
+  app.post('/data.php', exp.routes.debug);
+
   /** Index */
   app.get(exp.urlMap.INDEX, exp.routes.index);
 

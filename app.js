@@ -25,19 +25,19 @@ process.argv.forEach(function(val, index) {
 /**
  * App Setup
  */
-var app = exp.settings.configure(express(), express, dev);
+var explore = exp.settings.configure(express(), express, dev);
 
 
 /**
 * Server Setup
 * @type {*|http.Server|http.Server|goog.events.Key}
 */
-var server = http.createServer(app).listen(app.get('port'), function() {
-    console.log('Express server listening on port ' + app.get('port'));
+var server = http.createServer(explore).listen(explore.get('port'), function() {
+    console.log('Express server listening on port ' + explore.get('port'));
 });
 
 /**
 * Socket Server Setup
 * @type {WebSocketServer}
 */
-app.wss = new exp.WebSocket(server, app);
+explore.wss = new exp.WebSocket(server, explore);

@@ -170,7 +170,7 @@ app.user.view.Account.prototype.enterOverview = function(opt_id) {
       goog.events.EventType.CLICK,
       function() {
         this.dispatchActionEvent(app.user.EventType.EDIT_ACCOUNT);
-      }, undefined, this
+      }
     );
   }, panel);
   panel.setBeforeReadyCallback(beforeReadyCallback);

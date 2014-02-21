@@ -119,7 +119,8 @@ app.org.view.Org.prototype.onPanelAction = function(e) {
         this.activeOrg_.getId() + '/billing');
       break;
     case app.org.EventType.UPDATE_SUCCESS:
-      this.activeOrg_.updateData(data);
+      var orgData = /** @type {?Object} */(data);
+      this.activeOrg_.updateData(orgData);
       this.appDo(app.doMap.SWAP_THEME, this.activeOrg_.getCss());
       this.displayPanels();
       break;
