@@ -175,6 +175,18 @@ app.Site.prototype.initLayout_ = function() {
   leftVerticalLayout.setInitialSize(innerCellsVertical[2], 50);
 
   /**
+   * Up-Down Layout in the center.
+   * @type {bad.ui.Layout}
+   */
+  var centerVerticalLayout = mainHorizontalLayout.setInnerLayout(
+    innerCellsVertical,
+    innerCellsHorizontal[1],
+    bad.ui.Layout.Orientation.VERTICAL
+  );
+  centerVerticalLayout.setInitialSize(innerCellsVertical[0], 50);
+  centerVerticalLayout.setInitialSize(innerCellsVertical[2], 50);
+
+  /**
    * Up-Down Layout in the right.
    * @type {bad.ui.Layout}
    */
@@ -364,6 +376,8 @@ app.Site.prototype.hideAllNests = function() {
     this.layout_.getNest('main', 'left'),
     this.layout_.getNest('main', 'left', 'top'),
     this.layout_.getNest('main', 'left', 'bottom'),
+    this.layout_.getNest('main', 'center', 'top'),
+    this.layout_.getNest('main', 'center', 'bottom'),
     this.layout_.getNest('main', 'right'),
     this.layout_.getNest('main', 'right', 'top'),
     this.layout_.getNest('main', 'right', 'bottom')

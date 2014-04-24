@@ -6,6 +6,7 @@ goog.require('app.user.EventType');
 goog.require('app.user.panel.DeleteAccount');
 goog.require('app.user.panel.NavPanel');
 goog.require('app.user.panel.SignUp');
+goog.require('app.user.panel.AvApi');
 
 /**
  * @param {string=} opt_landing Optional panel to land on.
@@ -98,7 +99,7 @@ app.user.view.Account.prototype.onPanelAction = function(e) {
       this.connectAv();
       break;
     case app.user.EventType.VIEW_AV:
-      console.debug('So the user wants to see some AV magic...');
+      this.enterAVAPIView();
       break;
     default:
       console.log('app.user.view.Account No action for: ', value);
@@ -152,6 +153,44 @@ app.user.view.Account.prototype.enterOrgsList = function() {
   panel.setNestAsTarget(this.getLayout().getNest('main', 'center'));
   this.addPanelToView('replace', panel);
   panel.renderWithTemplate();
+};
+
+/**
+ * Creates two panels. One for the buttons, and one for the console feedback.
+ * The console feedback is placed in the right nest.
+ */
+app.user.view.Account.prototype.enterAVAPIView = function() {
+
+  var rPanelBeforeReadyCallback = function(panel, master) {
+    var consoleEl = goog.dom.createDom('pre', 'container-console_right');
+    goog.dom.appendChild(panel.getElement(), consoleEl);
+    master.setConsoleElement(consoleEl);
+    var size = 350;
+    var nest = this.getLayout().getNest('main', 'right');
+    nest.slideOpen(null, size);
+  };
+
+  var rPanel = new bad.ui.Panel();
+  rPanel.setUser(this.getUser());
+  rPanel.setNestAsTarget(this.getLayout().getNest('main', 'right'));
+  this.addPanelToView('rPanel', rPanel);
+
+
+  /**
+   * @type {app.user.panel.AvApi}
+   */
+  var panel = new app.user.panel.AvApi();
+  panel.setUri(new goog.Uri(exp.urlMap.AV.API));
+  panel.setUser(this.getUser());
+  panel.setNestAsTarget(this.getLayout().getNest('main', 'center'));
+  this.addPanelToView('replace', panel);
+  panel.renderWithTemplate();
+
+  rPanel.setBeforeReadyCallback(
+      goog.bind(rPanelBeforeReadyCallback, this, rPanel, panel)
+  );
+  rPanel.render();
+
 };
 
 /**

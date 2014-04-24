@@ -20,13 +20,14 @@ goog.addDependency('../../../app/orgs/views/org.js', ['app.org.view.Org'], ['app
 goog.addDependency('../../../app/site.js', ['app.Site', 'app.doMap'], ['app.base.view.Home', 'app.base.view.Persistent', 'app.org.view.Org', 'app.user.view.Account', 'app.user.view.Login', 'bad.UserManager', 'bad.ui.EventType', 'bad.ui.Layout', 'exp.urlMap', 'goog.Uri', 'goog.events.EventHandler']);
 goog.addDependency('../../../app/user/components/usermanager.js', ['bad.UserManager'], ['exp.accountMap']);
 goog.addDependency('../../../app/user/constants.js', ['app.user.EventType'], []);
+goog.addDependency('../../../app/user/panels/avapi.js', ['app.user.panel.AvApi'], ['bad.ui.Panel', 'goog.dom.Range', 'goog.string']);
 goog.addDependency('../../../app/user/panels/deleteaccountform.js', ['app.user.panel.DeleteAccount'], ['bad.ui.Form', 'goog.ui.CustomButton']);
 goog.addDependency('../../../app/user/panels/loginform.js', ['app.user.panel.Login'], ['bad.ui.Form', 'goog.ui.Css3ButtonRenderer', 'goog.ui.CustomButton']);
 goog.addDependency('../../../app/user/panels/lostpasswordform.js', ['app.user.panel.LostPassword'], ['bad.ui.Form']);
 goog.addDependency('../../../app/user/panels/navpanel.js', ['app.user.panel.NavPanel'], ['app.base.NavPanel']);
 goog.addDependency('../../../app/user/panels/resetpasswordform.js', ['app.user.panel.ResetPassword'], ['app.user.panel.SignUp']);
 goog.addDependency('../../../app/user/panels/signupform.js', ['app.user.panel.SignUp'], ['bad.ui.Form', 'goog.format.JsonPrettyPrinter', 'goog.ui.CustomButton']);
-goog.addDependency('../../../app/user/views/account.js', ['app.user.view.Account'], ['app.BasicView', 'app.org.panel.List', 'app.user.EventType', 'app.user.panel.DeleteAccount', 'app.user.panel.NavPanel', 'app.user.panel.SignUp']);
+goog.addDependency('../../../app/user/views/account.js', ['app.user.view.Account'], ['app.BasicView', 'app.org.panel.List', 'app.user.EventType', 'app.user.panel.AvApi', 'app.user.panel.DeleteAccount', 'app.user.panel.NavPanel', 'app.user.panel.SignUp']);
 goog.addDependency('../../../app/user/views/loginview.js', ['app.user.view.Login'], ['app.BasicView', 'app.user.EventType', 'app.user.panel.Login', 'app.user.panel.LostPassword', 'app.user.panel.ResetPassword', 'app.user.panel.SignUp', 'bad.ui.Panel']);
 goog.addDependency('../../../bad-library/bad/constants/constants.js', ['bad.CssClassMap', 'bad.CssPrefix'], []);
 goog.addDependency('../../../bad-library/bad/net/mqttwsio.js', ['bad.MqttEvent', 'bad.MqttEventType', 'bad.MqttWsIo'], ['bad.utils', 'goog.dom', 'goog.events.Event', 'goog.events.EventHandler', 'goog.events.EventTarget', 'goog.json', 'goog.net.WebSocket', 'goog.object']);

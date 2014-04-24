@@ -44,17 +44,16 @@ app.user.panel.SignUp.prototype.initDom = function() {
 
   var avConnected = goog.dom.getElement('av_details');
   if (avConnected) {
-    // Populate it with the latest user data:
-    console.debug('We have a panel we can add data to:');
     var callback = goog.bind(function(data) {
-      goog.dom.setTextContent(avConnected, data);
-
       var f = new goog.format.JsonPrettyPrinter(
           new goog.format.JsonPrettyPrinter.HtmlDelimiters()
       );
       avConnected.innerHTML = f.format(data);
-
-
+      var src = 'https://eu.airvantage.net/api/v1' + data['picture']['normal'];
+      var image = goog.dom.createDom('img', { 'src' : src });
+      goog.dom.insertChildAt(
+          goog.dom.getElement('av_account'), image, 0
+      );
 
     }, this);
     this.getUser().updateAVAccount(callback);

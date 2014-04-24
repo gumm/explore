@@ -179,6 +179,14 @@ span i[class^="icon-"], span i[class*=" icon-"] {
   padding: 10px;
 }
 
+.container-console_right {
+    margin: auto;
+    padding: 10px;
+    width: 95%;
+    min-height: 50px;
+    background-color: lightgrey;
+}
+
 .container-440-right {
   position: absolute;
   top: 122px;
@@ -391,4 +399,13 @@ pre.traceContainer {
 
 .goog-jsonprettyprinter-propertyvalue-null {
   color: orange;
+}
+
+.btn-group-vertical > .goog-css3-button {
+    display: block;
+    float: none;
+    width: 100%;
+    max-width: 100%;
+    position: relative;
+    margin-bottom: 3px;
 }

@@ -33,15 +33,21 @@ exp.urlMap = {
     DELETE: '/org/delete'
   },
   AV: {
+    API: '/av/api/test',
     AUTH: {
       CONNECT: '/auth/av/connect',
       CALLBACK: '/auth/av/callback',
       AUTHORIZE: '/auth/av/authorize'
     },
     USER: {
-      FIND: '/v1/users',
+      ALL: '/v1/users',
+      DETAIL: '/v1/users/:uid',
       CURRENT: '/v1/users/current',
-      RIGHTS: '/v1/users/rights'
-    }
+      RIGHTS: '/v1/users/rights',
+      PICTURE_NORMAL: '/v1/users/:uid/picture/normal',
+      PICTURE_SMALL: '/v1/users/:uid/picture/small',
+      PICTURE_ICON: '/v1/users/:uid/picture/small',
+      CLIENTS: '/v1/users/:uid/clients'
+    },
   }
 };
