@@ -28,11 +28,10 @@ exp.WebSocket = function(server, app) {
 
 exp.WebSocket.prototype.init = function(app) {
 
-  console.log('Web Socket server is up...');
-
   //----------------------------------------------------------[ Web Socket ]--
   this.wss.on('connection', function(ws) {
     ws.bridge = new exp.Bridge(ws, app);
+    app.mqtt = ws.bridge;
     var client = ws.bridge.getClient();
 
     ws.on('open', function() {

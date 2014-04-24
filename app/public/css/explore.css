@@ -363,3 +363,32 @@ label {
 #annOther {
   float: right;
 }
+
+.trace {
+    margin: 30px;
+}
+
+pre.traceContainer {
+    font-size: 14px;
+}
+
+.goog-jsonprettyprinter-propertyname {
+    font-weight: bold;
+  color: #F00;
+}
+
+.goog-jsonprettyprinter-propertyvalue-string {
+  color: #00F;
+}
+
+.goog-jsonprettyprinter-propertyvalue-number {
+  color: #0F0;
+}
+
+.goog-jsonprettyprinter-propertyvalue-boolean {
+  color: #0F0;
+}
+
+.goog-jsonprettyprinter-propertyvalue-null {
+  color: orange;
+}

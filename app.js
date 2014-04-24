@@ -7,10 +7,12 @@ require('./deps.js');
 goog.require('exp.settings');
 goog.require('exp.WebSocket');
 
-var express = require('express');
 var https = require('https');
 var http = require('http');
 var fs = require('fs');
+
+var express = require('express');
+
 
 var dev = false;
 if (process.argv[2] === 'dev') {
@@ -27,17 +29,18 @@ process.argv.forEach(function(val, index) {
  */
 var explore = exp.settings.configure(express(), express, dev);
 
-
 /**
-* Server Setup
-* @type {*|http.Server|http.Server|goog.events.Key}
-*/
+  * Server Setup
+  * @type {*|http.Server|http.Server|goog.events.Key}
+  */
 var server = http.createServer(explore).listen(explore.get('port'), function() {
     console.log('Express server listening on port ' + explore.get('port'));
 });
 
 /**
-* Socket Server Setup
-* @type {WebSocketServer}
-*/
+ * Socket Server Setup
+ * @type {WebSocketServer}
+ */
 explore.wss = new exp.WebSocket(server, explore);
+
+

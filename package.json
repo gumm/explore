@@ -1,6 +1,6 @@
 {
     "name": "explore",
-    "version": "0.0.2",
+    "version": "0.0.3",
     "description": "Exploring all sorts of new tech",
     "author": "Jan Badenhorst <janhendrik.badenhorst@gmail.com>",
     "private": true,
@@ -14,6 +14,7 @@
         "ws": "0.4.25",
         "mongodb": "1.3.8",
         "moment" : "1.7.2",
-        "emailjs": "0.3.3"
+        "emailjs": "0.3.3",
+        "oauth": "*"
     }
 }

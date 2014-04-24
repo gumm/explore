@@ -32,7 +32,7 @@ exp.settings.conf = {
   engine: 'jade',
   production: false,
   compiled: {
-    JS: false,
+    JS: true,
     CSS: false
   }
 };
@@ -46,13 +46,17 @@ exp.settings.init = function(dev) {
   // Switch between production and development
   var conf = exp.settings.conf;
   if (dev) {
+    console.log('======== DEVELOPMENT MODE =========');
     conf.production = false;
+    conf.compiled.JS = false;
+    conf.compiled.CSS = false;
     conf.mqttServer = 'localhost';
     conf.mqttPort = 1883;
     conf.wsServer = 'localhost';
-    conf.wsPort = process.env.PORT || 3000;
-    conf.port = process.env.PORT || 3000;
+    conf.wsPort = 3000;
+    conf.port = 3000;
   } else {
+    console.log('======== PRODUCTION MODE =========');
     conf.production = true;
     conf.mqttServer = 'blahblee.com';
     conf.mqttPort = 1883;
@@ -95,7 +99,7 @@ exp.settings.configure = function(app, express, dev) {
   // Middle-ware
   app.use(express.compress());
   app.use(express.favicon(conf.path.FAVICON));
-  app.use(express.bodyParser());
+  app.use(express.bodyParser({ keepExtensions: true, uploadDir: path.join(appPath, 'uploads')}));
   app.use(express.cookieParser());
   app.use(express.session({ secret: 'super-duper-secret-secret' }));
   app.use(express.static(conf.path.PUBLIC, {maxAge: 8640000000}));

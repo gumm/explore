@@ -42,7 +42,7 @@ app.base.panel.Persistent.prototype.initMqtt = function() {
   this.mqtt.trackActiveClients(goog.dom.getElement('active_clients'));
   this.mqtt.trackBytesSent(goog.dom.getElement('bytes_sent'));
   this.mqtt.trackBytesReceived(goog.dom.getElement('bytes_received'));
-  this.mqtt.mqttSubscribe('/mqttitude');
+  this.mqtt.mqttSubscribe('/owntracks/+/+');
 };
 
 app.base.panel.Persistent.prototype.buildUserButton = function() {
@@ -55,6 +55,8 @@ app.base.panel.Persistent.prototype.buildUserButton = function() {
       this, app.base.EventType.EDIT_PROFILE)],
     ['Organizations', 'icon-building', goog.bind(this.dispatchActionEvent,
       this, app.user.EventType.VIEW_ORG)],
+    ['Trace Headers', 'icon-terminal', goog.bind(this.dispatchActionEvent,
+      this, app.user.EventType.VIEW_TRACE)],
     [/* menu separator */],
     ['Sign Out', 'icon-signout', goog.bind(this.logOut, this)]
   ];

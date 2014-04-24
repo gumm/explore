@@ -8,6 +8,9 @@ goog.require('exp.EmailDispatcher');
 goog.require('exp.routesHelper');
 goog.require('exp.themes');
 goog.require('exp.accountMap');
+goog.require('exp.AirVantageOAuthAccess');
+
+var AVAccess = exp.AirVantageOAuthAccess();
 
 var helper = exp.routesHelper;
 
@@ -157,13 +160,30 @@ exp.routes.user.readPublicProfile = function(req, res, id) {
   helper.okGo(req, res, {'GET': getCall});
 };
 
+exp.routes.user.readTokens = function(req, res) {
+  console.log('Read own tokens');
+  var getCall = function() {
+    var user = req.session.user;
+    var tokens = [];
+    goog.object.forEach(user.tokens, function(value, key) {
+      tokens.push(key);
+    }, this);
+    res.send(
+      helper.makeReplyWith(null, tokens, 'Tokens not guaranteed active'),
+      200
+    );
+  };
+  helper.okGo(req, res, {'GET': getCall});
+};
+
+
 //-----------------------------------------------------------[ Edit Accounts ]--
 
 exp.routes.user.editProfile = function(req, res) {
   /**
    * BEWARE: The account passed in here contains the full account.
    * Only pass the profile component to the user.
-   * @param {Object} err The Error objectedit if any.
+   * @param {Object} err The Error object if any.
    * @param {Object} account The full account object from mongo.
    */
   var callback = function(err, account) {
@@ -185,9 +205,13 @@ exp.routes.user.editProfile = function(req, res) {
 
   var getCall = function() {
     var user = req.session.user;
+    var tokens = {};
+    goog.object.forEach(user.tokens, function(value, key) {
+      tokens[key] = true;
+    }, this);
     res.render(
       'user/edit/profile',
-      {countries: exp.countryList, udata: user.profile});
+      {countries: exp.countryList, udata: user.profile, tokens:tokens});
   };
 
   var postCall = function() {
@@ -400,3 +424,80 @@ exp.routes.user.accounts = function(req, res) {
     res.render('accounts', { title: 'Account List', accts: accounts });
   });
 };
+
+//-------------------------------------------------------------[ Air Vantage ]--
+
+/**
+ * This redirects to the Air Vantage API login.
+ * @param req
+ * @param res
+ */
+exp.routes.user.avConnect = function(req, res) {
+  var params = {};
+  params['response_type'] = 'code';
+  res.redirect(AVAccess.getAuthorizeUrl(params));
+};
+
+
+exp.routes.user.avOnConnect = function(req, res) {
+
+  var tokenUpdateCallback = function(err, account) {
+    if (err) {
+      res.send(helper.makeReplyWith(
+          "Failed to update user tokens : " + err), 500
+      );
+    } else {
+      console.log(
+          'TOKEN EXPIRES THEN:',
+          new Date(account.tokens.AV.exp).toLocaleString()
+      );
+      req.session.lastPage = exp.urlMap.INDEX;
+      res.redirect(exp.urlMap.AV.AUTH.AUTHORIZE);
+    }
+  };
+
+  var callback = function(err, accessToken, refreshToken, results) {
+    if (err) {
+      res.send(helper.makeReplyWith(
+          "Error getting OAuth request token : " + err), 500
+      );
+    } else {
+      req.session.oauthAccessToken = accessToken;
+      req.session.oauthRefreshToken = refreshToken;
+
+      var tokenData = {
+        type: 'AV',
+        refresh: refreshToken,
+        access: accessToken,
+        exp: new Date().getTime() + results['expires_in'] * 1000
+      };
+      AM.updateAuthToken(req.session.user._id, tokenData, tokenUpdateCallback);
+    }
+  };
+
+  AVAccess.getOAuthAccessToken(
+      req.param('code'),
+      {'grant_type': 'authorization_code'},
+      callback
+  );
+
+};
+
+exp.routes.user.avOnAuthOK = function(req, res) {
+  res.redirect(exp.urlMap.INDEX);
+};
+
+/**
+ * https://rnd.feide.no/2012/04/19/best-practice-for-dealing-with-oauth-2-0-token-expiration-at-the-consumer/
+ * First, it is extremely important that the consumer is able to detect the difference between generic errors at the protected endpoint and errors due to an expired token. If and only if the token is expired it is very important that the consumer uses the refresh token or starts a new flow to obtain a new valid token.
+
+The OAuth 2.0 Core spec does not mention with a single word how to detect expired tokens. Instead this is discussed in each of the token type specs, including the popular Bearer Tokens.
+
+For the bearer tokens, an expired token will result in the following response from a protected endpoint:
+
+HTTP/1.1 401 Unauthorized
+WWW-Authenticate: Bearer realm="example",
+    error="invalid_token",
+    error_description="The access token expired"
+The consumer should check for both the status code 401, and that the error field is set to invalid_token before requesting a new token from the provider.
+ */

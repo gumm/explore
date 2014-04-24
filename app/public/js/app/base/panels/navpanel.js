@@ -39,6 +39,7 @@ app.base.NavPanel.prototype.buildNavMenu = function() {
   goog.dom.classes.add(menuElement, 'well', 'menu-nav');
 
   this.appendMenuTitle();
+  this.addProvisionalMenuItems();
   this.resetMenu();
 };
 
@@ -62,3 +63,4 @@ app.base.NavPanel.prototype.appendMenuTitle = function() {
 };
 
 app.base.NavPanel.prototype.resetMenu = goog.nullFunction;
+app.base.NavPanel.prototype.addProvisionalMenuItems = goog.nullFunction;

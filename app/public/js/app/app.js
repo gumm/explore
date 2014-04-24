@@ -12,6 +12,8 @@ goog.require('goog.net.XhrManager');
  */
 app.initSite = function(wsServer, wsPort, landing) {
 
+  console.debug(wsServer, wsPort, landing);
+
   var opt_maxRetries = 0,
     opt_headers = null,
     opt_minCount = 1,
@@ -37,6 +39,7 @@ app.initSite = function(wsServer, wsPort, landing) {
    * @type {bad.MqttWsIo}
    */
   var mqtt = new bad.MqttWsIo(wsServer, wsPort);
+
   mqtt.openWebsocket();
 
   /**

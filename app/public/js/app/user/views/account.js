@@ -94,9 +94,22 @@ app.user.view.Account.prototype.onPanelAction = function(e) {
     case app.base.EventType.MENU_HEAD:
       this.enterOverview();
       break;
+    case app.user.EventType.CONNECT_AV:
+      this.connectAv();
+      break;
+    case app.user.EventType.VIEW_AV:
+      console.debug('So the user wants to see some AV magic...');
+      break;
     default:
       console.log('app.user.view.Account No action for: ', value);
   }
+};
+
+//--------------------------------------------------------------[ Connect AV ]--
+
+app.user.view.Account.prototype.connectAv = function() {
+  var uri = new goog.Uri(exp.urlMap.AV.AUTH.CONNECT);
+  window.location.href = uri.toString();
 };
 
 //------------------------------------------------------------[ Sign-Up Form ]--

@@ -1,0 +1,27 @@
+- tokens = typeof(tokens) != 'undefined' ? tokens : { }
+
+if (tokens.AV)
+    #av_account.container-900-left
+        .detail-head
+            .content Attached to AirVantage
+            p#sub1
+                strong Your account is liked to an AirVantage account.
+            p To disconnect this link, please log into AirVantage directly.
+                | Under your profile you will see 'EXP' as an authorised client.
+                | Select the 'Revoke' button to revoke 'EXP' access to your AV account.
+            pre#av_details
+else
+    #av_account.container-440-left
+        .detail-head
+            .content Attach Air Vantage account
+        form()#av_connect_form.form-horizontal.well
+            p#sub1
+                strong Gain access to your systems on Air Vantage.
+            p We will not store your Air Vantage username and password.
+                | You can discontinue this authorisation at any time.
+            fieldset
+                .form-actions
+                    .form-action-right
+                        #connect_av.g-button-submit
+                            i.icon-user
+                            | Connect

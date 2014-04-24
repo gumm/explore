@@ -130,6 +130,38 @@ var updateProfile = function(uid, newData, callback) {
   );
 };
 
+/**
+ * @param {string|number} uid
+ * @param {Object} tokenData The token date in the form:
+ * {
+ *    type: 'AV',
+ *    refresh: refreshToken,
+ *    access: accessToken,
+ *    exp: expdate
+ * };
+ * @param callback
+ */
+var updateAuthToken = function(uid, tokenData, callback) {
+
+  var transFunc = function(account) {
+    account.tokens = account.tokens || {};
+    account.tokens[tokenData.type] = tokenData;
+    return account;
+  };
+
+  var findByIdCallback = function(err, account) {
+    if (err) {
+      callback(err); // returns error if no matching object found
+    } else {
+      accounts.save(account, {safe: true}, function() {
+        callback(null, account);
+      });
+    }
+  };
+
+  findById(uid, findByIdCallback, transFunc);
+};
+
 var updatePassword = function(uid, passwords, callback) {
 
   var pass = passwords.currentPass;
@@ -289,6 +321,7 @@ module.exports = {
   addNewAccount: addNewAccount,
   updateProfile: updateProfile,
   updatePassword: updatePassword,
+  updateAuthToken: updateAuthToken,
   deleteAccount: deleteAccount,
   getAccountByEmail: getAccountByEmail,
   validateResetLink: validateResetLink,

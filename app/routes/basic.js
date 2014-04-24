@@ -1,17 +1,11 @@
 goog.provide('exp.routes');
 
 goog.require('exp.routesHelper');
+goog.require('goog.json');
 
 var helper = exp.routesHelper;
 
-exp.routes.debug = function(req, res) {
-  console.log('--------- DEBUG -----------');
-  console.log(req.headers);
-  res.send(req.headers, 200);
-};
-
 exp.routes.index = function(req, res) {
-  console.log(req.headers);
   var response = helper.getBasicSetup(req);
   res.render('index', response);
 };
@@ -31,6 +25,10 @@ exp.routes.home = function(req, res) {
 exp.routes.intro = function(req, res) {
   var app = req.app;
   res.render('intro', {title: app.get('title')});
+};
+
+exp.routes.trace = function(req, res) {
+  res.render('trace');
 };
 
 exp.routes.header = function(req, res) {
@@ -59,7 +57,5 @@ exp.routes.logout = function(req, res) {
 };
 
 exp.routes.four_oh_four = function(req, res) {
-  console.log('--------- FUCKIT -----------');
-  console.log(req.headers);
   res.render('404', { title: 'Page Not Found'});
 };

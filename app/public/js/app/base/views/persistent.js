@@ -2,6 +2,7 @@ goog.provide('app.base.view.Persistent');
 
 goog.require('app.base.EventType');
 goog.require('app.base.panel.Persistent');
+goog.require('app.base.panel.Trace');
 goog.require('bad.ui.View');
 
 /**
@@ -45,6 +46,10 @@ app.base.view.Persistent.prototype.onPanelAction = function(e) {
   e.stopPropagation();
 
   switch (value) {
+    case app.user.EventType.VIEW_TRACE:
+      console.debug('ACTIVE VIEW: ', this.activeView_);
+      this.activeView_.enterTraceForm();
+      break;
     case app.base.EventType.EDIT_PROFILE:
       this.switchView(goog.bind(
         this.appDo, this, app.doMap.VIEW_EDIT_USER));
@@ -53,9 +58,9 @@ app.base.view.Persistent.prototype.onPanelAction = function(e) {
       this.switchView(goog.bind(
         this.appDo, this, app.doMap.VIEW_EDIT_USER, 'orgList'));
       break;
-
     default:
-      console.log('app.base.view.Persistent No case for: ', value, data);
+      goog.nullFunction();
+//      console.log('app.base.view.Persistent No case for: ', value, data);
   }
 };
 
@@ -66,4 +71,8 @@ app.base.view.Persistent.prototype.switchView = function(fn) {
     fn();
   }, this);
   nest.slideClosed(callback);
+};
+
+app.base.view.Persistent.prototype.setActiveView = function(view) {
+  this.activeView_ = view;
 };

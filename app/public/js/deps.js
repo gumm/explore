@@ -5,9 +5,10 @@ goog.addDependency('../../../app/base/constants.js', ['app.base.EventType'], ['b
 goog.addDependency('../../../app/base/panels/homepanel.js', ['app.base.panel.Home'], ['bad.MqttEventType', 'bad.ui.Panel', 'goog.json']);
 goog.addDependency('../../../app/base/panels/navpanel.js', ['app.base.NavPanel'], ['bad.ui.MenuFlatRenderer', 'bad.ui.MenuItemRenderer', 'bad.ui.Panel', 'goog.style', 'goog.ui.CustomButton']);
 goog.addDependency('../../../app/base/panels/persistentpanel.js', ['app.base.panel.Persistent'], ['bad.MqttWsIo', 'bad.ui.MenuFloatRenderer', 'bad.ui.MenuItemRenderer', 'bad.ui.Panel', 'goog.ui.Css3MenuButtonRenderer', 'goog.ui.Menu', 'goog.ui.MenuButton', 'goog.ui.MenuItem', 'goog.ui.MenuSeparator']);
+goog.addDependency('../../../app/base/panels/trace.js', ['app.base.panel.Trace'], ['bad.ui.Panel', 'goog.format.JsonPrettyPrinter', 'goog.json']);
 goog.addDependency('../../../app/base/views/basic.js', ['app.BasicView'], ['bad.ui.View']);
 goog.addDependency('../../../app/base/views/homeview.js', ['app.base.view.Home'], ['app.base.panel.Home', 'bad.ui.View']);
-goog.addDependency('../../../app/base/views/persistent.js', ['app.base.view.Persistent'], ['app.base.EventType', 'app.base.panel.Persistent', 'bad.ui.View']);
+goog.addDependency('../../../app/base/views/persistent.js', ['app.base.view.Persistent'], ['app.base.EventType', 'app.base.panel.Persistent', 'app.base.panel.Trace', 'bad.ui.View']);
 goog.addDependency('../../../app/orgs/components/orgmanager.js', ['bad.OrgManager'], []);
 goog.addDependency('../../../app/orgs/constants.js', ['app.org.EventType'], []);
 goog.addDependency('../../../app/orgs/panels/deleteorgform.js', ['app.org.panel.DeleteOrg'], ['bad.ui.Form', 'goog.ui.CustomButton']);
@@ -24,7 +25,7 @@ goog.addDependency('../../../app/user/panels/loginform.js', ['app.user.panel.Log
 goog.addDependency('../../../app/user/panels/lostpasswordform.js', ['app.user.panel.LostPassword'], ['bad.ui.Form']);
 goog.addDependency('../../../app/user/panels/navpanel.js', ['app.user.panel.NavPanel'], ['app.base.NavPanel']);
 goog.addDependency('../../../app/user/panels/resetpasswordform.js', ['app.user.panel.ResetPassword'], ['app.user.panel.SignUp']);
-goog.addDependency('../../../app/user/panels/signupform.js', ['app.user.panel.SignUp'], ['bad.ui.Form', 'goog.ui.CustomButton']);
+goog.addDependency('../../../app/user/panels/signupform.js', ['app.user.panel.SignUp'], ['bad.ui.Form', 'goog.format.JsonPrettyPrinter', 'goog.ui.CustomButton']);
 goog.addDependency('../../../app/user/views/account.js', ['app.user.view.Account'], ['app.BasicView', 'app.org.panel.List', 'app.user.EventType', 'app.user.panel.DeleteAccount', 'app.user.panel.NavPanel', 'app.user.panel.SignUp']);
 goog.addDependency('../../../app/user/views/loginview.js', ['app.user.view.Login'], ['app.BasicView', 'app.user.EventType', 'app.user.panel.Login', 'app.user.panel.LostPassword', 'app.user.panel.ResetPassword', 'app.user.panel.SignUp', 'bad.ui.Panel']);
 goog.addDependency('../../../bad-library/bad/constants/constants.js', ['bad.CssClassMap', 'bad.CssPrefix'], []);

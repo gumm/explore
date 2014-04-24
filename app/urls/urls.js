@@ -5,12 +5,10 @@ goog.provide('exp.urls');
 goog.require('exp.routes');
 goog.require('exp.userUrls');
 goog.require('exp.orgsUrls');
+goog.require('exp.avUrls');
 goog.require('exp.urlMap');
 
 exp.urls = function(app) {
-
-  app.get('/data.php', exp.routes.debug);
-  app.post('/data.php', exp.routes.debug);
 
   /** Index */
   app.get(exp.urlMap.INDEX, exp.routes.index);
@@ -20,10 +18,12 @@ exp.urls = function(app) {
   app.get(exp.urlMap.BASIC.INTRO, exp.routes.intro);
   app.get(exp.urlMap.BASIC.HEADER, exp.routes.header);
   app.post(exp.urlMap.BASIC.LOGOUT, exp.routes.logout);
+  app.get(exp.urlMap.BASIC.TRACE, exp.routes.trace);
 
   /** All other module urls */
   exp.userUrls(app);
   exp.orgsUrls(app);
+  exp.avUrls(app);
 
   /** Catch all */
   app.get('*', exp.routes.four_oh_four);

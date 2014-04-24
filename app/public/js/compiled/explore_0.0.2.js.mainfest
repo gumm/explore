@@ -101,6 +101,10 @@
 /home/gumm/Workspace/explore/app/public/js/bad-library/bad/ui/component.js
 /home/gumm/Workspace/explore/app/public/js/bad-library/bad/ui/panel.js
 /home/gumm/Workspace/explore/app/public/js/app/base/panels/persistentpanel.js
+/home/gumm/Workspace/explore/app/public/js/closure-library/closure/goog/string/stringbuffer.js
+/home/gumm/Workspace/explore/app/public/js/closure-library/closure/goog/string/stringformat.js
+/home/gumm/Workspace/explore/app/public/js/closure-library/closure/goog/format/jsonprettyprinter.js
+/home/gumm/Workspace/explore/app/public/js/app/base/panels/trace.js
 /home/gumm/Workspace/explore/app/public/js/app/base/constants.js
 /home/gumm/Workspace/explore/app/public/js/bad-library/bad/ui/view.js
 /home/gumm/Workspace/explore/app/public/js/app/base/views/persistent.js

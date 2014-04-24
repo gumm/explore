@@ -65,7 +65,7 @@ app.Site = function(xManWrapper, mqtt, opt_landing) {
    * @type {bad.UserManager}
    * @private
    */
-  this.user_ = new bad.UserManager();
+  this.user_ = new bad.UserManager(this.xMan_);
 
   this.landing = opt_landing ? opt_landing : app.doMap.AUTO;
 };
@@ -291,7 +291,11 @@ app.Site.prototype.switchView = function(view) {
   this.activeView_.setLayout(this.layout_);
   this.activeView_.setXMan(this.xMan_);
   this.activeView_.setUser(this.user_);
+  this.activeView_.setMqtt(this.mqtt);
   this.activeView_.render();
+  if (this.persistentView_) {
+    this.persistentView_.setActiveView(this.activeView_);
+  }
   this.listen(
     this.activeView_, bad.ui.EventType.APP_DO, this.onApDo);
 };

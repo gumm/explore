@@ -34,6 +34,8 @@ exp.userUrls = function(app) {
   /** Read */
   app.get(exp.urlMap.ACCOUNTS.READ, route.readProfile);
   app.get(exp.urlMap.ACCOUNTS.READ + '/:id', route.readProfile);
+  app.get(exp.urlMap.ACCOUNTS.TOKENS, route.readTokens);
+
 
   /** Update */
   app.get(exp.urlMap.ACCOUNTS.UPDATE, route.editProfile);
@@ -42,4 +44,9 @@ exp.userUrls = function(app) {
   /** Delete */
   app.get(exp.urlMap.ACCOUNTS.DELETE, route.deleteAccount);
   app.post(exp.urlMap.ACCOUNTS.DELETE, route.deleteAccount);
+
+  /** Auth User Against AV */
+  app.get(exp.urlMap.AV.AUTH.CONNECT, route.avConnect);
+  app.get(exp.urlMap.AV.AUTH.CALLBACK, route.avOnConnect);
+  app.get(exp.urlMap.AV.AUTH.AUTHORIZE, route.avOnAuthOK);
 };

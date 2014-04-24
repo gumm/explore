@@ -26,6 +26,8 @@ var bootstrap = {
     bootstrap.wsServer = arguments[0];
     bootstrap.wsPort = arguments[1];
     bootstrap.landing = arguments[2];
+
+    console.debug(bootstrap.wsServer, bootstrap.wsPort, bootstrap.landing)
   },
   loadScript: function(src, callback) {
     var head = document.getElementsByTagName('head')[0],
