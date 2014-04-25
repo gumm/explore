@@ -26,52 +26,65 @@ exp.routes.av.apiExpore= function(req, res) {
 
 //-------------------------------------------------------------[ Basic Calls ]--
 
-exp.routes.av.basic = function(req, res) {
-
-  var requestUrl = 'https://eu.airvantage.net/api' + req.url;
+exp.routes.av.checkUserTokens = function(req, res, tokenName, callback) {
   var user = req.session.user;
-
   if (!user) {
     res.redirect('/');
   } else if (!user.tokens) {
-    res.send(helper.makeReplyWith('User not authenticated for anything'), 200);
-  } else if (!user.tokens.AV) {
-    res.send(helper.makeReplyWith('User has no AirVantage Authentication'), 200);
-  } else if (user.tokens.AV.access) {
-    AVAccess.get(
-      requestUrl,
-      user.tokens.AV.access,
+    res.send(helper.makeReplyWith('User has no tokens'), 200);
+  } else if (!user.tokens[tokenName]) {
+    res.send(helper.makeReplyWith('User has no token matching:' + tokenName), 200);
+  } else if (user.tokens[tokenName].access) {
+    callback(user.tokens[tokenName].access);
+  }
+};
+
+//-------------------------------------------------------------[ Basic Calls ]--
+
+exp.routes.av.basic = function(req, res) {
+
+  exp.routes.av.checkUserTokens(req, res, 'AV', function(accessToken) {
+    var requestUrl = 'https://eu.airvantage.net/api' + req.url;
+    AVAccess.get( requestUrl, accessToken,
       function(err, result, response) {
-        console.log(user.tokens.AV.access);
         if (err) {
-          res.send(helper.makeReplyWith('Error on reading from AV'), 400);
+          console.log(err.statusCode);
+          var errReply = JSON.parse(err.data);
+          res.send(helper.makeReplyWith(errReply.error, {}, errReply.error_description), 200);
         } else if (response && response.statusCode === 200) {
-          res.send(helper.makeReplyWith(null, JSON.parse(result), 'Current user data'), 200);
+          res.send(helper.makeReplyWith(null, JSON.parse(result), 'Success'), 200);
         } else {
           res.send(helper.makeReplyWith('Error on reading from AV'), response.statusCode);
         }
       }
     );
-  } else {
-    res.send(helper.makeReplyWith("Eh... That's a negatory captain..."), 400);
-  }
+  });
 };
 
 exp.routes.av.binary = function(req, res) {
 
-  var user = req.session.user;
-  var requestUrl = 'https://eu.airvantage.net/api' + req.url +
-      '/?access_token=' + user.tokens.AV.access;
+  exp.routes.av.checkUserTokens(req, res, 'AV', function(accessToken) {
+    var requestUrl = 'https://eu.airvantage.net/api' + req.url +
+        '/?access_token=' + accessToken;
 
-  var callback = function(error, message, respBody) {
-    res.send(helper.makeReplyWith(null, respBody.toString('base64')), 200);
-  };
+    var callback = function(err, response, respBody) {
+      if (err) {
+        console.log(err.statusCode);
+        var errReply = JSON.parse(err.data);
+        res.send(helper.makeReplyWith(errReply.error, {}, errReply.error_description), 200);
+      } else if (response && response.statusCode === 200) {
+        res.send(helper.makeReplyWith(null, respBody.toString('base64')), 200);
+      } else {
+        res.send(helper.makeReplyWith('Error on reading from AV'), response.statusCode);
+      }
+    };
 
-  var options = {
-    url: requestUrl,
-    encoding: null
-  };
-  request(options, callback);
+    var options = {
+      url: requestUrl,
+      encoding: null
+    };
+    request(options, callback);
+  });
 
 };
 

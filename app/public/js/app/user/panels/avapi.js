@@ -65,8 +65,6 @@ app.user.panel.AvApi.prototype.printResult = function(e) {
   var xhr = e.target;
   if (xhr.isSuccess()) {
     var data = xhr.getResponseJson();
-    if (!data.error) {
-      this.consoleEl_.innerHTML = this.jsonFormat_.format(data);
-    }
+    this.consoleEl_.innerHTML = this.jsonFormat_.format(data);
   }
 };
