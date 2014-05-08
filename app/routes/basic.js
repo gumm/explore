@@ -49,7 +49,7 @@ exp.routes.logout = function(req, res) {
       res.clearCookie('user');
       res.clearCookie('pass');
       req.session.destroy(function() {
-        res.send('ok', 200);
+        res.send(helper.makeReplyWith(null, 'Logged Out'), 200);
       });
     }
   };

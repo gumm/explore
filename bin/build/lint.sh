@@ -21,4 +21,4 @@ echo ""
     --multiprocess \
     --summary \
     --time \
-    --closurized_namespaces goog,trin,smart
+    --closurized_namespaces goog,bad,app

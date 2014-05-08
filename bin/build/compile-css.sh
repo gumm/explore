@@ -44,7 +44,7 @@ java -jar ${IMG_COMPILER_PATH}/cssembed.jar \
 echo "Compiling Global Defaults..."
 echo "Rename Setting: ${RENAMESETTING} "
 echo "Rename Output Format: ${RENAMEFORMAT} "
-java -jar ${CSS_COMPILER_PATH}/stylesheets.jar \
+java -jar ${CSS_COMPILER_PATH}/closure-stylesheets.jar \
     --output-file ${CSS_PATH}/compiled/${OUTPUT_NAME}.css \
     --rename ${RENAMESETTING} \
     --output-renaming-map-format ${RENAMEFORMAT} \
@@ -96,7 +96,7 @@ do
         ${THEME_PATH}/${THEMENAME}/css/images.css;
 
     echo "Compiling Theme..."
-    java -jar ${CSS_COMPILER_PATH}/stylesheets.jar \
+    java -jar ${CSS_COMPILER_PATH}/closure-stylesheets.jar \
         --rename ${RENAMESETTING} \
         --allowed-non-standard-function -moz-radial-gradient \
         --allowed-unrecognized-property -o-border-radius \

@@ -11,6 +11,10 @@ app.BasicView = function() {
 };
 goog.inherits(app.BasicView, bad.ui.View);
 
+/**
+ * Change the CSS styling of the site.
+ * @param {!Object} media The media component of the Org JSON structure.
+ */
 app.BasicView.prototype.swapCss = function(media) {
   document.getElementById('pagestyle').setAttribute(
     'href', 'css/themes/' + media['css'] + '.css');
@@ -22,11 +26,37 @@ app.BasicView.prototype.slideNavIn = function() {
   slider.slideOpen(null, size, goog.nullFunction);
 };
 
-app.BasicView.prototype.switchView = function(fn) {
+/**
+ * Closes both the left and right panels, and then calls the passed in function.
+ * @param {Function=} opt_fn
+ */
+app.BasicView.prototype.switchView = function(opt_fn) {
+  this.closeRight();
+  this.closeLeft(opt_fn);
+};
+
+/**
+ * Closes the right panel, and then calls the passed in function.
+ * @param {Function=} opt_fn
+ */
+app.BasicView.prototype.closeRight = function(opt_fn) {
+  var nest = this.getLayout().getNest('main', 'right');
+  var callback = goog.bind(function() {
+    nest.hide();
+    opt_fn ? opt_fn() : goog.nullFunction();
+  }, this);
+  nest.slideClosed(callback);
+};
+
+/**
+ * Closes the left panel, and then calls the passed in function.
+ * @param {Function=} opt_fn
+ */
+app.BasicView.prototype.closeLeft = function(opt_fn) {
   var nest = this.getLayout().getNest('main', 'left');
   var callback = goog.bind(function() {
     nest.hide();
-    fn();
+    opt_fn ? opt_fn() : goog.nullFunction();
   }, this);
   nest.slideClosed(callback);
 };

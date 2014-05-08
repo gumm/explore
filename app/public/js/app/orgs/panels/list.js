@@ -1,6 +1,13 @@
 goog.provide('app.org.panel.List');
 
+goog.require('app.doMap');
+goog.require('app.user.EventType');
+goog.require('bad.ui.Component');
 goog.require('bad.ui.Panel');
+goog.require('bad.utils');
+goog.require('goog.array');
+goog.require('goog.dom.classes');
+goog.require('goog.events.EventType');
 
 /**
  * A delete account confirmation form.

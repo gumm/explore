@@ -29,6 +29,7 @@ exp.routesHelper.okGo = function(req, res, obj) {
 
 exp.routesHelper.getBasicSetup = function(req) {
   var app = req.app;
+
   return {
     jsIsCompiled: app.enabled('jsIsCompiled'),
     cssIsCompiled: app.enabled('cssIsCompiled'),

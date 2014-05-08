@@ -1,14 +1,15 @@
 goog.provide('app.base.panel.Persistent');
 
-goog.require('bad.MqttWsIo');
+goog.require('app.base.EventType');
+goog.require('app.user.EventType');
 goog.require('bad.ui.MenuFloatRenderer');
 goog.require('bad.ui.MenuItemRenderer');
 goog.require('bad.ui.Panel');
+goog.require('bad.utils');
+goog.require('goog.dom');
 goog.require('goog.ui.Css3MenuButtonRenderer');
-goog.require('goog.ui.Menu');
 goog.require('goog.ui.MenuButton');
-goog.require('goog.ui.MenuItem');
-goog.require('goog.ui.MenuSeparator');
+goog.require('app.user.EventType');
 
 /**
  * The basic login form controller.
@@ -20,6 +21,9 @@ goog.require('goog.ui.MenuSeparator');
 app.base.panel.Persistent = function(mqtt, opt_domHelper) {
   bad.ui.Panel.call(this, opt_domHelper);
 
+  /**
+   * @type {bad.MqttWsIo}
+   */
   this.mqtt = mqtt;
 };
 goog.inherits(app.base.panel.Persistent, bad.ui.Panel);
@@ -28,6 +32,15 @@ app.base.panel.Persistent.prototype.enterDocument = function() {
   this.dom_ = goog.dom.getDomHelper(this.getElement());
   this.initDom();
   this.initMqtt();
+
+  if (this.user_) {
+    this.getHandler().listen(
+      this.user_,
+      app.user.EventType.USER_CHANGED,
+      this.userChanged
+    );
+  }
+
   app.base.panel.Persistent.superClass_.enterDocument.call(this);
 };
 
@@ -55,10 +68,8 @@ app.base.panel.Persistent.prototype.buildUserButton = function() {
       this, app.base.EventType.EDIT_PROFILE)],
     ['Organizations', 'icon-building', goog.bind(this.dispatchActionEvent,
       this, app.user.EventType.VIEW_ORG)],
-    ['Trace Headers', 'icon-terminal', goog.bind(this.dispatchActionEvent,
-      this, app.user.EventType.VIEW_TRACE)],
     [/* menu separator */],
-    ['Sign Out', 'icon-signout', goog.bind(this.logOut, this)]
+    ['Sign Out', 'icon-signout', goog.bind(this.getUser().logOut, this)]
   ];
 
   /**
@@ -83,15 +94,7 @@ app.base.panel.Persistent.prototype.buildUserButton = function() {
   this.userButton = menuButton;
 };
 
-/**
- * @param {Object} user
- */
-app.base.panel.Persistent.prototype.setUser = function(user) {
-  app.base.panel.Persistent.superClass_.setUser.call(this, user);
-  this.updateUser();
-};
-
-app.base.panel.Persistent.prototype.updateUser = function() {
+app.base.panel.Persistent.prototype.userChanged = function() {
   var salutation = this.getUser().getSalutation();
   if (this.userButton) {
     var icon = goog.dom.createDom('i', 'icon-cog');
@@ -99,20 +102,3 @@ app.base.panel.Persistent.prototype.updateUser = function() {
   }
 };
 
-app.base.panel.Persistent.prototype.logOut = function() {
-  var uri = new goog.Uri(exp.urlMap.BASIC.LOGOUT);
-  var queryData = goog.uri.utils.buildQueryDataFromMap({'logout': true});
-  this.xMan.post(uri, queryData, goog.bind(this.onLogOut, this));
-};
-
-/**
- * @param {goog.events.EventLike} e Event object.
- */
-app.base.panel.Persistent.prototype.onLogOut = function(e) {
-  var xhr = e.target;
-  if (xhr.isSuccess()) {
-    window.open(exp.urlMap.INDEX, '_self');
-  } else {
-    console.debug('Log Out was not successful. Try again...', e, xhr);
-  }
-};

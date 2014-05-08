@@ -2,36 +2,23 @@
  * @fileoverview The top level app. From here the views are controlled.
  */
 goog.provide('app.Site');
-goog.provide('app.doMap');
 
 goog.require('app.base.view.Home');
 goog.require('app.base.view.Persistent');
+goog.require('app.doMap');
 goog.require('app.org.view.Org');
 goog.require('app.user.view.Account');
 goog.require('app.user.view.Login');
 goog.require('bad.UserManager');
 goog.require('bad.ui.EventType');
 goog.require('bad.ui.Layout');
+goog.require('bad.utils');
 goog.require('exp.urlMap');
-goog.require('goog.Uri');
-goog.require('goog.events.EventHandler');
+goog.require('goog.array');
+goog.require('goog.dom');
+goog.require('goog.dom.classes');
 goog.require('goog.events.EventHandler');
 
-/**
- * @enum {!string}
- */
-app.doMap = {
-  UPDATE_USER: bad.utils.privateRandom(),
-  VIEW_EDIT_USER: bad.utils.privateRandom(),
-  USER_LOGGED_IN: bad.utils.privateRandom(),
-  VIEW_LOGIN: bad.utils.privateRandom(),
-  RESET_PASSWORD: 'resetpw',
-  AUTO: bad.utils.privateRandom(),
-  VIEW_HOME: bad.utils.privateRandom(),
-  VIEW_ORG_CREATE: bad.utils.privateRandom(),
-  VIEW_ORG: bad.utils.privateRandom(),
-  SWAP_THEME: bad.utils.privateRandom()
-};
 
 /**
  * Constructor of the main site object. Inherits from EventHandler, so it
@@ -81,20 +68,17 @@ app.Site.prototype.initSite = function() {
 app.Site.prototype.rpc = function(method, opt_param) {
 
   switch (method) {
-    case app.doMap.UPDATE_USER:
-      this.updateUser_(opt_param);
-      break;
     case app.doMap.VIEW_EDIT_USER:
       this.viewEditUser(opt_param);
       break;
     case app.doMap.USER_LOGGED_IN:
-      this.userSignedIn(opt_param);
+      this.userSignedIn();
       break;
     case app.doMap.VIEW_LOGIN:
       this.viewLogin();
       break;
     case app.doMap.RESET_PASSWORD:
-      this.viewLogin(true);
+      this.viewResetPassword();
       break;
     case app.doMap.AUTO:
       this.autoLogin();
@@ -111,6 +95,12 @@ app.Site.prototype.rpc = function(method, opt_param) {
     case app.doMap.SWAP_THEME:
       this.swapCss(opt_param);
       break;
+    case app.doMap.NESTS_SLIDE_CLOSE_ALL:
+      this.slideAllNestsClosed(opt_param);
+      break;
+    case app.doMap.NESTS_HIDE_ALL:
+      this.hideAllNests(opt_param);
+      break;
     default:
       console.log('Switch fall through for: ', method, opt_param);
   }
@@ -122,7 +112,7 @@ app.Site.prototype.rpc = function(method, opt_param) {
  */
 app.Site.prototype.initLayout_ = function() {
 
-  var id = 'body-background';
+  var id = 'blee';
   var mainCells = ['header', 'main', 'footer'];
   var innerCellsHorizontal = ['left', 'center', 'right'];
   var innerCellsVertical = ['top', 'mid', 'bottom'];
@@ -211,6 +201,16 @@ app.Site.prototype.initLayout_ = function() {
     bad.ui.Layout.EventType.LAYOUT_READY,
     function(e) {
       if (e.target.getId() === id) {
+        this.nests = [
+          this.layout_.getNest('main', 'left'),
+          this.layout_.getNest('main', 'left', 'top'),
+          this.layout_.getNest('main', 'left', 'bottom'),
+          this.layout_.getNest('main', 'center', 'top'),
+          this.layout_.getNest('main', 'center', 'bottom'),
+          this.layout_.getNest('main', 'right'),
+          this.layout_.getNest('main', 'right', 'top'),
+          this.layout_.getNest('main', 'right', 'bottom')
+        ];
         this.hideAllNests();
         this.rpc(this.landing);
       }
@@ -244,50 +244,21 @@ app.Site.prototype.initHeader = function() {
 
 };
 
-//--------------------------------------------------------------[ Auto Login ]--
+//-------------------------------------------------------------------[ Login ]--
 
 app.Site.prototype.autoLogin = function() {
-  var callback = goog.bind(this.onAutoLoginReply, this);
-  this.xMan_.get(new goog.Uri(exp.urlMap.LOG.AUTO), callback);
+  var onSuccess = goog.bind(this.userSignedIn, this);
+  var onFail = goog.bind(this.viewLogin, this);
+  this.user_.autoLogin(onSuccess, onFail);
 };
 
 /**
- * {goog.events.EventLike} e Event object.
+ * Called when a user signed in successfully.
  */
-app.Site.prototype.onAutoLoginReply = function(e) {
-  var xhr = e.target;
-  if (xhr.isSuccess()) {
-    var data = xhr.getResponseJson();
-    if (data.error) {
-      this.viewLogin();
-    } else {
-      this.userSignedIn(data['data']);
-    }
-  } else {
-    this.viewLogin();
-  }
-};
-
-/**
- * @param {Object} userData User profile data.
- */
-app.Site.prototype.userSignedIn = function(userData) {
+app.Site.prototype.userSignedIn = function() {
   goog.dom.classes.add(goog.dom.getElement('body-background'), 'noimg');
-  this.user_.updateProfile(userData);
   this.initHeader();
   this.viewHome();
-};
-
-/**
- * @param {Object} userData User profile data.
- * @private
- */
-app.Site.prototype.updateUser_ = function(userData) {
-  this.user_.updateProfile(userData);
-  this.persistentView_.setUser(this.user_);
-  if (this.activeView_) {
-    this.activeView_.setUser(this.user_);
-  }
 };
 
 //---------------------------------------------------------[ Views Utilities ]--
@@ -296,20 +267,20 @@ app.Site.prototype.updateUser_ = function(userData) {
  * @param {bad.ui.View} view
  */
 app.Site.prototype.switchView = function(view) {
-  if (this.activeView_) {
-    this.activeView_.dispose();
-  }
-  this.activeView_ = view;
-  this.activeView_.setLayout(this.layout_);
-  this.activeView_.setXMan(this.xMan_);
-  this.activeView_.setUser(this.user_);
-  this.activeView_.setMqtt(this.mqtt);
-  this.activeView_.render();
-  if (this.persistentView_) {
-    this.persistentView_.setActiveView(this.activeView_);
-  }
-  this.listen(
-    this.activeView_, bad.ui.EventType.APP_DO, this.onApDo);
+    if (this.activeView_) {
+      this.activeView_.dispose();
+    }
+    this.activeView_ = view;
+    this.activeView_.setLayout(this.layout_);
+    this.activeView_.setXMan(this.xMan_);
+    this.activeView_.setUser(this.user_);
+    this.activeView_.setMqtt(this.mqtt);
+    this.activeView_.render();
+    if (this.persistentView_) {
+      this.persistentView_.setActiveView(this.activeView_);
+    }
+    this.listen(
+      this.activeView_, bad.ui.EventType.APP_DO, this.onApDo);
 };
 
 /**
@@ -326,14 +297,23 @@ app.Site.prototype.onApDo = function(e) {
 
 /**
  *
- * @param {boolean=} opt_reset
  */
-app.Site.prototype.viewLogin = function(opt_reset) {
+app.Site.prototype.viewLogin = function() {
 
   /**
    * @type {app.user.view.Login}
    */
-  var view = new app.user.view.Login(opt_reset);
+  var view = new app.user.view.Login();
+  this.switchView(view);
+};
+
+app.Site.prototype.viewResetPassword = function() {
+
+  /**
+   * @type {app.user.view.Login}
+   */
+  var view = new app.user.view.Login();
+  view.setResetPassword(true);
   this.switchView(view);
 };
 
@@ -368,25 +348,62 @@ app.Site.prototype.viewOrg = function(orgId) {
 
 //-----------------------------------------------------[ Utility Stuff Below ]--
 
-app.Site.prototype.hideAllNests = function() {
-  /**
-   * @type {Array}
-   */
-  var nests = [
-    this.layout_.getNest('main', 'left'),
-    this.layout_.getNest('main', 'left', 'top'),
-    this.layout_.getNest('main', 'left', 'bottom'),
-    this.layout_.getNest('main', 'center', 'top'),
-    this.layout_.getNest('main', 'center', 'bottom'),
-    this.layout_.getNest('main', 'right'),
-    this.layout_.getNest('main', 'right', 'top'),
-    this.layout_.getNest('main', 'right', 'bottom')
-  ];
-  goog.array.forEach(nests, function(nest) {
-    nest.hide();
+/**
+ * An iterator over the layout nests. Called with two optional arguments.
+ * @param {Function=} opt_lastly A function to call once the iterator has
+ *    passed all the nests.
+ * @param {Function=} opt_every A function to call for every nest. This function
+ *    takes receives the nest as its first argument.
+ * @return {!Function}
+ * @private
+ */
+app.Site.prototype.getNestIter_ = function(opt_lastly, opt_every) {
+  var counter = bad.utils.privateCounter();
+  var tester = goog.bind(function(nest, i, arr) {
+    opt_every ? opt_every(nest) : goog.nullFunction();
+    if (counter() === arr.length) {
+      counter = null;
+      opt_lastly ? opt_lastly() : goog.nullFunction();
+    }
+  }, this);
+  return tester;
+};
+
+/**
+ * Hides all the nests in the layout, calling the optional passed in function
+ * once all nests are hidden.
+ * @param {Function=} opt_fn A function that is called once all the nests are
+ *    hidden.
+ */
+app.Site.prototype.hideAllNests = function(opt_fn) {
+  var lastly = this.getNestIter_(opt_fn);
+  goog.array.forEach(this.nests, function(nest, i, arr) {
+
+    nest.hide(goog.partial(lastly, nest, i, arr));
   }, this);
 };
 
+/**
+ * Slides all nests closed. Calls @code{nest.hide()} on each nest after it has
+ *   slided closed. Takes an optional function to call after all nests have
+ *   closed.
+ * @param {Function=} opt_fn An optionla function to call after all nests have
+ *    closed.
+ */
+app.Site.prototype.slideAllNestsClosed = function(opt_fn) {
+  var every = function(nest) { nest.hide(); };
+  var lastly = this.getNestIter_(opt_fn, every);
+  goog.array.forEach(this.nests, function(nest, i, arr) {
+    nest.slideClosed(goog.partial(lastly, nest, i, arr));
+  }, this);
+};
+
+
+/**
+ * Changes the css styling of the whole site.
+ * @param {string!} filename The file name of the css file to apply to the site.
+ *    This file should be located at @code{'css/themes/...'}
+ */
 app.Site.prototype.swapCss = function(filename) {
   document.getElementById('pagestyle').setAttribute('href',
     'css/themes/' + filename + '.css');

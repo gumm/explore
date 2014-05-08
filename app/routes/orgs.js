@@ -222,8 +222,6 @@ exp.routes.orgs.update = function(req, res) {
       mediaCss: req.param('mediaCss'),
       billPlan: req.param('billPlan'),
       billEmail: req.param('billEmail'),
-      logo: req.param('logo'),
-      css: req.param('css'),
       crdName: req.param('crdName'),
       crdType: req.param('crdType'),
       crdNumber: req.param('crdNumber'),

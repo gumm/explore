@@ -28,7 +28,7 @@ if [ -d "${TARGET_PATH}" ]; then
   else
     echo "The closure library is not installed. Cloning it now..."
     cd ${JS_PATH}
-    git clone https://code.google.com/p/closure-library/
+    git clone https://github.com/google/closure-library.git
 fi
 
 # Make the build tools executable

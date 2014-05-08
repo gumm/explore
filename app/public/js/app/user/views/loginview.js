@@ -1,26 +1,40 @@
 goog.provide('app.user.view.Login');
 
 goog.require('app.BasicView');
+goog.require('app.doMap');
 goog.require('app.user.EventType');
+goog.require('app.user.panel.Account');
 goog.require('app.user.panel.Login');
-goog.require('app.user.panel.LostPassword');
-goog.require('app.user.panel.ResetPassword');
-goog.require('app.user.panel.SignUp');
+goog.require('app.user.panel.PasswordLost');
+goog.require('app.user.panel.PasswordReset');
+goog.require('bad.ui.EventType');
 goog.require('bad.ui.Panel');
+goog.require('bad.utils');
+goog.require('goog.Uri');
 
 /**
- * @param {boolean=} opt_reset True if this view should present the
- *      reset password form, and not the usual login forms.
  * @constructor
  * @extends {app.BasicView}
  */
-app.user.view.Login = function(opt_reset) {
-  this.reset = opt_reset;
+app.user.view.Login = function() {
+
+  /**
+   * When set to true, this will init the reset password panel instead of the
+   * normal login panel.
+   * @type {boolean}
+   */
+  this.reset = false;
+
   app.BasicView.call(this);
 };
 goog.inherits(app.user.view.Login, app.BasicView);
 
+app.user.view.Login.prototype.setResetPassword = function(bool) {
+  this.reset = bool;
+};
+
 app.user.view.Login.prototype.configurePanels = function() {
+
   var layout = this.getLayout();
 
   /**
@@ -51,34 +65,38 @@ app.user.view.Login.prototype.configurePanels = function() {
    * @type {app.user.panel.Login}
    */
   this.loginPanel = new app.user.panel.Login('login-form');
+  this.loginPanel.setUser(this.getUser());
   this.loginPanel.setUri(new goog.Uri(exp.urlMap.LOG.IN));
   this.loginPanel.setNestAsTarget(layout.getNest('main', 'right', 'mid'));
   this.addPanelToView(bad.utils.makeId(), this.loginPanel);
 
   /**
    * Signup Form
-   * @type {app.user.panel.SignUp}
+   * @type {app.user.panel.Account}
    */
-  this.signUpForm = new app.user.panel.SignUp('account-form');
+  this.signUpForm = new app.user.panel.Account('account-form');
+  this.signUpForm.setUser(this.getUser());
   this.signUpForm.setUri(new goog.Uri(exp.urlMap.ACCOUNTS.CREATE));
   this.signUpForm.setNestAsTarget(layout.getNest('main', 'center'));
   this.addPanelToView(bad.utils.makeId(), this.signUpForm);
 
   /**
    * Lost Password Form
-   * @type {app.user.panel.LostPassword}
+   * @type {app.user.panel.PasswordLost}
    */
-  this.lostPwForm = new app.user.panel.LostPassword('get-credentials-form');
+  this.lostPwForm = new app.user.panel.PasswordLost('get-credentials-form');
   this.lostPwForm.setUri(new goog.Uri(exp.urlMap.PW.LOST));
+  this.lostPwForm.setUser(this.getUser());
   this.lostPwForm.setNestAsTarget(layout.getNest('main', 'center'));
   this.addPanelToView(bad.utils.makeId(), this.lostPwForm);
 
   /**
    * A reset password form
-   * @type {app.user.panel.ResetPassword}
+   * @type {app.user.panel.PasswordReset}
    */
-  this.resetPasswordForm = new app.user.panel.ResetPassword('account-form');
+  this.resetPasswordForm = new app.user.panel.PasswordReset('account-form');
   this.resetPasswordForm.setUri(new goog.Uri(exp.urlMap.PW.RESET));
+  this.resetPasswordForm.setUser(this.getUser());
   this.resetPasswordForm.setNestAsTarget(
     this.getLayout().getNest('main', 'center'));
   this.addPanelToView(bad.utils.makeId(), this.resetPasswordForm);
@@ -114,13 +132,10 @@ app.user.view.Login.prototype.onPanelAction = function(e) {
       this.enterLostPasswordForm();
       break;
     case app.user.EventType.LOGIN_SUCCESS:
-      this.fetchHomePage(/** @type {Object} */ (data));
+      this.fetchHomePage();
       break;
     case app.user.EventType.SIGNUP_CANCEL:
       this.exitSignUpForm();
-      break;
-    case app.user.EventType.SIGNUP_SUCCESS:
-      this.loginPanel.logIn(data.query);
       break;
     case app.user.EventType.FORGOT_PW_CANCEL:
       this.exitLostPasswordForm();
@@ -195,12 +210,10 @@ app.user.view.Login.prototype.exitLostPasswordForm = function() {
 
 //---------------------------------------------------------------[ Home Page ]--
 
-/**
- * @param {Object} data The logged in users profile data.
- */
-app.user.view.Login.prototype.fetchHomePage = function(data) {
+
+app.user.view.Login.prototype.fetchHomePage = function() {
   var callback = goog.bind(function() {
-    this.appDo(app.doMap.USER_LOGGED_IN, data);
+    this.appDo(app.doMap.USER_LOGGED_IN);
   }, this);
   this.slideLoginOut(callback);
 };

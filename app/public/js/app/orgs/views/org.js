@@ -1,13 +1,16 @@
 goog.provide('app.org.view.Org');
 
 goog.require('app.BasicView');
+goog.require('app.base.EventType');
+goog.require('app.doMap');
 goog.require('app.org.EventType');
 goog.require('app.org.panel.DeleteOrg');
 goog.require('app.org.panel.DetailPanel');
 goog.require('app.org.panel.NavPanel');
 goog.require('app.org.panel.SignUp');
 goog.require('bad.OrgManager');
-goog.require('goog.dom.dataset');
+goog.require('bad.utils');
+goog.require('goog.Uri');
 
 /**
  * @extends {app.BasicView}
@@ -17,6 +20,10 @@ goog.require('goog.dom.dataset');
 app.org.view.Org = function(opt_orgId) {
   app.BasicView.call(this);
 
+  /**
+   * @type {bad.OrgManager}
+   * @private
+   */
   this.activeOrg_ = new bad.OrgManager();
   this.activeOrg_.setId(opt_orgId);
 };
@@ -28,7 +35,9 @@ app.org.view.Org.prototype.displayPanels = function() {
       this.navPanel_.setOrg(this.activeOrg_);
       this.navPanel_.resetMenu();
     } else {
-      this.createNavPanel(this.activeOrg_.getId());
+      this.createNavPanel(
+          /** @type {(string|number)} */ (this.activeOrg_.getId())
+      );
     }
     this.createOrgDetailPanel();
   } else {
@@ -67,6 +76,9 @@ app.org.view.Org.prototype.createOrgEditPanel = function(opt_uri) {
   panel.renderWithTemplate();
 };
 
+/**
+ * @param {(string|number)} orgId
+ */
 app.org.view.Org.prototype.createNavPanel = function(orgId) {
 
   var uriString = exp.urlMap.ORGS.READ + '/' + orgId + '/all';
@@ -119,13 +131,12 @@ app.org.view.Org.prototype.onPanelAction = function(e) {
         this.activeOrg_.getId() + '/billing');
       break;
     case app.org.EventType.UPDATE_SUCCESS:
-      var orgData = /** @type {?Object} */(data);
-      this.activeOrg_.updateData(orgData);
+      this.activeOrg_.updateData(/** @type {?Object} */(data));
       this.appDo(app.doMap.SWAP_THEME, this.activeOrg_.getCss());
       this.displayPanels();
       break;
     case app.org.EventType.CHANGE_SCOPE:
-      this.activeOrg_.updateData(data);
+      this.activeOrg_.updateData(/** @type {?Object} */(data));
       this.appDo(app.doMap.SWAP_THEME, this.activeOrg_.getCss());
       break;
     case app.org.EventType.VIEW_OWNER:
@@ -149,6 +160,9 @@ app.org.view.Org.prototype.onPanelAction = function(e) {
 
 app.org.view.Org.prototype.confirmRemoveAccount = function() {
 
+  /**
+   * @type {app.org.panel.DeleteOrg}
+   */
   var form = new app.org.panel.DeleteOrg('confaccdel-form');
   form.setUri(new goog.Uri(exp.urlMap.ORGS.DELETE + '/' +
     this.activeOrg_.getId()));

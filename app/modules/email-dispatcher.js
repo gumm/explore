@@ -25,8 +25,8 @@ exp.EmailDispatcher.prototype.dispatchResetPasswordLink = function(account, call
 };
 
 exp.EmailDispatcher.prototype.composeEmail_ = function(account) {
-  var target = 'http://localhost:3000/';
-  var link = target + 'reset-password?e=' + account.profile.email +
+  var target = 'http://localhost:3000';
+  var link = target + exp.urlMap.PW.RESET + '?e=' + account.profile.email +
     '&p=' + account.credentials.tpass;
   var html = '<html><body>';
   html += 'Hi ' + account.profile.name + ',<br><br>';

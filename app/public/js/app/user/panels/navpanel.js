@@ -1,6 +1,8 @@
 goog.provide('app.user.panel.NavPanel');
 
 goog.require('app.base.NavPanel');
+goog.require('app.user.EventType');
+goog.require('goog.dom');
 
 /**
  * A user navigation menu.
@@ -31,21 +33,10 @@ app.user.panel.NavPanel.prototype.getMenuItems = function() {
 
 };
 
-app.user.panel.NavPanel.prototype.addProvisionalMenuItems = function() {
-  var callback = goog.bind(function(tokens) {
-    console.debug('THIS WAS PASSED INTO THE CALLBACK!!!!', tokens);
-    if (goog.array.contains(tokens, 'AV')) {
-      console.debug('WE have AV');
-      this.menu_.addListItem([
-        'AirVantage', 'icon-circle-arrow-right',
-        goog.bind(this.dispatchActionEvent, this, app.user.EventType.VIEW_AV)
-      ]);
-    }
-  }, this);
-  this.getUser().updateTokensList(callback);
-};
-
 app.user.panel.NavPanel.prototype.resetMenu = function() {
-  goog.dom.setTextContent(this.nameEl_, this.getUser().getSalutation());
+  goog.dom.setTextContent(
+      this.nameEl_,
+      /** @type {string} */ (this.getUser().getSalutation())
+  );
   this.menu_.unStickAll();
 };

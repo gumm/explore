@@ -16,7 +16,7 @@ exp.urlMap = {
   },
   PW: {
     LOST: '/pw/lost',
-    RESET: '/pw/reset',
+    RESET: '/pwreset',
     EDIT: '/pw/edit'
   },
   ACCOUNTS: {
@@ -48,6 +48,6 @@ exp.urlMap = {
       PICTURE_SMALL: '/v1/users/:uid/picture/small',
       PICTURE_ICON: '/v1/users/:uid/picture/small',
       CLIENTS: '/v1/users/:uid/clients'
-    },
+    }
   }
 };

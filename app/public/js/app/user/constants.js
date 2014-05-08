@@ -1,14 +1,18 @@
 goog.provide('app.user.EventType');
 
+goog.require('bad.utils');
+
 /**
  * Constants for panel event.
  * @enum {string}
  */
 app.user.EventType = {
+  USER_CHANGED: bad.utils.privateRandom(),
   EDIT_ACCOUNT: bad.utils.privateRandom(),
+  EDIT_ACCOUNT_SUCCESS: bad.utils.privateRandom(),
+  EDIT_PASSWORD_SUCCESS: bad.utils.privateRandom(),
   EDIT_PW: bad.utils.privateRandom(),
   VIEW_ORG: bad.utils.privateRandom(),
-  VIEW_TRACE: bad.utils.privateRandom(),
   CANCEL_VIEW_ORG: bad.utils.privateRandom(),
   VIEW_ACCOUNT: bad.utils.privateRandom(),
   EDIT_ORG: bad.utils.privateRandom(),

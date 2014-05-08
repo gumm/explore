@@ -23,10 +23,10 @@
         .dl-head Physical Address
     dl.dl-horizontal.left-100
         dt City
-        dd= account.location.city
+        dd= account.location.city || 'Not known'
 
         dt Country
-        dd= account.location.country
+        dd= account.location.country || 'Not known'
 
     .dl-hwrap
         .dl-head Contact Details

@@ -16,9 +16,9 @@ CSS_PATH=${PUBLIC_PATH}/css
 CLOSURE_PATH=${JS_PATH}/closure-library/closure
 
 # Compilers
-JS_COMPILER_PATH=${BIN_PATH}/closure-compiler
-CSS_COMPILER_PATH=${BIN_PATH}/closure-stylesheets
-IMG_COMPILER_PATH=${BIN_PATH}/cssembed
+JS_COMPILER_PATH=${BIN_PATH} #/closure-compiler
+CSS_COMPILER_PATH=${BIN_PATH} #/closure-stylesheets
+IMG_COMPILER_PATH=${BIN_PATH} #/cssembed
 GOOG_BIN_PATH=${CLOSURE_PATH}/bin/build
 
 # Project Variables.

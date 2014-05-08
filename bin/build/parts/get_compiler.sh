@@ -4,8 +4,10 @@ WORKSPACE=$1
 PROJECT_NAME=$2
 BIN_PATH=$3
 
-TARGET_PATH=${BIN_PATH}/closure-compiler
-TEMP_PATH=${BIN_PATH}/temp
+# This makes the source directory, and does not fail if it already exists
+mkdir -p ${BIN_PATH}/build/source
+SOURCE_PATH=${BIN_PATH}/build/source
+PRODUCT_SOURCE_PATH=${SOURCE_PATH}/closure-compiler
 
 # Just start somewhere.
 cd ${WORKSPACE}
@@ -20,20 +22,21 @@ echo "BIN_PATH:     ${BIN_PATH}"
 echo "-----------------------------------------------------"
 echo ""
 
-# Clean Install
-rm -rf ${TARGET_PATH}
-mkdir -p ${TARGET_PATH}
+if [ -d "${PRODUCT_SOURCE_PATH}" ]; then
+    echo "The closure compiler source is already available. Pulling update"
+    cd ${PRODUCT_SOURCE_PATH}
+    git pull
+  else
+    echo "The closure compiler source is not available. Cloning it now..."
+    cd ${SOURCE_PATH}
+    git clone https://github.com/google/closure-compiler.git;
+fi
 
 # Extract and build in a temp directory
-rm -rf ${TEMP_PATH}
-mkdir -p ${TEMP_PATH}
-cd ${TEMP_PATH}
-
-# Get and compile the source
-wget http://dl.google.com/closure-compiler/compiler-latest.zip
-unzip compiler-latest.zip
-mv compiler.jar ${TARGET_PATH};
+cd ${PRODUCT_SOURCE_PATH}
+ant jar;
+#ant test;
+cp build/compiler.jar ${BIN_PATH};
 
 # Clean up.
 cd ${WORKSPACE}
-rm -rf ${TEMP_PATH}

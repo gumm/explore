@@ -1,7 +1,10 @@
 goog.provide('app.org.panel.DeleteOrg');
 
+goog.require('app.org.EventType');
 goog.require('bad.ui.Form');
-goog.require('goog.ui.CustomButton');
+goog.require('bad.utils');
+goog.require('goog.dom.forms');
+goog.require('goog.uri.utils');
 
 /**
  * A delete account confirmation form.

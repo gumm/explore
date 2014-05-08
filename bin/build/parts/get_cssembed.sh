@@ -4,8 +4,11 @@ WORKSPACE=$1
 PROJECT_NAME=$2
 BIN_PATH=$3
 
-TARGET_PATH=${BIN_PATH}/cssembed
-TEMP_PATH=${BIN_PATH}/temp
+# This makes the source directory, and does not fail if it already exists
+mkdir -p ${BIN_PATH}/build/source
+SOURCE_PATH=${BIN_PATH}/build/source
+PRODUCT_SOURCE_PATH=${SOURCE_PATH}/cssembed
+
 
 # Just start somewhere.
 cd ${WORKSPACE}
@@ -20,24 +23,23 @@ echo "BIN_PATH:     ${BIN_PATH}"
 echo "-----------------------------------------------------"
 echo ""
 
-# Clean install
-rm -rf ${TARGET_PATH}
-mkdir -p ${TARGET_PATH}
-
-# Extract and build in a temp directory
-rm -rf ${TEMP_PATH}
-mkdir -p ${TEMP_PATH}
-cd ${TEMP_PATH}
+if [ -d "${PRODUCT_SOURCE_PATH}" ]; then
+    echo "The CSS Embed source is already available. Pulling update"
+    cd ${PRODUCT_SOURCE_PATH}
+    git pull
+  else
+    echo "The CSS Embed source is not available. Cloning it now..."
+    cd ${SOURCE_PATH}
+    git clone git://github.com/nzakas/cssembed.git;
+fi
 
 # Get and compile the source
-git clone git://github.com/nzakas/cssembed.git;
-cd cssembed;
+cd ${PRODUCT_SOURCE_PATH};
 ant;
 
 # Move to the target directory.
-mv ${TEMP_PATH}/cssembed/build/cssembed*.jar ${TARGET_PATH}/cssembed.jar;
-mv ${TEMP_PATH}/cssembed/build/datauri*.jar ${TARGET_PATH}/datauri.jar;
+cp build/cssembed*.jar ${BIN_PATH}/cssembed.jar;
+cp build/datauri*.jar ${BIN_PATH}/datauri.jar;
 
 # Clean up.
 cd ${WORKSPACE}
-rm -rf ${TEMP_PATH}

@@ -16,8 +16,26 @@
   background-color: rgba(0, 0, 0, 0.3);
 }
 
+body {
+    overflow: hidden;
+}
+
+#body-background {
+    position: absolute;
+    top: -2%;
+    left: -2%;
+    width: 104%;
+    height: 104%;
+}
+
+
 #body-background.noimg {
   background: none;
+  /*filter: blur(20px) opacity(90%);*/
+  /*-webkit-filter: blur(20px) opacity(90%);*/
+  /*-moz-filter: blur(20px) opacity(90%);*/
+  /*-o-filter: blur(20px) opacity(90%);*/
+  /*-ms-filter: blur(20px) opacity(90%);*/
 }
 
 /* Optional responsive image override */

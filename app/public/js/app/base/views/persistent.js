@@ -2,8 +2,14 @@ goog.provide('app.base.view.Persistent');
 
 goog.require('app.base.EventType');
 goog.require('app.base.panel.Persistent');
-goog.require('app.base.panel.Trace');
+goog.require('app.doMap');
+goog.require('app.user.EventType');
 goog.require('bad.ui.View');
+goog.require('bad.utils');
+goog.require('goog.Uri');
+goog.require('goog.array');
+goog.require('goog.dom');
+goog.require('goog.events.EventType');
 
 /**
  * @constructor
@@ -46,10 +52,6 @@ app.base.view.Persistent.prototype.onPanelAction = function(e) {
   e.stopPropagation();
 
   switch (value) {
-    case app.user.EventType.VIEW_TRACE:
-      console.debug('ACTIVE VIEW: ', this.activeView_);
-      this.activeView_.enterTraceForm();
-      break;
     case app.base.EventType.EDIT_PROFILE:
       this.switchView(goog.bind(
         this.appDo, this, app.doMap.VIEW_EDIT_USER));
@@ -65,12 +67,30 @@ app.base.view.Persistent.prototype.onPanelAction = function(e) {
 };
 
 app.base.view.Persistent.prototype.switchView = function(fn) {
-  var nest = this.getLayout().getNest('main', 'left');
-  var callback = goog.bind(function() {
+  var layout = this.getLayout();
+  var nests = [
+    layout.getNest('main', 'left'),
+    layout.getNest('main', 'left', 'top'),
+    layout.getNest('main', 'left', 'bottom'),
+    layout.getNest('main', 'center', 'top'),
+    layout.getNest('main', 'center', 'bottom'),
+    layout.getNest('main', 'right'),
+    layout.getNest('main', 'right', 'top'),
+    layout.getNest('main', 'right', 'bottom')
+  ];
+
+  var counter = bad.utils.privateCounter();
+  var callback = function(nest) {
     nest.hide();
-    fn();
+    if (counter() === nests.length) {
+      counter = null;
+      fn();
+    }
+  };
+
+  goog.array.forEach(nests, function(nest) {
+    nest.slideClosed(goog.bind(callback, this, nest));
   }, this);
-  nest.slideClosed(callback);
 };
 
 app.base.view.Persistent.prototype.setActiveView = function(view) {

@@ -132,7 +132,6 @@ exp.routes.user.readProfile = function(req, res) {
 };
 
 exp.routes.user.readOwnProfile = function(req, res) {
-  console.log('Private profile');
   var getCall = function() {
     var user = req.session.user;
     res.render('user/view', {udata: user.profile});
@@ -141,7 +140,6 @@ exp.routes.user.readOwnProfile = function(req, res) {
 };
 
 exp.routes.user.readPublicProfile = function(req, res, id) {
-  console.log('Public profile', id);
   var transform = function(acc) {
     return acc.profile;
   };
@@ -161,7 +159,6 @@ exp.routes.user.readPublicProfile = function(req, res, id) {
 };
 
 exp.routes.user.readTokens = function(req, res) {
-  console.log('Read own tokens');
   var getCall = function() {
     var user = req.session.user;
     var tokens = [];
@@ -319,7 +316,7 @@ exp.routes.user.resetPassword = function(req, res) {
         // save the user's email in a session instead of
         // sending to the client //
         req.session.reset = { email: email, passHash: passH };
-        var setup = exp.routes.user.getBasicSetup(req);
+        var setup = helper.getBasicSetup(req);
         setup.landing = 'resetpw';
         setup.user = account.credentials.user;
         res.render('resetpassword', setup);
@@ -381,10 +378,10 @@ exp.routes.user.deleteAccount = function(req, res) {
       res.clearCookie('user', {path: '/'});
       res.clearCookie('pass', {path: '/'});
       req.session.destroy(function() {
-        res.send('Success: Account deleted', 200);
+        res.send(helper.makeReplyWith(null, 'Account deleted'), 200);
       });
     } else {
-      res.send('Account not found', 400);
+      res.send(helper.makeReplyWith('Account not found'), 400);
     }
   };
 
@@ -462,9 +459,6 @@ exp.routes.user.avOnConnect = function(req, res) {
           "Error getting OAuth request token : " + err), 500
       );
     } else {
-      req.session.oauthAccessToken = accessToken;
-      req.session.oauthRefreshToken = refreshToken;
-
       var tokenData = {
         type: 'AV',
         refresh: refreshToken,

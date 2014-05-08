@@ -3,16 +3,12 @@ goog.provide('app');
 goog.require('app.Site');
 goog.require('bad.MqttWsIo');
 goog.require('bad.Net');
-goog.require('bad.utils');
-goog.require('goog.dom');
 goog.require('goog.net.XhrManager');
 
 /**
  * Init the site
  */
 app.initSite = function(wsServer, wsPort, landing) {
-
-  console.debug(wsServer, wsPort, landing);
 
   var opt_maxRetries = 0,
     opt_headers = null,
@@ -39,7 +35,6 @@ app.initSite = function(wsServer, wsPort, landing) {
    * @type {bad.MqttWsIo}
    */
   var mqtt = new bad.MqttWsIo(wsServer, wsPort);
-
   mqtt.openWebsocket();
 
   /**

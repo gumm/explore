@@ -2,6 +2,9 @@ goog.provide('app.org.panel.DetailPanel');
 
 goog.require('app.org.EventType');
 goog.require('bad.ui.Panel');
+goog.require('goog.dom');
+goog.require('goog.dom.dataset');
+goog.require('goog.events.EventType');
 
 /**
  * An organization nav panel.

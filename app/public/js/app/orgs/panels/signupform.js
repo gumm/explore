@@ -1,8 +1,16 @@
 goog.provide('app.org.panel.SignUp');
 
+goog.require('app.org.EventType');
 goog.require('bad.ui.Form');
+goog.require('bad.utils');
 goog.require('exp.productMap');
-goog.require('goog.ui.CustomButton');
+goog.require('goog.array');
+goog.require('goog.dom');
+goog.require('goog.dom.classes');
+goog.require('goog.dom.forms');
+goog.require('goog.object');
+goog.require('goog.style');
+goog.require('goog.uri.utils');
 
 /**
  * @param {!string} id The form element id.

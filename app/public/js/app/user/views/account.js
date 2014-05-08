@@ -1,12 +1,20 @@
 goog.provide('app.user.view.Account');
 
 goog.require('app.BasicView');
+goog.require('app.base.EventType');
+goog.require('app.doMap');
 goog.require('app.org.panel.List');
 goog.require('app.user.EventType');
-goog.require('app.user.panel.DeleteAccount');
-goog.require('app.user.panel.NavPanel');
-goog.require('app.user.panel.SignUp');
 goog.require('app.user.panel.AvApi');
+goog.require('app.user.panel.Delete');
+goog.require('app.user.panel.Edit');
+goog.require('app.user.panel.NavPanel');
+goog.require('app.user.panel.PasswordEdit');
+goog.require('bad.ui.Panel');
+goog.require('bad.utils');
+goog.require('goog.Uri');
+goog.require('goog.dom');
+goog.require('goog.events.EventType');
 
 /**
  * @param {string=} opt_landing Optional panel to land on.
@@ -15,7 +23,6 @@ goog.require('app.user.panel.AvApi');
  */
 app.user.view.Account = function(opt_landing) {
   app.BasicView.call(this);
-
   this.landing_ = opt_landing || null;
 };
 goog.inherits(app.user.view.Account, app.BasicView);
@@ -61,29 +68,28 @@ app.user.view.Account.prototype.onPanelAction = function(e) {
 
   switch (value) {
     case app.user.EventType.SIGNUP_CANCEL:
-      this.enterOverview();
-      break;
-    case app.user.EventType.SIGNUP_SUCCESS:
-      this.appDo(app.doMap.UPDATE_USER, data.reply['data']);
-      this.displayPanels();
-      break;
     case app.user.EventType.ACCOUNT_REMOVE_CANCELED:
+    case app.user.EventType.EDIT_ACCOUNT_SUCCESS:
+    case app.user.EventType.EDIT_PASSWORD_SUCCESS:
+    case app.user.EventType.CANCEL_VIEW_ORG:
+    case app.base.EventType.MENU_HEAD:
+      this.closeRight();
       this.enterOverview();
       break;
     case app.user.EventType.ACCOUNT_REMOVE:
       this.confirmRemoveAccount();
       break;
     case app.user.EventType.EDIT_ACCOUNT:
-      this.enterSignUpForm(value);
+      this.closeRight();
+      this.enterEditForm();
       break;
     case app.user.EventType.EDIT_PW:
-      this.enterSignUpForm(value);
+      this.closeRight();
+      this.enterEditPasswordForm();
       break;
     case app.user.EventType.VIEW_ORG:
+      this.closeRight();
       this.enterOrgsList();
-      break;
-    case app.user.EventType.CANCEL_VIEW_ORG:
-      this.enterOverview();
       break;
     case app.doMap.VIEW_ORG_CREATE:
       this.switchView(goog.bind(this.appDo, this, value));
@@ -92,106 +98,12 @@ app.user.view.Account.prototype.onPanelAction = function(e) {
       this.switchView(
         goog.bind(this.appDo, this, app.doMap.VIEW_ORG, data.id));
       break;
-    case app.base.EventType.MENU_HEAD:
-      this.enterOverview();
-      break;
-    case app.user.EventType.CONNECT_AV:
-      this.connectAv();
-      break;
-    case app.user.EventType.VIEW_AV:
-      this.enterAVAPIView();
-      break;
     default:
-      console.log('app.user.view.Account No action for: ', value);
+      app.user.view.Account.superClass_.onPanelAction.call(this, e);
   }
 };
 
-//--------------------------------------------------------------[ Connect AV ]--
-
-app.user.view.Account.prototype.connectAv = function() {
-  var uri = new goog.Uri(exp.urlMap.AV.AUTH.CONNECT);
-  window.location.href = uri.toString();
-};
-
-//------------------------------------------------------------[ Sign-Up Form ]--
-
-/**
- * The sign-up form is used for sign-up, editing accounts, and passwords.
- * It is destroyed on exit, and is thus recreated here each time it is called.
- * @param {string} value The event value describes the required form.
- */
-app.user.view.Account.prototype.enterSignUpForm = function(value) {
-
-  var urlString = exp.urlMap.ACCOUNTS.UPDATE;
-  if (value === app.user.EventType.EDIT_PW) {
-    urlString = exp.urlMap.PW.EDIT;
-  }
-
-  /**
-   * @type {app.user.panel.SignUp}
-   */
-  var form = new app.user.panel.SignUp('account-form');
-  form.setUri(new goog.Uri(urlString));
-  form.setUser(this.getUser());
-  form.setNestAsTarget(this.getLayout().getNest('main', 'center'));
-  this.addPanelToView('replace', form);
-  form.renderWithTemplate();
-};
-
-/**
- * The sign-up form is used for sign-up, editing accounts, and passwords.
- * It is destroyed on exit, and is thus recreated here each time it is called.
- */
-app.user.view.Account.prototype.enterOrgsList = function() {
-
-  /**
-   * @type {app.org.panel.List}
-   */
-  var panel = new app.org.panel.List();
-  panel.setUri(new goog.Uri(exp.urlMap.ORGS.READ));
-  panel.setUser(this.getUser());
-  panel.setNestAsTarget(this.getLayout().getNest('main', 'center'));
-  this.addPanelToView('replace', panel);
-  panel.renderWithTemplate();
-};
-
-/**
- * Creates two panels. One for the buttons, and one for the console feedback.
- * The console feedback is placed in the right nest.
- */
-app.user.view.Account.prototype.enterAVAPIView = function() {
-
-  var rPanelBeforeReadyCallback = function(panel, master) {
-    var consoleEl = goog.dom.createDom('pre', 'container-console_right');
-    goog.dom.appendChild(panel.getElement(), consoleEl);
-    master.setConsoleElement(consoleEl);
-    var size = 350;
-    var nest = this.getLayout().getNest('main', 'right');
-    nest.slideOpen(null, size);
-  };
-
-  var rPanel = new bad.ui.Panel();
-  rPanel.setUser(this.getUser());
-  rPanel.setNestAsTarget(this.getLayout().getNest('main', 'right'));
-  this.addPanelToView('rPanel', rPanel);
-
-
-  /**
-   * @type {app.user.panel.AvApi}
-   */
-  var panel = new app.user.panel.AvApi();
-  panel.setUri(new goog.Uri(exp.urlMap.AV.API));
-  panel.setUser(this.getUser());
-  panel.setNestAsTarget(this.getLayout().getNest('main', 'center'));
-  this.addPanelToView('replace', panel);
-  panel.renderWithTemplate();
-
-  rPanel.setBeforeReadyCallback(
-      goog.bind(rPanelBeforeReadyCallback, this, rPanel, panel)
-  );
-  rPanel.render();
-
-};
+//----------------------------------------------------------[ Overview Panel ]--
 
 /**
  * An overview of the account
@@ -230,12 +142,120 @@ app.user.view.Account.prototype.enterOverview = function(opt_id) {
   panel.renderWithTemplate();
 };
 
+//-------------------------------------------------------[ Account Edit Form ]--
+
+/**
+ * The sign-up form is used for sign-up, editing accounts, and passwords.
+ * It is destroyed on exit, and is thus recreated here each time it is called.
+ */
+app.user.view.Account.prototype.enterEditForm = function() {
+
+  /**
+   * @type {app.user.panel.Edit}
+   */
+  var form = new app.user.panel.Edit('account-form');
+  form.setUri(new goog.Uri(exp.urlMap.ACCOUNTS.UPDATE));
+  form.setUser(this.getUser());
+  form.setNestAsTarget(this.getLayout().getNest('main', 'center'));
+  this.addPanelToView('replace', form);
+  form.renderWithTemplate();
+};
+
 app.user.view.Account.prototype.confirmRemoveAccount = function() {
 
-  var form = new app.user.panel.DeleteAccount('confaccdel-form');
+  /**
+   * @type {app.user.panel.Delete}
+   */
+  var form = new app.user.panel.Delete('confaccdel-form');
   form.setUri(new goog.Uri(exp.urlMap.ACCOUNTS.DELETE));
   form.setUser(this.getUser());
   form.setNestAsTarget(this.getLayout().getNest('main', 'center'));
   this.addPanelToView('replace', form);
   form.renderWithTemplate();
 };
+
+//------------------------------------------------------[ Password Edit Form ]--
+
+/**
+ * The sign-up form is used for sign-up, editing accounts, and passwords.
+ * It is destroyed on exit, and is thus recreated here each time it is called.
+ */
+app.user.view.Account.prototype.enterEditPasswordForm = function() {
+
+  /**
+   * @type {app.user.panel.PasswordEdit}
+   */
+  var form = new app.user.panel.PasswordEdit('account-form');
+  form.setUri(new goog.Uri(exp.urlMap.PW.EDIT));
+  form.setUser(this.getUser());
+  form.setNestAsTarget(this.getLayout().getNest('main', 'center'));
+  this.addPanelToView('replace', form);
+  form.renderWithTemplate();
+};
+
+//-------------------------------------------------------[ Organization Form ]--
+
+/**
+ * Presents the organization list
+ */
+app.user.view.Account.prototype.enterOrgsList = function() {
+
+  /**
+   * @type {app.org.panel.List}
+   */
+  var panel = new app.org.panel.List();
+  panel.setUri(new goog.Uri(exp.urlMap.ORGS.READ));
+  panel.setUser(this.getUser());
+  panel.setNestAsTarget(this.getLayout().getNest('main', 'center'));
+  this.addPanelToView('replace', panel);
+  panel.renderWithTemplate();
+};
+
+// TODO: This shit does not belong here...
+////-------------------------------------------------------[ Air Vantage Stuff ]--
+//
+///**
+// * Creates two panels. One for the buttons, and one for the console feedback.
+// * The console feedback is placed in the right nest.
+// */
+//app.user.view.Account.prototype.enterAVAPIView = function() {
+//
+//  var rPanelBeforeReadyCallback = function(panel, master) {
+//    var consoleEl = goog.dom.createDom('pre', 'container-console_right');
+//    goog.dom.appendChild(panel.getElement(), consoleEl);
+//    master.setConsoleElement(consoleEl);
+//    var size = 350;
+//    var nest = this.getLayout().getNest('main', 'right');
+//    nest.slideOpen(null, size);
+//  };
+//
+//  /**
+//   * @type {bad.ui.Panel}
+//   */
+//  var rPanel = new bad.ui.Panel();
+//  rPanel.setUser(this.getUser());
+//  rPanel.setNestAsTarget(this.getLayout().getNest('main', 'right'));
+//  this.addPanelToView('rPanel', rPanel);
+//
+//
+//  /**
+//   * @type {app.user.panel.AvApi}
+//   */
+//  var panel = new app.user.panel.AvApi();
+//  panel.setUri(new goog.Uri(exp.urlMap.AV.API));
+//  panel.setUser(this.getUser());
+//  panel.setNestAsTarget(this.getLayout().getNest('main', 'center'));
+//  this.addPanelToView('replace', panel);
+//  panel.renderWithTemplate();
+//
+//  rPanel.setBeforeReadyCallback(
+//      goog.bind(rPanelBeforeReadyCallback, this, rPanel, panel)
+//  );
+//  rPanel.render();
+//
+//};
+//
+//app.user.view.Account.prototype.connectAv = function() {
+//  var uri = new goog.Uri(exp.urlMap.AV.AUTH.CONNECT);
+//  window.location.href = uri.toString();
+//};

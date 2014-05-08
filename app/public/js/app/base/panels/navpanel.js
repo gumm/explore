@@ -1,10 +1,12 @@
 goog.provide('app.base.NavPanel');
 
+goog.require('app.base.EventType');
 goog.require('bad.ui.MenuFlatRenderer');
 goog.require('bad.ui.MenuItemRenderer');
 goog.require('bad.ui.Panel');
-goog.require('goog.style');
-goog.require('goog.ui.CustomButton');
+goog.require('bad.utils');
+goog.require('goog.dom.classes');
+goog.require('goog.events.EventType');
 
 /**
  * An organization nav panel.
@@ -29,6 +31,11 @@ app.base.NavPanel.prototype.buildNavMenu = function() {
   var renderer = bad.ui.MenuFlatRenderer.getInstance();
   var itemRenderer = bad.ui.MenuItemRenderer.getInstance();
   var stickySelect = true; // This keeps the last selected item highlighted.
+
+  /**
+   * @type {goog.ui.Menu}
+   * @private
+   */
   this.menu_ = bad.utils.makeMenu(
     menuItems, this.dom_, this.getHandler(), this, renderer,
     itemRenderer, stickySelect);

@@ -132,7 +132,7 @@ var updateProfile = function(uid, newData, callback) {
 
 /**
  * @param {string|number} uid
- * @param {Object} tokenData The token date in the form:
+ * @param {Object} tokenData The token data in the form:
  * {
  *    type: 'AV',
  *    refresh: refreshToken,
@@ -146,6 +146,29 @@ var updateAuthToken = function(uid, tokenData, callback) {
   var transFunc = function(account) {
     account.tokens = account.tokens || {};
     account.tokens[tokenData.type] = tokenData;
+    return account;
+  };
+
+  var findByIdCallback = function(err, account) {
+    if (err) {
+      callback(err); // returns error if no matching object found
+    } else {
+      accounts.save(account, {safe: true}, function() {
+        callback(null, account);
+      });
+    }
+  };
+
+  findById(uid, findByIdCallback, transFunc);
+};
+
+var deleteAuthToken = function(uid, tokenType, callback) {
+
+  var transFunc = function(account) {
+    console.log('Inside the account transFunc', tokenType);
+    delete account.tokens[tokenType];
+
+    console.log('Inside the account transFunc', account);
     return account;
   };
 
@@ -322,6 +345,7 @@ module.exports = {
   updateProfile: updateProfile,
   updatePassword: updatePassword,
   updateAuthToken: updateAuthToken,
+  deleteAuthToken: deleteAuthToken,
   deleteAccount: deleteAccount,
   getAccountByEmail: getAccountByEmail,
   validateResetLink: validateResetLink,

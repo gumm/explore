@@ -1,6 +1,9 @@
 goog.provide('app.org.panel.NavPanel');
 
 goog.require('app.base.NavPanel');
+goog.require('app.org.EventType');
+goog.require('bad.OrgManager');
+goog.require('goog.dom');
 
 /**
  * An organization nav panel.

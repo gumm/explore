@@ -1,51 +1,51 @@
 goog.provide('exp.orgMap');
 
 /**
- * @param data
- * @returns {Object.<string, (Object|boolean|string|number)>}
+ * @param {Object} data
+ * @returns {Object}
  */
 exp.orgMap = function(data) {
   return  {
     profile: {
-      orgName: data.orgName || null,
-      orgUrl: data.orgUrl || null
+      orgName:    /** @type {?(string|number)} */ (data.orgName || null),
+      orgUrl:     /** @type {?(string|number)} */ (data.orgUrl || null)
     },
     loc: {
-      locStreet: data.locStreet || null,
-      locSuburb: data.locSuburb || null,
-      locCode: data.locCode || null,
-      locCity: data.locCity || null,
-      locCountry: data.locCountry || null
+      locStreet:  /** @type {?(string|number)} */ (data.locStreet || null),
+      locSuburb:  /** @type {?(string|number)} */ (data.locSuburb || null),
+      locCode:    /** @type {?(string|number)} */ (data.locCode || null),
+      locCity:    /** @type {?(string|number)} */ (data.locCity || null),
+      locCountry: /** @type {?(string|number)} */ (data.locCountry || null)
     },
     geo: {
-      geoLng: data.geoLng || null,
-      geoLat: data.geoLat || null,
-      geoAddress: data.geoAddress || null,
-      geoZoom: data.geoZoom || null
+      geoLng:     /** @type {?(string|number)} */ (data.geoLng || null),
+      geoLat:     /** @type {?(string|number)} */ (data.geoLat || null),
+      geoAddress: /** @type {?(string|number)} */ (data.geoAddress || null),
+      geoZoom:    /** @type {?(string|number)} */ (data.geoZoom || null)
     },
     box: {
-      boxNum: data.boxNum || null,
-      boxSuburb: data.boxSuburb || null,
-      boxCode: data.boxCode || null,
-      boxCity: data.boxCity || null,
-      boxCountry: data.boxCountry || null
+      boxNum:     /** @type {?(string|number)} */ (data.boxNum || null),
+      boxSuburb:  /** @type {?(string|number)} */ (data.boxSuburb || null),
+      boxCode:    /** @type {?(string|number)} */ (data.boxCode || null),
+      boxCity:    /** @type {?(string|number)} */ (data.boxCity || null),
+      boxCountry: /** @type {?(string|number)} */ (data.boxCountry || null)
     },
     media: {
-      logo: data.mediaLogo || null,
-      css: data.mediaCss || null
+      logo:       /** @type {?(string)} */ (data.mediaLogo || null),
+      css:        /** @type {?(string)} */ (data.mediaCss || null)
     },
     bill: {
-      billPlan: data.billPlan || null,
-      billEmail: data.billEmail || null
+      billPlan:   /** @type {?(string|number)} */ (data.billPlan || null),
+      billEmail:  /** @type {?(string|number)} */ (data.billEmail || null)
     },
     card: {
-      crdName: data.crdName || null,
-      crdType: data.crdType || null,
-      crdNumber: data.crdNumber || null,
-      crdExpDate: data.crdExpDate || null,
-      crdCvv: data.crdCvv || null
+      crdName:    /** @type {?(string|number)} */ (data.crdName || null),
+      crdType:    /** @type {?(string|number)} */ (data.crdType || null),
+      crdNumber:  /** @type {?(string|number)} */ (data.crdNumber || null),
+      crdExpDate: /** @type {?(string|number)} */ (data.crdExpDate || null),
+      crdCvv:     /** @type {?(string|number)} */ (data.crdCvv || null)
     },
-    members: [],
-    owners: [data.userId]
+    members: /** @type {Array} */ ([]),
+    owners: /** @type {Array} */ ([data.userId])
   };
 };

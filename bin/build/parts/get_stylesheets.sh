@@ -4,8 +4,10 @@ WORKSPACE=$1
 PROJECT_NAME=$2
 BIN_PATH=$3
 
-TARGET_PATH=${BIN_PATH}/closure-stylesheets
-TEMP_PATH=${BIN_PATH}/temp
+# This makes the source directory, and does not fail if it already exists
+mkdir -p ${BIN_PATH}/build/source
+SOURCE_PATH=${BIN_PATH}/build/source
+PRODUCT_SOURCE_PATH=${SOURCE_PATH}/closure-stylesheets
 
 # Just start somewhere.
 cd ${WORKSPACE}
@@ -20,24 +22,23 @@ echo "BIN_PATH:     ${BIN_PATH}"
 echo "-----------------------------------------------------"
 echo ""
 
-# Clean install
-rm -rf ${TARGET_PATH}
-mkdir -p ${TARGET_PATH}
-
-# Extract and build in a temp directory
-rm -rf ${TEMP_PATH}
-mkdir -p ${TEMP_PATH}
-cd ${TEMP_PATH}
+if [ -d "${PRODUCT_SOURCE_PATH}" ]; then
+    echo "The closure stylesheet source is already available. Pulling update"
+    cd ${PRODUCT_SOURCE_PATH}
+    git pull
+  else
+    echo "The closure stylesheet source is not available. Cloning it now..."
+    cd ${SOURCE_PATH}
+    git clone https://github.com/google/closure-stylesheets.git;
+fi
 
 # Get and compile the source
-git clone https://code.google.com/p/closure-stylesheets/;
-cd closure-stylesheets;
+cd ${PRODUCT_SOURCE_PATH}
 ant;
 ant test;
 
 # Move to target directory
-mv ${TEMP_PATH}/closure-stylesheets/build/closure-stylesheets.jar ${TARGET_PATH}/stylesheets.jar;
+cp build/closure-stylesheets.jar ${BIN_PATH};
 
 # Clean up.
 cd ${WORKSPACE}
-rm -rf ${TEMP_PATH}

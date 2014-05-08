@@ -1,5 +1,7 @@
 goog.provide('app.org.EventType');
 
+goog.require('bad.utils');
+
 /**
  * Constants for panel event.
  * @enum {string}

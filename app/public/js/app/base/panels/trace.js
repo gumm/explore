@@ -1,8 +1,9 @@
 goog.provide('app.base.panel.Trace');
 
 goog.require('bad.ui.Panel');
-goog.require('goog.json');
+goog.require('goog.dom');
 goog.require('goog.format.JsonPrettyPrinter');
+goog.require('goog.json');
 
 
 /**

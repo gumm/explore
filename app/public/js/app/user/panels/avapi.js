@@ -1,7 +1,13 @@
 goog.provide('app.user.panel.AvApi');
 
 goog.require('bad.ui.Panel');
+goog.require('bad.utils');
+goog.require('goog.Uri');
+goog.require('goog.array');
+goog.require('goog.dom');
 goog.require('goog.dom.Range');
+goog.require('goog.dom.dataset');
+goog.require('goog.format.JsonPrettyPrinter');
 goog.require('goog.string');
 
 /**
