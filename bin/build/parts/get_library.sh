@@ -24,7 +24,11 @@ echo ""
 if [ -d "${TARGET_PATH}" ]; then
     echo "The closure library is already installed. Pulling update"
     cd ${TARGET_PATH}
-    git pull
+    git fetch --all
+    git reset --hard origin/master
+
+
+
   else
     echo "The closure library is not installed. Cloning it now..."
     cd ${JS_PATH}

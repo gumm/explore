@@ -25,7 +25,9 @@ echo ""
 if [ -d "${PRODUCT_SOURCE_PATH}" ]; then
     echo "The closure stylesheet source is already available. Pulling update"
     cd ${PRODUCT_SOURCE_PATH}
-    git pull
+    git fetch --all
+    git reset --hard origin/master
+    git clean -df
   else
     echo "The closure stylesheet source is not available. Cloning it now..."
     cd ${SOURCE_PATH}

@@ -43,7 +43,7 @@ app.user.view.Login.prototype.configurePanels = function() {
    */
   this.headerPanel = new bad.ui.Panel();
   this.headerPanel.setUri(new goog.Uri(exp.urlMap.BASIC.HEADER));
-  this.headerPanel.setNestAsTarget(layout.getNest('header'));
+  this.headerPanel.setNestAsTarget(layout.getNest('footer'));
   this.headerPanel.setBeforeReadyCallback(goog.bind(function() {
     bad.utils.makeButton('create-account', this.headerPanel,
       goog.bind(this.enterSignUpForm, this)

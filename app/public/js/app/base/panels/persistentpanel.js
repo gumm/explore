@@ -55,7 +55,7 @@ app.base.panel.Persistent.prototype.initMqtt = function() {
   this.mqtt.trackActiveClients(goog.dom.getElement('active_clients'));
   this.mqtt.trackBytesSent(goog.dom.getElement('bytes_sent'));
   this.mqtt.trackBytesReceived(goog.dom.getElement('bytes_received'));
-  this.mqtt.mqttSubscribe('/owntracks/+/+');
+  this.mqtt.mqttSubscribe('#');
 };
 
 app.base.panel.Persistent.prototype.buildUserButton = function() {

@@ -16,8 +16,19 @@ bad.UserManager = function(opt_xMan) {
   goog.events.EventTarget.call(this);
   this.xMan = opt_xMan;
   this.user_ = exp.accountMap({});
+
+  this.color_ = 'blue';
+  this.mapstyle_ = bad.UserManager.MapStyles_[this.color_];
 };
 goog.inherits(bad.UserManager, goog.events.EventTarget);
+
+bad.UserManager.MapStyles_ = {
+  'orange': 'gumm.idjg6h8d',
+  'red': 'gumm.idjb010j',
+  'yellow': 'gumm.idjgj22h',
+  'blue': 'gumm.idfoh2ko',
+  'green': 'gumm.idjdo11i'
+};
 
 
 /**
@@ -263,6 +274,21 @@ bad.UserManager.prototype.getSalutation = function() {
     salutation = salutation + ' ' + surname;
   }
   return salutation;
+};
+
+bad.UserManager.prototype.setTheme = function(value) {
+
+  console.debug('HERE IS THE NEW THEM COLOR:', value);
+
+
+  this.color_ = value;
+  this.mapstyle_ = bad.UserManager.MapStyles_[this.color_];
+
+  console.debug('HERE IS THE NEW MAP THEME:', this.mapstyle_);
+};
+
+bad.UserManager.prototype.getTheme = function() {
+  return this.mapstyle_;
 };
 
 

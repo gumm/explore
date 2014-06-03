@@ -132,8 +132,8 @@ app.Site.prototype.initLayout_ = function() {
 
   // Set the defaults for the site.
   this.layout_.setTarget(goog.dom.getDocument().body);
-  this.layout_.setInitialSize(mainCells[0], 72);
-  this.layout_.setInitialSize(mainCells[2], 23);
+  this.layout_.setInitialSize(mainCells[0], 0);
+  this.layout_.setInitialSize(mainCells[2], 72);
   this.layout_.setDraggerThickness(0);
   this.layout_.setWidthToViewport(true);
   this.layout_.setHeightToViewport(true);
@@ -318,7 +318,7 @@ app.Site.prototype.viewResetPassword = function() {
 };
 
 app.Site.prototype.viewHome = function() {
-  this.swapCss('theme');
+//  this.swapCss('theme');
   /**
    * @type {app.base.view.Home}
    */
@@ -327,7 +327,7 @@ app.Site.prototype.viewHome = function() {
 };
 
 app.Site.prototype.viewEditUser = function(opt_landing) {
-  this.swapCss('theme');
+//  this.swapCss('theme');
 
   /**
    * @type {app.user.view.Account}
@@ -405,6 +405,7 @@ app.Site.prototype.slideAllNestsClosed = function(opt_fn) {
  *    This file should be located at @code{'css/themes/...'}
  */
 app.Site.prototype.swapCss = function(filename) {
+  this.user_.setTheme(filename);
   document.getElementById('pagestyle').setAttribute('href',
     'css/themes/' + filename + '.css');
 };

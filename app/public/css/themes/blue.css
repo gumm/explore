@@ -15,7 +15,7 @@
 
 .layout-nest-header,
 .layout-nest-footer {
-  background-color: rgba(0, 0, 0, 0.4);
+  background-color: #16202B;
 }
 
 .layout-nest-header {
@@ -29,11 +29,6 @@
 .layout-nest-main-left-mid,
 .layout-nest-main-right-mid {
   background-color: rgba(0, 0, 0, 0.3);
-}
-
-.layout-nest-header {
-  background-color: #275265;
-  border-bottom: 1px solid rgb(229, 229, 229);
 }
 
 #sysreadout,

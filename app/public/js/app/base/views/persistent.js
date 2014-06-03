@@ -36,7 +36,7 @@ app.base.view.Persistent.prototype.configurePanels = function() {
   var headerPanel = new app.base.panel.Persistent(this.mqtt);
   headerPanel.setUri(new goog.Uri(exp.urlMap.BASIC.HEADER));
   headerPanel.setUser(this.getUser());
-  headerPanel.setNestAsTarget(this.getLayout().getNest('header'));
+  headerPanel.setNestAsTarget(this.getLayout().getNest('footer'));
   headerPanel.setBeforeReadyCallback(callback);
   this.addPanelToView(bad.utils.makeId(), headerPanel);
   headerPanel.renderWithTemplate();

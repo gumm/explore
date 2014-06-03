@@ -50,7 +50,7 @@ exp.settings.init = function(dev) {
     conf.production = false;
     conf.compiled.JS = false;
     conf.compiled.CSS = false;
-    conf.mqttServer = 'localhost';
+    conf.mqttServer = '107.170.174.112';
     conf.mqttPort = 1883;
     conf.wsServer = 'localhost';
     conf.wsPort = 3000;
@@ -91,7 +91,7 @@ exp.settings.configure = function(app, express, dev) {
     .set('deps', conf.path.DEPS)
     .set('bootstrap', conf.path.BOOTSTRAP)
     .set('cssBasic', conf.path.CSS)
-    .set('title', pjson.name)
+    .set('title', 'Trinity Reload')
     .set('version', pjson.version)
     .set('jsCompiled', conf.path.COMPILED.JS)
     .set('cssCompiled', conf.path.COMPILED.CSS);
