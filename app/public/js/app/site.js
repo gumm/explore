@@ -405,7 +405,10 @@ app.Site.prototype.slideAllNestsClosed = function(opt_fn) {
  *    This file should be located at @code{'css/themes/...'}
  */
 app.Site.prototype.swapCss = function(filename) {
-  this.user_.setTheme(filename);
+  var theme = filename || 'default';
+  this.user_.setTheme(theme);
+
+
   document.getElementById('pagestyle').setAttribute('href',
-    'css/themes/' + filename + '.css');
+    'css/themes/' + theme + '.css');
 };

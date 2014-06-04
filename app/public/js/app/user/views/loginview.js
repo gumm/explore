@@ -148,7 +148,7 @@ app.user.view.Login.prototype.onPanelAction = function(e) {
 //-------------------------------------------------------------[ Log-In Form ]--
 
 app.user.view.Login.prototype.slideLoginIn = function() {
-  var size = 350;
+  var size = 1062;
   var nest = this.getLayout().getNest('main', 'right');
   nest.slideOpen(null, size,
     goog.bind(this.headerPanel.show, this.headerPanel)

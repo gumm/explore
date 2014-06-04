@@ -42,6 +42,8 @@ app.base.panel.Home.prototype.enterDocument = function() {
  */
 app.base.panel.Home.prototype.renderMapBox = function() {
 
+  console.debug('HERE IS THE USER THEME:', this.getUser().getTheme())
+
   var map = L.mapbox.map('mapCanvas', this.getUser().getTheme()).setZoom(2);
   var marker = L.marker([0, 0]).addTo(map);
 

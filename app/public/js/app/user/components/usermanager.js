@@ -27,7 +27,8 @@ bad.UserManager.MapStyles_ = {
   'red': 'gumm.idjb010j',
   'yellow': 'gumm.idjgj22h',
   'blue': 'gumm.idfoh2ko',
-  'green': 'gumm.idjdo11i'
+  'green': 'gumm.idjdo11i',
+  'default': 'gumm.ie17o3cj'
 };
 
 
