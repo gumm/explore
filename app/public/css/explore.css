@@ -52,6 +52,10 @@ img {
   float: left;
 }
 
+.overflow-hidden {
+    overflow: hidden !important;
+}
+
 input.error {
   border-color: rgb(233, 50, 45);
   -webkit-box-shadow: 0 0 6px rgb(248, 185, 183);

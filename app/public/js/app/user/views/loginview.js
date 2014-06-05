@@ -56,6 +56,7 @@ app.user.view.Login.prototype.configurePanels = function() {
    * @type {bad.ui.Panel}
    */
   this.introPanel = new bad.ui.Panel();
+  this.introPanel.addElementClass('overflow-hidden');
   this.introPanel.setUri(new goog.Uri(exp.urlMap.BASIC.INTRO));
   this.introPanel.setNestAsTarget(layout.getNest('main', 'center'));
   this.addPanelToView(bad.utils.makeId(), this.introPanel);
@@ -65,6 +66,7 @@ app.user.view.Login.prototype.configurePanels = function() {
    * @type {app.user.panel.Login}
    */
   this.loginPanel = new app.user.panel.Login('login-form');
+  this.loginPanel.addElementClass('overflow-hidden');
   this.loginPanel.setUser(this.getUser());
   this.loginPanel.setUri(new goog.Uri(exp.urlMap.LOG.IN));
   this.loginPanel.setNestAsTarget(layout.getNest('main', 'right', 'mid'));
@@ -150,7 +152,7 @@ app.user.view.Login.prototype.onPanelAction = function(e) {
 app.user.view.Login.prototype.slideLoginIn = function() {
   var size = 1062;
   var nest = this.getLayout().getNest('main', 'right');
-  nest.slideOpen(null, size,
+  nest.slideOpen(50, null,
     goog.bind(this.headerPanel.show, this.headerPanel)
   );
 };
