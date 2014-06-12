@@ -11,15 +11,6 @@ app.BasicView = function() {
 };
 goog.inherits(app.BasicView, bad.ui.View);
 
-/**
- * Change the CSS styling of the site.
- * @param {!Object} media The media component of the Org JSON structure.
- */
-app.BasicView.prototype.swapCss = function(media) {
-  document.getElementById('pagestyle').setAttribute(
-    'href', 'css/themes/' + media['css'] + '.css');
-};
-
 app.BasicView.prototype.slideNavIn = function() {
   var size = 310;
   var slider = this.getLayout().getNest('main', 'left');

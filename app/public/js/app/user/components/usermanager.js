@@ -1,10 +1,10 @@
 goog.provide('bad.UserManager');
 
+goog.require('app.user.EventType');
 goog.require('exp.accountMap');
 goog.require('goog.Promise');
-goog.require('goog.uri.utils');
 goog.require('goog.events.EventTarget');
-goog.require('app.user.EventType');
+goog.require('goog.uri.utils');
 
 
 /**

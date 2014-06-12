@@ -2,7 +2,7 @@
 // Please do not edit.
 goog.addDependency('../../../app/app.js', ['app'], ['app.Site', 'bad.MqttWsIo', 'bad.Net', 'goog.net.XhrManager']);
 goog.addDependency('../../../app/base/constants.js', ['app.base.EventType'], ['bad.utils']);
-goog.addDependency('../../../app/base/panels/homepanel.js', ['app.base.panel.Home'], ['bad.ui.Panel']);
+goog.addDependency('../../../app/base/panels/homepanel.js', ['app.base.panel.Home'], ['bad.MqttEventType', 'bad.ui.Panel', 'goog.json']);
 goog.addDependency('../../../app/base/panels/navpanel.js', ['app.base.NavPanel'], ['app.base.EventType', 'bad.ui.MenuFlatRenderer', 'bad.ui.MenuItemRenderer', 'bad.ui.Panel', 'bad.utils', 'goog.dom.classes', 'goog.events.EventType']);
 goog.addDependency('../../../app/base/panels/persistentpanel.js', ['app.base.panel.Persistent'], ['app.base.EventType', 'app.user.EventType', 'bad.ui.MenuFloatRenderer', 'bad.ui.MenuItemRenderer', 'bad.ui.Panel', 'bad.utils', 'goog.dom', 'goog.ui.Css3MenuButtonRenderer', 'goog.ui.MenuButton']);
 goog.addDependency('../../../app/base/panels/trace.js', ['app.base.panel.Trace'], ['bad.ui.Panel', 'goog.dom', 'goog.format.JsonPrettyPrinter', 'goog.json']);
@@ -33,7 +33,8 @@ goog.addDependency('../../../app/user/panels/passwordreset.js', ['app.user.panel
 goog.addDependency('../../../app/user/views/account.js', ['app.user.view.Account'], ['app.BasicView', 'app.base.EventType', 'app.doMap', 'app.org.panel.List', 'app.user.EventType', 'app.user.panel.AvApi', 'app.user.panel.Delete', 'app.user.panel.Edit', 'app.user.panel.NavPanel', 'app.user.panel.PasswordEdit', 'bad.ui.Panel', 'bad.utils', 'goog.Uri', 'goog.dom', 'goog.events.EventType']);
 goog.addDependency('../../../app/user/views/loginview.js', ['app.user.view.Login'], ['app.BasicView', 'app.doMap', 'app.user.EventType', 'app.user.panel.Account', 'app.user.panel.Login', 'app.user.panel.PasswordLost', 'app.user.panel.PasswordReset', 'bad.ui.EventType', 'bad.ui.Panel', 'bad.utils', 'goog.Uri']);
 goog.addDependency('../../../bad-library/bad/constants/constants.js', ['bad.CssClassMap', 'bad.CssPrefix'], []);
-goog.addDependency('../../../bad-library/bad/net/mqttwsio.js', ['bad.MqttEvent', 'bad.MqttEventType', 'bad.MqttWsIo'], ['bad.utils', 'goog.dom', 'goog.events.Event', 'goog.events.EventHandler', 'goog.events.EventTarget', 'goog.json', 'goog.net.WebSocket', 'goog.object']);
+goog.addDependency('../../../bad-library/bad/data/mqttparse.js', ['bad.MqttParse', 'bad.MqttParse.replyCode', 'bad.TCTEvent', 'bad.TCTReceivedEvent'], ['goog.array', 'goog.events.Event', 'goog.events.EventTarget', 'goog.json', 'goog.object']);
+goog.addDependency('../../../bad-library/bad/net/mqttwsio.js', ['bad.MqttEvent', 'bad.MqttEventType', 'bad.MqttWsIo'], ['bad.MqttParse', 'bad.utils', 'goog.dom', 'goog.events.Event', 'goog.events.EventHandler', 'goog.events.EventTarget', 'goog.json', 'goog.net.WebSocket', 'goog.object']);
 goog.addDependency('../../../bad-library/bad/net/net.js', ['bad.Net'], ['goog.Uri', 'goog.net.XhrIo']);
 goog.addDependency('../../../bad-library/bad/ui/component.js', ['bad.ActionEvent', 'bad.ui.Component'], ['bad.ui.EventType', 'goog.events.Event', 'goog.style', 'goog.ui.Component']);
 goog.addDependency('../../../bad-library/bad/ui/form.js', ['bad.ui.Form'], ['bad.ui.Panel', 'bad.utils', 'goog.dom', 'goog.dom.classes', 'goog.dom.forms', 'goog.events.EventType', 'goog.object', 'goog.uri.utils']);

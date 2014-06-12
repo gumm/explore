@@ -82,10 +82,10 @@ nodedeps) echo  "Build Node Dependencies"
 
 # Lint both the app and the library, and compile JS and CSS.
 ui) echo  "Lint and compile JS and CSS"
-    ${BUILD_PATH}/build.sh lint app
-    ${BUILD_PATH}/build.sh lint bad-library
-    ${BUILD_PATH}/build.sh js
-    ${BUILD_PATH}/build.sh css
+    ${BUILD_PATH}/build.sh ${WORKSPACE} lint app
+    ${BUILD_PATH}/build.sh ${WORKSPACE} lint bad-library
+    ${BUILD_PATH}/build.sh ${WORKSPACE} js
+    ${BUILD_PATH}/build.sh ${WORKSPACE} css
    ;;
 
 # Lint some files.

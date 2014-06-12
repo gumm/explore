@@ -24,14 +24,14 @@ bad.OrgManager.prototype.updateData = function(data) {
 };
 
 /**
- * @returns {Object}
+ * @return {Object}
  */
 bad.OrgManager.prototype.getData = function() {
   return this.org_;
 };
 
 /**
- * @returns {?(string|number|undefined)}
+ * @return {?(string|number|undefined)}
  */
 bad.OrgManager.prototype.getId = function() {
   return this.org_['_id'];
@@ -45,28 +45,28 @@ bad.OrgManager.prototype.setId = function(id) {
 };
 
 /**
- * @returns {?Object}
+ * @return {?Object}
  */
 bad.OrgManager.prototype.getProfile = function() {
   return this.org_['profile'];
 };
 
 /**
- * @returns {?(string|number)}
+ * @return {?(string|number)}
  */
 bad.OrgManager.prototype.getName = function() {
   return this.getProfile()['orgName'];
 };
 
 /**
- * @returns {?Object}
+ * @return {?Object}
  */
 bad.OrgManager.prototype.getMedia = function() {
   return this.org_['media'];
 };
 
 /**
- * @returns {?string}
+ * @return {?string}
  */
 bad.OrgManager.prototype.getCss = function() {
   return this.getMedia()['css'];

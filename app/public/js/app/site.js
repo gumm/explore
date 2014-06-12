@@ -93,7 +93,7 @@ app.Site.prototype.rpc = function(method, opt_param) {
       this.viewOrg(opt_param);
       break;
     case app.doMap.SWAP_THEME:
-      this.swapCss(opt_param);
+      this.swapTheme(opt_param);
       break;
     case app.doMap.NESTS_SLIDE_CLOSE_ALL:
       this.slideAllNestsClosed(opt_param);
@@ -219,6 +219,8 @@ app.Site.prototype.initLayout_ = function() {
 
   // Create the layout in the DOM
   this.layout_.render();
+//  this.renderMapBox();
+
 };
 
 //------------------------------------------------------------------[ Header ]--
@@ -318,7 +320,7 @@ app.Site.prototype.viewResetPassword = function() {
 };
 
 app.Site.prototype.viewHome = function() {
-//  this.swapCss('theme');
+//  this.swapTheme('theme');
   /**
    * @type {app.base.view.Home}
    */
@@ -327,7 +329,7 @@ app.Site.prototype.viewHome = function() {
 };
 
 app.Site.prototype.viewEditUser = function(opt_landing) {
-//  this.swapCss('theme');
+//  this.swapTheme('theme');
 
   /**
    * @type {app.user.view.Account}
@@ -401,14 +403,74 @@ app.Site.prototype.slideAllNestsClosed = function(opt_fn) {
 
 /**
  * Changes the css styling of the whole site.
- * @param {string!} filename The file name of the css file to apply to the site.
+ * @param {string!} name The file name of the css file to apply to the site.
  *    This file should be located at @code{'css/themes/...'}
  */
-app.Site.prototype.swapCss = function(filename) {
-  var theme = filename || 'default';
+app.Site.prototype.swapTheme = function(name) {
+  var theme = name || 'default';
   this.user_.setTheme(theme);
-
 
   document.getElementById('pagestyle').setAttribute('href',
     'css/themes/' + theme + '.css');
+
+//  this.setTileLayer();
 };
+
+///**
+// * Once google maps is available this is the callback to execute.
+// * @param {string=} opt_randName
+// */
+//app.Site.prototype.renderMapBox = function() {
+//
+//  var tileUrl = this.user_.getTheme();
+//  console.debug('We came here...', tileUrl);
+//
+//  // create a map in the "map" div, set the view to a given place and zoom
+//  this.map = L.mapbox.map('map').setView([51.505, -0.09], 13);
+//
+//  this.setTileLayer();
+//
+////  // add an OpenStreetMap tile layer
+////  L.mapbox.tileLayer(tileUrl, {
+////      attribution: ''
+////  }).addTo(map);
+//
+//  // add a marker in the given location, attach some popup content to it and open the popup
+//  L.marker([51.5, -0.09]).addTo(this.map)
+//      .bindPopup('A pretty CSS3 popup. <br> Easily customizable.')
+//      .openPopup();
+//
+//
+//
+//
+//
+////
+////  console.debug('HERE IS THE USER THEME:', tileUrl)
+////
+////  var map = L.mapbox.map('mapCanvas', tileUrl).setZoom(2);
+////  var marker = L.marker([0, 0]).addTo(map);
+////
+////  var setPosition = function(payload) {
+////    var latLng = L.latLng(payload['lat'], payload['lon']);
+////    console.debug('Setting position:', latLng);
+////    marker.setLatLng(latLng);
+////    map.panTo(latLng);
+////  };
+////
+////  this.getHandler().listen(
+////    this.mqtt,
+////    'owntracks/jan/phone',
+////    function(e) {
+////      setPosition(goog.json.parse(e.payload));
+////    }
+////  );
+//};
+
+//app.Site.prototype.setTileLayer = function() {
+//
+//  // add an OpenStreetMap tile layer
+//  L.mapbox.tileLayer(this.user_.getTheme(), {
+//      attribution: ''
+//  }).addTo(this.map);
+//
+//};

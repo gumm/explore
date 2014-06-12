@@ -1,5 +1,6 @@
 goog.provide('app.base.panel.Persistent');
 
+goog.require('app.user.EventType');
 goog.require('app.base.EventType');
 goog.require('app.user.EventType');
 goog.require('bad.ui.MenuFloatRenderer');
@@ -9,7 +10,6 @@ goog.require('bad.utils');
 goog.require('goog.dom');
 goog.require('goog.ui.Css3MenuButtonRenderer');
 goog.require('goog.ui.MenuButton');
-goog.require('app.user.EventType');
 
 /**
  * The basic login form controller.
